@@ -17,13 +17,15 @@ export class Main {
 	constructor(pool: Pool) {
 		this.pool = pool;
 		this.app = express();
+
+    this.setupMiddlewares();
+    this.setupRoutes();
 	}
 
-  private async connectDb(): Promise<void> {
-    // Funcion para conectar con la base de datos (a desarrollar)
-  };
 
   private setupMiddlewares() {
+
+    // Trust proxy form nginx
     this.app.set("trust proxy", 1);
 
     const corsOptions = {
@@ -83,10 +85,4 @@ export class Main {
     })
   }
 
-	public async run(): Promise<void> {
-	  await this.connectDb();
-    this.setupMiddlewares();
-    this.setupRoutes();
-	
-	}
 }
