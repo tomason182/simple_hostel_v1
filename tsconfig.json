@@ -3,18 +3,14 @@
     "target": "ES2020",
     "module": "CommonJS",
     "moduleResolution": "Node",
-
     "esModuleInterop": true,
-
     "strict": true,
-
     "skipLibCheck": true,
-
     "sourceMap": true,
-
-    "types": ["node"],
-
-    "outDir": "./dist",
-    "rootDir": "./src"
+    "types": [
+      "node"
+    ],
+    "outDir": ".api/dist",
+    "rootDir": "./api/src"
   }
 }
