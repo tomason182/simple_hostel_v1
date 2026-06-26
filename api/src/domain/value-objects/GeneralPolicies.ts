@@ -1,0 +1,26 @@
+export class GeneralPolicies {
+  constructor(
+    public minLengthStay: number,
+    public maxLengthStay: number,
+    public minAdvanceBooking: number,
+    public breakfastIncluded: boolean,
+    public checkInFrom: string,
+    public checkOutFrom: string,
+    public checkInUntil: string,
+    public checkOutUntil: string,
+
+  ) {
+    this.minLengthStay = minLengthStay;
+    this.maxLengthStay = maxLengthStay;
+    this.minAdvanceBooking = minAdvanceBooking;
+    this.breakfastIncluded = breakfastIncluded;
+    this.checkInFrom = checkInFrom;
+    this.checkOutFrom = checkOutFrom;
+    this.checkInUntil = checkInUntil;
+    this.checkOutUntil = checkOutUntil;
+
+    if (minLengthStay < 0 || maxLengthStay < 0 || minAdvanceBooking < 0) {
+      throw new Error("GeneralPolicies Error: Values must be non-negative numbers");
+    }
+  }
+}
