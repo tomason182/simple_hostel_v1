@@ -12,14 +12,12 @@ import { Pool } from "pg";
 export class Main {
 	private app: Express;
 	private pool: Pool;
+  private baseUrl: string = "/api/v1";
 
 	
 	constructor(pool: Pool) {
 		this.pool = pool;
 		this.app = express();
-
-    this.setupMiddlewares();
-    this.setupRoutes();
 	}
 
 
@@ -48,7 +46,7 @@ export class Main {
       message: "Too many request from this IP, please try again later",
     });
 
-    this.app.use("/api/v1/", apiLimiter);
+    this.app.use(this.baseUrl, apiLimiter);
 
     // Compresion
     this.app.use(compression());
@@ -85,4 +83,12 @@ export class Main {
     })
   }
 
+  public run() {
+    // 1. Iniciar instancias necesarias (controladores, servicios, infraestrucutra, proxy, etc.
+    // 2. Cargar middelwares.
+    this.setupMiddlewares();
+    // 3. Cargar rutas. Creo que necesitan la instancia del controlador y del pool.
+    this.setupRoutes();
+
+  }
 }
