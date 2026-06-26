@@ -1,8 +1,4 @@
-import User from "../entities/User";
-
-
-export class IUserService {
-  
-  authUser(username:string, password:string):Promise<User>
+export interface IUserService {
+  authUser(username: string, password: string): Promise<{ status: number, msg: string }>;
 
 }
