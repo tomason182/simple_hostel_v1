@@ -1,27 +1,29 @@
-import IUserService from "../domain/interfaces/IUserService";
+import { IUserService } from "../domain/interfaces/IUserService";
+import { Request, Response, NextFunction } from "express";
+
 
 export class UserController {
-  userService:IUserService;
+  private readonly userService: IUserService;
 
-  constructor(userService:IUserService) {
+  constructor(userService: IUserService) {
     this.userService = userService;
   }
 
-  // 1. Registrar usuario
-  
-  // 2. Autentificar usuario
-  private async authUser(req, res, next) {
+  // 1. Autentificar usuario
+  private async authUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const {username, password } = req.body;
+      const { username, password } = req.body;
 
       const result = await this.userService.authUser(username, password);
-    }catch(e){
 
+      res.status(200).json({ msg: result.msg })
+    } catch (e) {
+      next(e)
     }
   }
 
   // 3. Eliminar usuario
-  
+
   // 4. Actualizar usuario
 
 
