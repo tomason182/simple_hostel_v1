@@ -1,8 +1,8 @@
 export interface PoliciesDTO {
-  generalPolicies: GeneralPoliciesDTO;
-  paymentPolicies: PaymentPoliciesDTO;
-  minorPolicies: MinorPoliciesDTO;
-  otherPolicies: OtherPoliciesDTO;
+  general: GeneralPoliciesDTO;
+  payment: PaymentPoliciesDTO;
+  minor: MinorPoliciesDTO;
+  other: OtherPoliciesDTO;
 }
 
 export interface GeneralPoliciesDTO {
@@ -24,7 +24,7 @@ export interface PaymentPoliciesDTO {
 export interface MinorPoliciesDTO {
   minCheckInAge: number;
   acceptChildren: boolean;
-  minorsAdultsSupervision: boolean;
+  minorsAdultSupervision: boolean;
   minChildAge: number;
   freeStayAge: number;
 };

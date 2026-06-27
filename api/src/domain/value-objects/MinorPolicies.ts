@@ -2,13 +2,13 @@ export class MinorPolicies {
   constructor(
     public minCheckInAge: number,
     public acceptChildren: boolean,
-    public minorsAdultSupervicion: boolean,
+    public minorsAdultSupervision: boolean,
     public minChildAge: number,
     public freeStayAge: number,
   ) {
     this.minCheckInAge = minCheckInAge;
     this.acceptChildren = acceptChildren;
-    this.minorsAdultSupervicion = minorsAdultSupervicion;
+    this.minorsAdultSupervision = minorsAdultSupervision;
     this.minChildAge = minChildAge;
     this.freeStayAge = freeStayAge;
 
