@@ -18,6 +18,16 @@ export class EmailServiceSMTP {
 
   constructor(config: nodemailer.TransportOptions) {
     this.transporter = nodemailer.createTransport(config);
+
+  }
+
+  private async initialize(): Promise<void> {
+    try {
+      await this.transporter.verify();
+    } catch (e) {
+      throw new Error("Email Server verification failed");
+    }
+
   }
 
   async sendEmail(
@@ -28,23 +38,21 @@ export class EmailServiceSMTP {
     language: string = "es",
   ): Promise<void> {
     try {
-      // 0. Verificar transporter al inicar.
-      await this.transporter.verify();
       // 1. Seleccionar el idioma.
 
       // 2. Cargar la plantilla de mjml.
-      let mjmlTemplate;
-      if (this.templateCache.has(templateName)) {
-        mjmlTemplate = this.templateCache.get(templateName);
-      } else {
+      let compiledTemplate = this.templateCache.get(templateName);
+
+      if (!compiledTemplate) {
         const mjmlTemplatePath = path.join(__dirname, "./templates", `${templateName}.mjml`);
-        mjmlTemplate = await fs.readFile(mjmlTemplatePath, "utf8");
-        this.templateCache.set(templateName, mjmlTemplate);           // Almacenamos el template en una variable de intancia de la clase. Para ser usado en otro momento.
+        const mjmlTemplate = await fs.readFile(mjmlTemplatePath, "utf8");
+
+        compiledTemplate = Handlebars.compile(mjmlTemplate);
+        this.templateCache.set(templateName, compiledTemplate);           // Almacenamos el template en una variable de intancia de la clase. Para ser usado en otro momento.
 
       }
 
       // 3. Compilar datos con handlebars.
-      const compiledTemplate = Handlebars.compile(mjmlTemplate);
       const mjmlWithData = compiledTemplate(data);
 
       const { html, errors } = await mjml2html(mjmlWithData, { minify: false });   // No minificamos html aqui. Vulneravilidad html-minifier. Ver si ya esta solucionado
@@ -64,7 +72,7 @@ export class EmailServiceSMTP {
         text: convert(html),
         replyTo: this.emailConfig.emailSupport,
         headers: {
-          "List-Unsubscribe": `<mailto:${this.emailConfig.emailSupport}?subject=Unsubscribe>, ` + `https://${this.emailConfig.baseURL}/unsubscribe-info>`,
+          "List-Unsubscribe": `<mailto:${this.emailConfig.emailSupport}?subject=Unsubscribe>, ` + `<https://${this.emailConfig.baseURL}/unsubscribe-info>`,
           "X-Mailer": "SimpleHostel Mailer",
         },
         messageId: `<${crypto.randomUUID()}@${this.emailConfig.baseURL}>`
@@ -77,7 +85,7 @@ export class EmailServiceSMTP {
       if (e instanceof Error) {
         throw new Error(`Fail to send email: ${e.message}`);
       } else {
-        throw new Error("Fail to send emai. Unkown error");
+        throw new Error("Fail to send email. Unkown error");
       }
     };
   }
