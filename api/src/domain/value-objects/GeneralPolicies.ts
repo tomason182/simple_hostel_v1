@@ -4,10 +4,10 @@ export class GeneralPolicies {
     public maxLengthStay: number,
     public minAdvanceBooking: number,
     public breakfastIncluded: boolean,
-    public checkInFrom: string,
-    public checkOutFrom: string,
-    public checkInUntil: string,
-    public checkOutUntil: string,
+    public checkInFrom: string | null,
+    public checkOutFrom: string | null,
+    public checkInUntil: string | null,
+    public checkOutUntil: string | null,
 
   ) {
     this.minLengthStay = minLengthStay;

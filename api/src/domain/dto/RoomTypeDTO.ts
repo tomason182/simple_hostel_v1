@@ -1,12 +1,10 @@
-export type RoomType = "dorm" | "private";
-export type RoomGender = "mixed" | "female" | "male";
 
 export interface RoomTypeDTO {
   id: number | null;
   propertyId: number;
   description: string;
-  type: RoomType;
-  gender: RoomGender;
+  type: string;
+  gender: string;
   maxOccupancy: number;
   inventory: number;
   status: boolean;

@@ -10,4 +10,5 @@ export class PaymentPolicies {
       throw new Error("PaymentPolicies Error: Deposit amount must be a positive number");
     }
   }
+
 }

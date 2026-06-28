@@ -12,4 +12,5 @@ export class OtherPolicies {
     this.allowExternalGuest = allowExternalGuest;
     this.allowPets = allowPets;
   }
+
 }

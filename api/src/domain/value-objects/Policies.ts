@@ -15,4 +15,5 @@ export class Policies {
     this.minor = minor;
     this.other = other;
   };
+
 }

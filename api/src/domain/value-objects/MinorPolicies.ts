@@ -16,5 +16,6 @@ export class MinorPolicies {
       throw new Error("MinorPolicies Error: Ages must be non-negative");
     }
   };
+
 }
 

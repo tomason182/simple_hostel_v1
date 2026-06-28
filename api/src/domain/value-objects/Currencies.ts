@@ -6,4 +6,5 @@ export class Currencies {
     this.baseCurrency = baseCurrency;
     this.paymentCurrency = paymentCurrency;
   };
+
 }

@@ -1,21 +1,18 @@
 import bcrypt from "bcrypt";
-
-export type UserRole = "admin" | "manager" | "employee";
-export type Status = "active" | "blocked" | "pending"
+import { CreateUserDTO, UserDTO, UserStatus } from "../dto/UserDTO";
 
 export class User {
   public readonly id: number | null;
   public username: string;
   public firstName: string;
   public lastName: string | null;
-  public role: UserRole;
   public isEmailVerified: boolean;
   public avatar: string;
-  private status: Status;
+  public status: UserStatus;
   public createdAt: Date;
   public updatedAt: Date;
   private passwordHash: string;
-  public lastResendEmail: Date;
+  private lastResendEmail: Date;
   private waitingPeriod: number = 5 * 60 * 1000;
 
   constructor(
@@ -23,12 +20,11 @@ export class User {
     username: string,
     firstName: string,
     lastName: string | null,
-    role: UserRole,
     passwordHash: string,
     isEmailVerified: boolean,
     lastResendEmail: Date,
     avatar: string,
-    status: Status,
+    status: UserStatus,
     createdAt: Date,
     updatedAt: Date
   ) {
@@ -36,7 +32,6 @@ export class User {
     this.username = username;
     this.firstName = firstName;
     this.lastName = lastName;
-    this.role = role;
     this.passwordHash = passwordHash;
     this.isEmailVerified = isEmailVerified;
     this.lastResendEmail = lastResendEmail;
@@ -56,17 +51,21 @@ export class User {
     }
   }
 
-  static async newUser(username: string, firstName: string, role: UserRole, password: string): Promise<User> {
-    const hashPassword = await User.passwordHash(password);
+  static setLastResendEmail() {
+    return new Date();
+  }
+
+  static async fromCreateUserDTO(userDTO: CreateUserDTO): Promise<User> {
+    const hashPassword = await User.passwordHash(userDTO.password);
     const isEmailVerified = false;
-    const lastResendEmail = new Date();
-    const defaultAvatar = "url/to/default/avatar";
+    const lastResendEmail = User.setLastResendEmail();
+    const defaultAvatarURL = "url/to/default/avatar";
     const status = "pending";
     const createdAt = new Date();
     const updatedAt = new Date();
 
 
-    return new User(null, username, firstName, null, role, hashPassword, isEmailVerified, lastResendEmail, defaultAvatar, status, createdAt, updatedAt);
+    return new User(null, userDTO.username, userDTO.firstname, null, hashPassword, isEmailVerified, lastResendEmail, defaultAvatarURL, status, createdAt, updatedAt);
   }
 
   // Metodos de instancia

@@ -1,4 +1,3 @@
-export type UserStatus = "pending" | "active" | "blocked" | "suspended";
 
 export interface UserDTO {
   id?: number;
@@ -10,7 +9,6 @@ export interface UserDTO {
   lastResendEmail: Date;
   role: string;
   avatar: string;
-  status: UserStatus;
   createdAt: Date;
   updateAt: Date;
 }
