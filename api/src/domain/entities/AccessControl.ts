@@ -19,4 +19,16 @@ export class AccessControl {
     this.updatedAt = updatedAt;
   };
 
+
+  // Getters and Setters.
+  public getPropertyId() {
+    return this.propertyId;
+  };
+  public getUserId() {
+    return this.userId;
+  };
+  public getRole() {
+    return this.role;
+  }
+
 };
