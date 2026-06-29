@@ -5,9 +5,10 @@ import crypto from "node:crypto";
 import mjml2html from "mjml";
 import Handlebars from "handlebars";
 import { convert } from "html-to-text"
+import { IEmailRepositorySMTP } from "../../domain/ports/IEmailRepository";
 
 
-export class EmailServiceSMTP {
+export class EmailServiceSMTP implements IEmailRepositorySMTP {
   private transporter: Transporter;
   private templateCache = new Map<string, HandlebarsTemplateDelegate>();
   private emailConfig = {
@@ -34,8 +35,7 @@ export class EmailServiceSMTP {
     to: string,
     subject: string,
     templateName: string,
-    data: Record<string, unknown>,
-    language: string = "es",
+    data: object,
   ): Promise<void> {
     try {
       // 1. Seleccionar el idioma.
