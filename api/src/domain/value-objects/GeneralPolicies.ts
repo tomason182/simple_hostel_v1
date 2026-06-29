@@ -1,3 +1,5 @@
+import { GeneralPoliciesDTO } from "../dto/PoliciesDTO";
+
 export class GeneralPolicies {
   constructor(
     public minLengthStay: number,
@@ -22,5 +24,18 @@ export class GeneralPolicies {
     if (minLengthStay < 0 || maxLengthStay < 0 || minAdvanceBooking < 0) {
       throw new Error("GeneralPolicies Error: Values must be non-negative numbers");
     }
+  }
+
+  static fromDTO(dto: GeneralPoliciesDTO): GeneralPolicies {
+    return new GeneralPolicies(
+      dto.minLengthStay,
+      dto.maxLengthStay,
+      dto.minAdvanceBooking,
+      dto.breakfastIncluded,
+      dto.checkInFrom,
+      dto.checkOutFrom,
+      dto.checkInUntil,
+      dto.checkOutUntil
+    )
   }
 }

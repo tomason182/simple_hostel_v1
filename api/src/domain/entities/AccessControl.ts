@@ -29,6 +29,14 @@ export class AccessControl {
     return new AccessControl(null, userId, propertyId, role, createdAt, updatedAt);
   }
 
+  // Metodos de instancia.
+  canEditPolicies() {
+    if (this.role === "admin" || this.role === "manager") {
+      return true;
+    }
+    return false;
+  }
+
 
   // Getters and Setters.
   public getPropertyId() {

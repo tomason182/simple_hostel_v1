@@ -1,3 +1,5 @@
+import { MinorPoliciesDTO } from "../dto/PoliciesDTO";
+
 export class MinorPolicies {
   constructor(
     public minCheckInAge: number,
@@ -17,5 +19,13 @@ export class MinorPolicies {
     }
   };
 
+  static fromDTO(dto: MinorPoliciesDTO): MinorPolicies {
+    return new MinorPolicies(
+      dto.minCheckInAge,
+      dto.acceptChildren,
+      dto.minorsAdultSupervision,
+      dto.minChildAge,
+      dto.freeStayAge)
+  }
 }
 

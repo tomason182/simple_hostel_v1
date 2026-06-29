@@ -1,6 +1,7 @@
 import { GeneralPolicies } from "../value-objects/GeneralPolicies";
 import { MinorPolicies } from "../value-objects/MinorPolicies";
 import { OtherPolicies } from "../value-objects/OtherPolicies";
+import { PaymentPolicies } from "../value-objects/PaymentPolicies";
 import { Policies } from "../value-objects/Policies";
 
 export interface IPoliciesRepository {
@@ -11,4 +12,6 @@ export interface IPoliciesRepository {
   saveMinorPolicies(propertyId: number, minorPolicies: MinorPolicies): Promise<void>;
 
   saveOtherPolicies(propertyId: number, otherPolicies: OtherPolicies): Promise<void>;
+
+  savePaymentPolicies(propertyId: number, paymentPolicies: PaymentPolicies): Promise<void>;
 }

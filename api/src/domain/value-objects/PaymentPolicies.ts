@@ -1,3 +1,5 @@
+import { PaymentPoliciesDTO } from "../dto/PoliciesDTO";
+
 export class PaymentPolicies {
   constructor(
     public advancePaymentRequired: boolean,
@@ -11,4 +13,7 @@ export class PaymentPolicies {
     }
   }
 
+  static fromDTO(dto: PaymentPoliciesDTO): PaymentPolicies {
+    return new PaymentPolicies(dto.advancePaymentRequired, dto.depositAmount)
+  }
 }
