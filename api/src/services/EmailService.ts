@@ -1,0 +1,44 @@
+import { AccessControl } from "../domain/entities/AccessControl";
+import { Property } from "../domain/entities/Property";
+import { User } from "../domain/entities/User";
+import { IEmailRepositorySMTP } from "../domain/ports/IEmailRepository";
+import { jwtTokenGenerator } from "../utils/jwtTokenHelper";
+
+export class EmailService {
+
+  constructor(
+    private emailRepository: IEmailRepositorySMTP,
+  ) {
+    this.emailRepository = emailRepository;
+  }
+
+  async validateAccountEmail(user: User, property: Property, accessControl: AccessControl): Promise<void> {
+    const tokenData = {
+      id: user.getId(),
+      propertyId: property.getId(),
+      role: accessControl.getRole()
+    }
+
+    const token = jwtTokenGenerator(tokenData, 60);
+
+    const confirmationLink = process.env.BASE_URL + "/accounts/validation/" + token;
+    const to = user.getUsername();
+    const subject = "Confirma tu correo electrónico";
+    const templateName = "validate_account";
+    const data = {
+      logoUrl: process.env.LOGO_URL,
+      appName: process.env.APP_NAME,
+      websiteURL: process.env.WEBSITE_URL,
+      name: user.getFirstName(),
+      confirmationLink: confirmationLink,
+      year: new Date().getFullYear.toString(),
+      companyName: process.env.COMPANY_NAME,
+      supportEmail: process.env.SUPPORT_EMAIL
+    }
+
+    await this.emailRepository.sendEmail(to, subject, templateName, data);
+
+  }
+
+
+}
