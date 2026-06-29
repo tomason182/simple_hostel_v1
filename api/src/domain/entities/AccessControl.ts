@@ -20,6 +20,16 @@ export class AccessControl {
   };
 
 
+  // Metodos de clase.
+  static createNewAccessControl(userId: number, propertyId: number): AccessControl {
+    const role = "admin";
+    const createdAt = new Date();
+    const updatedAt = new Date();
+
+    return new AccessControl(null, userId, propertyId, role, createdAt, updatedAt);
+  }
+
+
   // Getters and Setters.
   public getPropertyId() {
     return this.propertyId;

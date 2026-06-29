@@ -6,7 +6,7 @@ export class User {
   public firstName: string;
   public lastName: string | null;
   public isEmailVerified: boolean;
-  public avatar: string;
+  public avatar: string | null;
   public createdAt: Date;
   public updatedAt: Date;
   private passwordHash: string;
@@ -21,7 +21,7 @@ export class User {
     passwordHash: string,
     isEmailVerified: boolean,
     lastResendEmail: Date,
-    avatar: string,
+    avatar: string | null,
     createdAt: Date,
     updatedAt: Date
   ) {
@@ -39,6 +39,16 @@ export class User {
   }
 
   // Metodos de clase
+  static async createNewUser(username: string, password: string, firstName: string): Promise<User> {
+    const passwordHash = await User.passwordHash(password);
+    const isEmailVerified = false;
+    const lastResendEmail = new Date();
+    const createdAt = new Date();
+    const updatedAt = new Date();
+
+    return new User(null, username, firstName, null, passwordHash, isEmailVerified, lastResendEmail, null, createdAt, updatedAt);
+  }
+
   static async passwordHash(password: string, saltRounds = 10): Promise<string> {
     try {
       return await bcrypt.hash(password, saltRounds);
@@ -81,6 +91,14 @@ export class User {
       throw new Error("User id is not set")
     }
     return this.id;
+  }
+
+  getUsername(): string {
+    return this.username;
+  }
+
+  getFirstName(): string {
+    return this.firstName;
   }
 
 

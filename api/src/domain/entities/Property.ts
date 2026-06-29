@@ -3,7 +3,7 @@ import { ContactInfo } from "../value-objects/ContactInfo";
 import { Policies } from "../value-objects/Policies";
 import { Currencies } from "../value-objects/Currencies";
 
-export type PropertyStatus = "ACTIVE" | "SUSPENDED" | "ACTIVE";
+export type PropertyStatus = "ACTIVE" | "SUSPENDED" | "PENDING";
 export type ProfileStatus = "COMPLETE" | "INCOMPLETE";
 
 export class Property {
@@ -32,6 +32,16 @@ export class Property {
     this.status = status;
   };
 
+  // Metodos de class
+  static createNewProperty(propertyName: string): Property {
+    const propertyStatus = "PENDING";
+    const profileStatus = "INCOMPLETE";
+    const createdAt = new Date();
+    const updatedAt = new Date();
+
+    return new Property(null, propertyName, null, null, null, null, null, createdAt, updatedAt, propertyStatus, profileStatus);
+  }
+
   static updateDate() {
     return new Date();
   }
@@ -43,6 +53,16 @@ export class Property {
     };
 
     return false
+  }
+
+
+  // Getters y Setters.
+  getId(): number {
+    const id = this.id;
+    if (!id) {
+      throw new Error("PropertyId is not set");
+    }
+    return id
   }
 
 }
