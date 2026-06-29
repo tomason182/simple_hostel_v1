@@ -22,4 +22,18 @@ export class AccountService {
     }
 
   }
+
+  // 2. Eliminar cuenta.
+  public async DeleteAccount(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { username, password } = req.body;
+
+      const result = await this.accountService.deleteAccount(username, password);
+
+      return res.status(200).json({ msg: result });
+
+    } catch (err) {
+      next(err);
+    }
+  }
 }
