@@ -16,7 +16,7 @@ export class UserController {
 
       const result = await this.userService.authUser(username, password);
 
-      res.status(200).json({ msg: result.msg })
+      res.status(200).json({ token: result.token })
     } catch (e) {
       next(e)
     }
