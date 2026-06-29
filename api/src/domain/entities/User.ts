@@ -1,5 +1,4 @@
 import bcrypt from "bcrypt";
-import { CreateUserDTO, UserDTO, UserStatus } from "../dto/UserDTO";
 
 export class User {
   public readonly id: number | null;
@@ -8,7 +7,6 @@ export class User {
   public lastName: string | null;
   public isEmailVerified: boolean;
   public avatar: string;
-  public status: UserStatus;
   public createdAt: Date;
   public updatedAt: Date;
   private passwordHash: string;
@@ -24,7 +22,6 @@ export class User {
     isEmailVerified: boolean,
     lastResendEmail: Date,
     avatar: string,
-    status: UserStatus,
     createdAt: Date,
     updatedAt: Date
   ) {
@@ -36,7 +33,6 @@ export class User {
     this.isEmailVerified = isEmailVerified;
     this.lastResendEmail = lastResendEmail;
     this.avatar = avatar;
-    this.status = status;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
 
@@ -55,18 +51,6 @@ export class User {
     return new Date();
   }
 
-  static async fromCreateUserDTO(userDTO: CreateUserDTO): Promise<User> {
-    const hashPassword = await User.passwordHash(userDTO.password);
-    const isEmailVerified = false;
-    const lastResendEmail = User.setLastResendEmail();
-    const defaultAvatarURL = "url/to/default/avatar";
-    const status = "pending";
-    const createdAt = new Date();
-    const updatedAt = new Date();
-
-
-    return new User(null, userDTO.username, userDTO.firstname, null, hashPassword, isEmailVerified, lastResendEmail, defaultAvatarURL, status, createdAt, updatedAt);
-  }
 
   // Metodos de instancia
   async comparePassword(password: string): Promise<boolean> {
@@ -90,5 +74,14 @@ export class User {
   setLastResenEmail(): void {
     this.lastResendEmail = new Date()
   };
+
+  getId(): number {
+    const id = this.id;
+    if (!id) {
+      throw new Error("User id is not set")
+    }
+    return this.id;
+  }
+
 
 }

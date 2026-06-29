@@ -2,9 +2,9 @@ import { Address } from "../value-objects/Address";
 import { ContactInfo } from "../value-objects/ContactInfo";
 import { Policies } from "../value-objects/Policies";
 import { Currencies } from "../value-objects/Currencies";
-import { CreatePropertyDTO, PropertyDTO } from "../dto/PropertyDTO";
 
-export type PropertyStatus = "PENDING_PROFILE" | "PENDING_EMAIL" | "ACTIVE" | "SUSPENDED" | "ACTIVE";
+export type PropertyStatus = "ACTIVE" | "SUSPENDED" | "ACTIVE";
+export type ProfileStatus = "COMPLETE" | "INCOMPLETE";
 
 export class Property {
   constructor(
@@ -18,6 +18,7 @@ export class Property {
     public createdAt: Date,
     public updatedAt: Date,
     public status: PropertyStatus,
+    public profileStatus: ProfileStatus,
   ) {
     this.id = id;
     this.propertyName = propertyName;
@@ -35,38 +36,13 @@ export class Property {
     return new Date();
   }
 
-  static fromDTO(dto: PropertyDTO): Property {
-    return new Property(
-      dto.id,
-      dto.propertyName,
-      dto.address,
-      dto.contactInfo,
-      dto.policies,
-      dto.currencies,
-      dto.description,
-      dto.createdAt,
-      dto.updatedAt,
-    )
-  }
+  // Metodos de instancia.
+  public isPropertyActive() {
+    if (this.status === "ACTIVE") {
+      return true;
+    };
 
-  static fromCreatePropertyDTO(dto: CreatePropertyDTO): Property {
-    const address = Address.default();
-    const contactInfo = ContactInfo.default();
-    const policies = Policies.default();
-    const currencies = Currencies.default();
-    const status = "pending"
-    return new Property(
-      null,
-      dto.propertyName,
-      address,
-      contactInfo,
-      policies,
-      currencies,
-      null,
-      new Date(),
-      Property.updateDate(),
-      status
-    )
+    return false
   }
 
 }
