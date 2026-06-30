@@ -3,11 +3,15 @@ import { RoomType } from "../domain/entities/RoomTypes";
 import { UserRole } from "../domain/entities/AccessControl";
 import { IRoomTypeService } from "../domain/interfaces/IRoomTypeService";
 import { IRoomTypeRepository } from "../domain/ports/IRoomTypeRepository";
+import { IReservationRepository } from "../domain/ports/IReservationRepository";
 
 export class RoomTypeService implements IRoomTypeService {
   roomTypeRepository: IRoomTypeRepository;
-  constructor(roomTypeRepository: IRoomTypeRepository) {
+  reservationRepository: IReservationRepository;
+
+  constructor(roomTypeRepository: IRoomTypeRepository, reservationRepository: IReservationRepository) {
     this.roomTypeRepository = roomTypeRepository;
+    this.reservationRepository = reservationRepository;
   }
 
   async createRoomType(propertyId: number, userId: number, userRole: UserRole, roomTypeDTO: RoomTypeDTO): Promise<{ msg: string; }> {
@@ -33,39 +37,39 @@ export class RoomTypeService implements IRoomTypeService {
   async updateRoomType(propertyId: number, userId: number, userRole: UserRole, roomTypeDTO: RoomTypeDTO): Promise<{ msg: string; }> {
     // 1. Comprobar que el usuario tenga permisos para actualizar un RoomType.
 
-    // Crear el roomType.
+    // 2. Crear el roomType.
     const currentRoomType = RoomType.fromDTO(roomTypeDTO);
     const id = currentRoomType.getId();
 
 
-    // Buscar el roomType a actualizar
+    // 3. Buscar el roomType a actualizar
     const oldRoomType = await this.roomTypeRepository.findById(id);
 
     if (oldRoomType === null) {
       throw new Error("ROOM_TYPE_DONT_EXITS");
     }
+
+    // Traer todos los roomtypes de la propiedasd.
     const roomTypes = await this.roomTypeRepository.getAllRoomTypes(propertyId);
     // Chequeos para actualizar un Room Type.
-    oldRoomType.checkSameDescription(roomTypes);
+    currentRoomType.checkSameDescription(roomTypes);
+    currentRoomType.checkBedsLimit(roomTypes);    // Tener cuidado de no duplicar el roomType.
 
-    const hasInventoryChange = oldRoomType.checkInventoryChange(currentRoomType);
+    const hasCapacityDecrease = currentRoomType.hasCapacityDecrease(oldRoomType);
 
-    if (hasInventoryChange === 1) {
-      // Chequear si hay reservas de HOY en adelante para ese tipo de cuarto.
-      // Si hay reservas implicaria que el usuario quiere disminur el inventario teniendo reservas pendientes.
-      // No se permite. Arroja error.
-    } else {
+    if (hasCapacityDecrease) {
+      const today = new Date();
+      const hasUpcomingReservations = await this.reservationRepository.hasUpcomingReservations(id, today);
 
+      if (hasUpcomingReservations) {
+        throw new Error("UPCOMMING_RESERVATIONS. ROOM_TYPE_COULD_NOT_UPDATE");
+      }
     }
-    // 2. Buscar si existe un RoomType con la misma descripcion.
 
+    await this.roomTypeRepository.save(currentRoomType);
 
-    await this.roomTypeRepository.save(oldRoomType);
-    // 3. Buscar el roomType por id.
+    return { msg: "ROOM_TYPE_UPDATED" }
 
-    // 4. Actualizar el roomTyep.
-
-    // 5. Guardar.
   }
 
   async deleteRoomType(propertyId: number, userId: number, userRole: UserRole, roomTypeId: number): Promise<{ msg: string; }> {

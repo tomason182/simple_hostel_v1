@@ -79,8 +79,9 @@ export class RoomType {
   public checkBedsLimit(array: Array<RoomType>): void {
     const newBeds = this.type === "private" ? this.inventory : this.inventory * this.maxOccupancy;
 
+    const filteredArray = array.filter(room => room.id !== this.id);
     let storedBeds = 0;
-    for (const room of array) {
+    for (const room of filteredArray) {
       if (room.type === "private") {
         storedBeds += room.inventory;
       } else {
@@ -93,6 +94,15 @@ export class RoomType {
     }
 
     return
+
+  }
+
+  public hasCapacityDecrease(oldRoomType: RoomType): boolean {
+
+    if (this.maxOccupancy * this.inventory < oldRoomType.maxOccupancy * oldRoomType.inventory) {
+      return true;
+    }
+    return false;
 
   }
 
