@@ -14,4 +14,13 @@ export interface IPoliciesRepository {
   saveOtherPolicies(propertyId: number, otherPolicies: OtherPolicies): Promise<void>;
 
   savePaymentPolicies(propertyId: number, paymentPolicies: PaymentPolicies): Promise<void>;
+
+  getPaymentPolicies(propertyId: number): Promise<PaymentPolicies>;
+
+  getGeneralPolicies(propertyId: number): Promise<GeneralPolicies>;
+
+  getMinorPolices(propertyId: number): Promise<MinorPolicies>;
+
+  getOtherPolicies(propertyId: number): Promise<OtherPolicies>;
+
 }

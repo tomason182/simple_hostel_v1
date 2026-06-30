@@ -1,17 +1,19 @@
-export type BookingSource = "WEB_PAGE" | "DIRECT" | "BOOKING.COM" | "HOSTELWORD.COM";
+import { ReservationDTO } from "../dto/ReservationDTO";
+
+export type BookingSource = "BOOK_ENGINE" | "DIRECT" | "BOOKING.COM" | "HOSTELWORD.COM";
 export type ReservationStatus = "CONFIRMED" | "PENDING" | "CANCELED";
 export type PaymentStatus = "PARTIAL" | "FULL_PAID" | "PENDING";
 
 export class Reservation {
   constructor(
-    public id: number,
+    public id: number | null,
     public guestId: number,
     public propertyId: number,
     public bookingSource: BookingSource,
-    public currency: string,
     public reservationStatus: ReservationStatus,
     public paymentStatus: PaymentStatus,
     public totalAmount: number,
+    public currency: string,
     public advancePaymentAmount: number,
     public checkIn: Date,
     public checkOut: Date,
@@ -27,10 +29,10 @@ export class Reservation {
     this.guestId = guestId;
     this.propertyId = propertyId;
     this.bookingSource = bookingSource;
-    this.currency = currency;
     this.reservationStatus = reservationStatus;
     this.paymentStatus = paymentStatus;
     this.totalAmount = totalAmount;
+    this.currency = currency;
     this.advancePaymentAmount = advancePaymentAmount;
     this.checkIn = checkIn;
     this.checkOut = checkOut;
@@ -41,7 +43,8 @@ export class Reservation {
     this.updatedAt = updatedAt;
     this.selectedRooms = selectedRooms;
     this.assignedBeds = assignedBeds;
-
-
   };
+
+
+
 }

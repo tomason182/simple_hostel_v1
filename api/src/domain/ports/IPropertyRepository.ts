@@ -8,4 +8,5 @@ export interface IPropertyRepository {
   findById(property: number): Promise<Property>;
 
   updateDescription(property: Property): Promise<void>;
+
 }
