@@ -79,7 +79,8 @@ export class Reservation {
     )
   }
 
-  public checkAvailability() {
+  public checkAvailability(reservations: Array<Reservation>, checkIn: Date, checkOut: Date) {
+
 
   }
 
