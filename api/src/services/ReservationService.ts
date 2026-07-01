@@ -16,14 +16,14 @@ export class ReservationService implements IReservationService {
     private guestRepository: IGuestRepository,
     private currenciesRepository: ICurrenciesRepository,
     private policiesRepository: IPoliciesRepository,
-    private ratesAndAvailability: IRatesAndAvailabilityRepository,
+    private ratesAndAvailabilityRepository: IRatesAndAvailabilityRepository,
     private reservation: Reservation
   ) {
     this.reservationRepository = reservationRepository;
     this.guestRepository = guestRepository;
     this.currenciesRepository = currenciesRepository;
     this.policiesRepository = policiesRepository;
-    this.ratesAndAvailability = ratesAndAvailability;
+    this.ratesAndAvailabilityRepository = ratesAndAvailabilityRepository;
     this.reservation = reservation
   }
 
@@ -43,7 +43,7 @@ export class ReservationService implements IReservationService {
     const checkOut = reservationDTO.checkOut;
     const roomTypes = reservationDTO.selectedRooms   // Es un array con los roomTypes seleccionados.
 
-    const ratesAndAvailability = await this.ratesAndAvailability.getDateRange(propertyId, roomTypes, checkIn, checkOut);
+    const ratesAndAvailability = await this.ratesAndAvailabilityRepository.getDateRange(propertyId, roomTypes, checkIn, checkOut);
 
     const reservation = this.reservation.create(guestId, reservationDTO, ratesAndAvailability, currencies, paymentPolicies, userId);
 
