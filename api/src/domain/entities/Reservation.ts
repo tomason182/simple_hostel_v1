@@ -93,7 +93,7 @@ export class Reservation {
     for (const room of rooms) {
       const roomId = room.roomTypeId;
       const roomRates = rates.filter(r => r.roomTypeId === roomId);
-      const unitTotal = roomRates.reduce((acc, rate) => rate.customRate, 0);
+      const unitTotal = roomRates.reduce((acc, rate) => acc + rate.customRate, 0);
       const quantity = room.quantity;
 
       totalAmount += unitTotal * quantity;
