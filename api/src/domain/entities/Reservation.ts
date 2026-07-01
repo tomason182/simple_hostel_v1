@@ -1,10 +1,14 @@
 import { ReservationDTO } from "../dto/ReservationDTO";
-
+import { Currencies } from "../value-objects/Currencies";
+import { PaymentPolicies } from "../value-objects/PaymentPolicies";
+import type { SelectedRooms } from "../value-objects/SelectedRooms";
+import { RatesAndAvailability } from "./RatesAndAvailability";
 export type BookingSource = "BOOK_ENGINE" | "DIRECT" | "BOOKING.COM" | "HOSTELWORD.COM";
 export type ReservationStatus = "CONFIRMED" | "PENDING" | "CANCELED";
 export type PaymentStatus = "PARTIAL" | "FULL_PAID" | "PENDING";
 
 export class Reservation {
+  private totalAmountHelper: number = 0;
   constructor(
     public id: number | null,
     public guestId: number,
@@ -22,7 +26,7 @@ export class Reservation {
     public updatedBy: number,
     public createdAt: Date,
     public updatedAt: Date,
-    public selectedRooms: Array<number>,
+    public selectedRooms: Array<SelectedRooms>,
     public assignedBeds: Array<number>
   ) {
     this.id = id;
@@ -31,7 +35,7 @@ export class Reservation {
     this.bookingSource = bookingSource;
     this.reservationStatus = reservationStatus;
     this.paymentStatus = paymentStatus;
-    this.totalAmount = totalAmount;
+    this.totalAmount = 0;
     this.currency = currency;
     this.advancePaymentAmount = advancePaymentAmount;
     this.checkIn = checkIn;
@@ -43,8 +47,68 @@ export class Reservation {
     this.updatedAt = updatedAt;
     this.selectedRooms = selectedRooms;
     this.assignedBeds = assignedBeds;
+
+
+    this.setReservationStatus();
   };
 
+  public create(guestId: number, dto: ReservationDTO, rates: Array<RatesAndAvailability>, currencies: Currencies, paymentPolicie: PaymentPolicies, userId: number) {
+    const currency = currencies.getPaymentCurrency();
+    const totalAmount = this.calculateTotalAmount(dto, dto.selectedRooms, rates)
+    const advancePaymentAmount = paymentPolicie.checkAPA(dto, totalAmount);
+    return new Reservation(
+      null,
+      guestId,
+      dto.propertyId,
+      dto.bookingSource,
+      dto.reservationStatus,
+      dto.paymentStatus,
+      totalAmount,
+      currency,
+      advancePaymentAmount,
+      dto.checkIn,
+      dto.checkOut,
+      dto.specialRequest,
+      userId,
+      userId,
+      new Date(),
+      new Date(),
+      dto.selectedRooms,
+      [1]
+
+    )
+  }
+
+  public checkAvailability() {
+
+  }
+
+
+  private calculateTotalAmount(dto: ReservationDTO, rooms: Array<SelectedRooms>, rates: Array<RatesAndAvailability>): number {
+    let totalAmount = 0;
+
+    // Chequear restricciones de RatesaAndAvailability.
+    RatesAndAvailability.checkRatesConstrains(rates, dto);
+
+    for (const room of rooms) {
+      const roomId = room.roomTypeId;
+      const roomRates = rates.filter(r => r.roomTypeId === roomId);
+      const unitTotal = roomRates.reduce((acc, rate) => rate.customRate, 0);
+      const quantity = room.quantity;
+
+      totalAmount += unitTotal * quantity;
+    }
+
+    return totalAmount;
+  }
+
+  // Logica para reservation status.
+  private setReservationStatus() {
+    if (this.bookingSource === "BOOK_ENGINE") {
+      this.reservationStatus = "PENDING";
+      this.paymentStatus = "PENDING";
+    }
+  }
 
 
 }

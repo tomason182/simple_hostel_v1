@@ -1,4 +1,5 @@
 import { PaymentPoliciesDTO } from "../dto/PoliciesDTO";
+import { ReservationDTO } from "../dto/ReservationDTO";
 
 export class PaymentPolicies {
   constructor(
@@ -15,5 +16,19 @@ export class PaymentPolicies {
 
   static fromDTO(dto: PaymentPoliciesDTO): PaymentPolicies {
     return new PaymentPolicies(dto.advancePaymentRequired, dto.depositAmount)
+  }
+
+  public checkAPA(dto: ReservationDTO, totalAmount: number) {
+    if (dto.advancePaymentAmount > totalAmount) {
+      throw new Error("APA_ERROR: advance payment amount greater than totalAmount");
+    }
+
+    if (dto.bookingSource === "BOOK_ENGINE") {
+      return 0
+    }
+
+
+
+    return dto.advancePaymentAmount;
   }
 }

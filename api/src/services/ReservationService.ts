@@ -5,20 +5,26 @@ import { IReservationService } from "../domain/interfaces/IReservationService";
 import { ICurrenciesRepository } from "../domain/ports/ICurrenciesRepository";
 import { IGuestRepository } from "../domain/ports/IGuestRepository";
 import { IPoliciesRepository } from "../domain/ports/IPoliciesRepository";
+import { IRatesAndAvailabilityRepository } from "../domain/ports/IRatesAndAvailabilityRepository";
 import { IReservationRepository } from "../domain/ports/IReservationRepository";
+import { Reservation } from "../domain/entities/Reservation";
 
 export class ReservationService implements IReservationService {
 
   constructor(
     private reservationRepository: IReservationRepository,
     private guestRepository: IGuestRepository,
-    private currenciesPolicies: ICurrenciesRepository,
+    private currenciesRepository: ICurrenciesRepository,
     private policiesRepository: IPoliciesRepository,
+    private ratesAndAvailability: IRatesAndAvailabilityRepository,
+    private reservation: Reservation
   ) {
     this.reservationRepository = reservationRepository;
     this.guestRepository = guestRepository;
-    this.currenciesPolicies = currenciesPolicies;
+    this.currenciesRepository = currenciesRepository;
     this.policiesRepository = policiesRepository;
+    this.ratesAndAvailability = ratesAndAvailability;
+    this.reservation = reservation
   }
 
   async createReservation(reservationDTO: ReservationDTO, guestDTO: GuestDTO, userId: number, propertyId: number): Promise<{ msg: string; }> {
@@ -29,11 +35,20 @@ export class ReservationService implements IReservationService {
     const guestId = guest.getId();
 
     // 2. Buscar politicas de pago y monedas.
-    const currencies = this.currenciesPolicies.get(propertyId);
-    const paymentPolicies = this.policiesRepository.getPaymentPolicies(propertyId);
+    const currencies = await this.currenciesRepository.get(propertyId);
+    const paymentPolicies = await this.policiesRepository.getPaymentPolicies(propertyId);
 
-    // 2. Crear la reserva
-    //const reservation = 
+    // 3. buscar tarifas y disponibilidad.
+    const checkIn = reservationDTO.checkIn;
+    const checkOut = reservationDTO.checkOut;
+    const roomTypes = reservationDTO.selectedRooms   // Es un array con los roomTypes seleccionados.
+
+    const ratesAndAvailability = await this.ratesAndAvailability.getDateRange(propertyId, roomTypes, checkIn, checkOut);
+
+    const reservation = this.reservation.create(guestId, reservationDTO, ratesAndAvailability, currencies, paymentPolicies, userId);
+
+
+
 
 
 

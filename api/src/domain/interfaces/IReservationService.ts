@@ -5,7 +5,7 @@ import type { ReservationStatus, PaymentStatus } from "../entities/Reservation";
 
 export interface IReservationService {
   // Crear una reserva nueva.
-  createReservation(reservationDTO: ReservationDTO, guestDTO: GuestDTO, userId: number): Promise<{ msg: string }>;
+  createReservation(reservationDTO: ReservationDTO, guestDTO: GuestDTO, userId: number, propertyId: number): Promise<{ msg: string }>;
 
   // Posiblemente necesitomos distinta data para crear que para actualizar.
   updateReservation(reservationDTO: ReservationDTO): Promise<{ msg: string }>;
