@@ -79,12 +79,6 @@ export class Reservation {
     )
   }
 
-  public checkAvailability(reservations: Array<Reservation>, checkIn: Date, checkOut: Date) {
-
-
-  }
-
-
   private calculateTotalAmount(dto: ReservationDTO, rooms: Array<SelectedRooms>, rates: Array<RatesAndAvailability>): number {
     let totalAmount = 0;
 
@@ -110,6 +104,20 @@ export class Reservation {
       this.paymentStatus = "PENDING";
     }
   }
+
+
+  // Getters y Setters.
+  static filterByRoomType(reservations: Array<Reservation>, roomTypeId: number): Array<Reservation> {
+    const filteredReservations: Array<Reservation> = []
+    for (const reservation of reservations) {
+      const selectedRoom = reservation.selectedRooms.find(sr => sr.roomTypeId === roomTypeId);
+      if (selectedRoom) {
+        filteredReservations.push(reservation)
+      }
+    }
+    return filteredReservations
+  }
+
 
 
 }

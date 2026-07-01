@@ -44,6 +44,7 @@ export class ReservationService implements IReservationService {
     const roomTypes = reservationDTO.selectedRooms   // Es un array con los roomTypes seleccionados.
 
     const ratesAndAvailability = await this.ratesAndAvailabilityRepository.getDateRange(propertyId, roomTypes, checkIn, checkOut);
+    const reservations = await this.reservationRepository.getReservationsByPeriodAndRooms(propertyId, roomTypes, checkIn, checkOut);
 
     const reservation = this.reservation.create(guestId, reservationDTO, ratesAndAvailability, currencies, paymentPolicies, userId);
 
