@@ -41,26 +41,20 @@ export class RatesAndAvailability {
   }
 
 
-  public checkConstrains(checkIn: Date, checkOut: Date): void {
-    if (!this.date) {
-      throw new Error("EMPTY_DATE");
+  public checkConstraints(): void {
+
+    if (this.roomsToSell === 0) {
+      throw new Error("NOT_AVAILABLE");
     }
-    if (!this.customRate) {
-      throw new Error("RATES_NULL_VALUE");
+
+    if (this.roomsToSell < 0) {
+      throw new Error("INVALID_ROOMS_TO_SELL_VALUE")
     }
 
     if (this.customRate <= 0) {
       throw new Error("INVALID_RATES_VALUES")
     }
 
-    // Chequear que el valor minimo no exceda un porcentaje del valor maximo.
-    // Esto me da la seguridad de q no va a haber nada tipo [23,23,1], lo cual sugeriria una mala configuracion de rates.
-
-
-    // Chequear que rango de fechas coincida con el solicitado.
-    if (this.date.getTime() < checkIn.getTime() || this.date.getTime() >= checkOut.getTime()) {
-      throw new Error("INVALID_RATES_VALUES");
-    }
   }
 
   // METODOS DE CLASE
