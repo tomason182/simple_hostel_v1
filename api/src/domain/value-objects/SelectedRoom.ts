@@ -1,4 +1,4 @@
-export type SelectedRooms = {
+export type SelectedRoom = {
   roomTypeId: number;
   quantity: number
 }

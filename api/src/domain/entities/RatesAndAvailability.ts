@@ -1,10 +1,8 @@
 import { ReservationDTO } from "../dto/ReservationDTO";
-import { SelectedRooms } from "../value-objects/SelectedRooms";
+import { SelectedRoom } from "../value-objects/SelectedRoom";
 import { Reservation } from "./Reservation";
-import { RoomType } from "./RoomTypes";
 
 export class RatesAndAvailability {
-  private availability?: number;
   constructor(
     public id: number | null,
     public propertyId: number,
@@ -26,73 +24,94 @@ export class RatesAndAvailability {
 
   }
 
-  private nextDate(date: number): number {
-    const nextDate = new Date(date);
-    nextDate.setDate(nextDate.getDate() + 1);
+  public calculateAvailability(reservations: Array<Reservation>): number {
+    // Filtrar las reservas por dia.
 
-    return nextDate.getTime();
+    let quantity = 0;
+    for (const reservation of reservations) {
+      if (!reservation.isActiveOn(this.date)) {
+        continue
+      }
 
-  }
-
-  public setAvailability(rates: Array<RatesAndAvailability>, reservations: Array<Reservation>, checkIn: Date, checkOut: Date): Array<RatesAndAvailability> {
-    // filtar las tarifas por rango de fechas.
-    const filteredRates = rates.filter(r => r.date.getTime() >= checkIn.getTime() && r.date.getTime() < checkOut.getTime());
-    // filtar las reservas.
-    for (const fr of filteredRates) {
-      // Filtramos las reservas por tipo de cuarto.
-      const filteredReservationsByRoomType = Reservation.filterByRoomType(reservations, fr.roomTypeId);
-
-
-      const filteredReservationsByDate = filteredReservationsByRoomType.filter(r => r.checkIn.getTime() <= fr.date.getTime() && r.checkOut.getTime() > fr.date.getTime());
-
-
+      quantity += reservation.getQuantity(this.roomTypeId);
     }
 
+    return this.roomsToSell - quantity
 
   }
 
 
-  private checkRatesConstrains(rates: Array<RatesAndAvailability>, checkIn: Date, checkOut: Date, rooms: SelectedRooms | null): void {
-    if (rates.length === 0) {
-      throw new Error("EMPTY_RATE_RANGE");
+  public checkConstrains(checkIn: Date, checkOut: Date): void {
+    if (!this.date) {
+      throw new Error("EMPTY_DATE");
     }
-    if (checkOut <= checkIn) {
-      throw new Error("INVALID_CHECK_IN_CHECK_OUT_RANGE");
-    }
-    if (rates.some(rate => rate.customRate === null)) {
-      throw new Error("RATE_RANGE_HAS_NULL_VALUES");
+    if (!this.customRate) {
+      throw new Error("RATES_NULL_VALUE");
     }
 
-    if (rates.some(rate => rate.customRate <= 0)) {
-      throw new Error("INVALID_RATES_VALUES");
+    if (this.customRate <= 0) {
+      throw new Error("INVALID_RATES_VALUES")
     }
 
     // Chequear que el valor minimo no exceda un porcentaje del valor maximo.
     // Esto me da la seguridad de q no va a haber nada tipo [23,23,1], lo cual sugeriria una mala configuracion de rates.
-    const customRate = rates.map(rate => rate.customRate);
-    const minRate = Math.min(...customRate);
-    const maxRate = Math.max(...customRate);
-    if (minRate < maxRate * 0.2) {
-      throw new Error("RATE_RANGE_HAS_INCONCISTEN_AMOUNT")
-    }
+
 
     // Chequear que rango de fechas coincida con el solicitado.
-    const { minDate, maxDate } = rates.reduce((acc, rate) => ({
-      minDate: rate.date < acc.minDate ? rate.date : acc.minDate,
-      maxDate: rate.date > acc.maxDate ? rate.date : acc.maxDate
-    }),
-      {
-        minDate: rates[0].date,
-        maxDate: rates[0].date
-      });
-
-    const prevDate = new Date(checkOut);
-    prevDate.setDate(prevDate.getDate() - 1);
-
-    if (minDate.getTime() !== checkIn.getTime() || maxDate.getTime() !== prevDate.getTime()) {
-      throw new Error("INVALID_RATES_RANGE")
+    if (this.date.getTime() < checkIn.getTime() || this.date.getTime() >= checkOut.getTime()) {
+      throw new Error("INVALID_RATES_VALUES");
     }
   }
+
+  // METODOS DE CLASE
+  static validateRatePeriod(rates: Array<RatesAndAvailability>, selectedRoomIds: Array<number>, checkIn: Date, checkOut: Date): void {
+    // agrupar tarifas por tipo de cuarto.
+    const mappedRates = new Map<number, Map<number, RatesAndAvailability>>();
+
+    for (const rate of rates) {
+
+      const roomRates = mappedRates.get(rate.roomTypeId);
+      const timestamp = rate.date.getTime();
+
+      if (!roomRates) {
+        const roomRate = new Map<number, RatesAndAvailability>();
+        roomRate.set(timestamp, rate);
+
+        mappedRates.set(rate.roomTypeId, roomRate);
+        continue;
+      }
+
+      // Detectar que no hay duplicado
+      if (roomRates.has(timestamp)) {
+        throw new Error("DUPICATED_RATE_CONFIG");
+      }
+      const newRoomRate = new Map<number, RatesAndAvailability>();
+      newRoomRate.set(timestamp, rate);
+      mappedRates.set(rate.roomTypeId, newRoomRate);
+    }
+
+    for (const roomTypeId of selectedRoomIds) {
+      // comprobar que esten todos los dias. 
+      const roomRate = mappedRates.get(roomTypeId);
+      if (!roomRate) {
+        throw new Error("MISSING_RATE_CONFIG");
+      }
+
+      for (let date = checkIn.getTime(); date < checkOut.getTime(); date = this.nextDay(new Date(date))) {
+        if (!roomRate.has(date)) {
+          throw new Error("MISSING_RATE_CONFIG")
+        }
+      }
+    }
+
+  }
+
+  static nextDay(date: Date): number {
+    const next = new Date(date);
+    next.setDate(next.getDate() + 1);
+    return next.getTime()
+  }
+
 
 
 }
