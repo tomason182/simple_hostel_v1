@@ -116,6 +116,12 @@ export class Reservation {
   };
 
   // Getters y Setters.
+  public getId(): number {
+    if (!this.id) {
+      throw new Error("ID_NOT_SET");
+    }
+    return this.id
+  }
   public getQuantity(roomTypeId: number): number {
 
     const selectedRooms = this.selectedRooms;
