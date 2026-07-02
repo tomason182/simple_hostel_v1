@@ -105,17 +105,28 @@ export class Reservation {
     }
   }
 
+  // METODOS DE INSTANCIA
+  public isActiveOn(date: Date): boolean {
+    const timestamp = date.getTime();
+
+    return (
+      this.checkIn.getTime() <= timestamp &&
+      this.checkOut.getTime() > timestamp
+    );
+  };
 
   // Getters y Setters.
-  static filterByRoomType(reservations: Array<Reservation>, roomTypeId: number): Array<Reservation> {
-    const filteredReservations: Array<Reservation> = []
-    for (const reservation of reservations) {
-      const selectedRoom = reservation.selectedRooms.find(sr => sr.roomTypeId === roomTypeId);
-      if (selectedRoom) {
-        filteredReservations.push(reservation)
-      }
+  public getQuantity(roomTypeId: number): number {
+
+    const selectedRooms = this.selectedRooms;
+    // Buscar si la reserva contiene el roomId.
+    const selectedRoom = selectedRooms.find(sr => sr.roomTypeId === roomTypeId);
+    if (selectedRoom) {
+      return selectedRoom.quantity;
     }
-    return filteredReservations
+
+    return 0;
+
   }
 
 
