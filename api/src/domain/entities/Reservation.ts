@@ -1,14 +1,12 @@
 import { ReservationDTO } from "../dto/ReservationDTO";
 import { Currencies } from "../value-objects/Currencies";
 import { PaymentPolicies } from "../value-objects/PaymentPolicies";
-import type { SelectedRooms } from "../value-objects/SelectedRooms";
-import { RatesAndAvailability } from "./RatesAndAvailability";
+import type { SelectedRoom } from "../value-objects/SelectedRoom";
 export type BookingSource = "BOOK_ENGINE" | "DIRECT" | "BOOKING.COM" | "HOSTELWORD.COM";
 export type ReservationStatus = "CONFIRMED" | "PENDING" | "CANCELED";
 export type PaymentStatus = "PARTIAL" | "FULL_PAID" | "PENDING";
 
 export class Reservation {
-  private totalAmountHelper: number = 0;
   constructor(
     public id: number | null,
     public guestId: number,
@@ -26,7 +24,7 @@ export class Reservation {
     public updatedBy: number,
     public createdAt: Date,
     public updatedAt: Date,
-    public selectedRooms: Array<SelectedRooms>,
+    public selectedRooms: Array<SelectedRoom>,
     public assignedBeds: Array<number>
   ) {
     this.id = id;
@@ -52,9 +50,8 @@ export class Reservation {
     this.setReservationStatus();
   };
 
-  public create(guestId: number, dto: ReservationDTO, rates: Array<RatesAndAvailability>, currencies: Currencies, paymentPolicie: PaymentPolicies, userId: number) {
+  public create(guestId: number, dto: ReservationDTO, totalAmount: number, currencies: Currencies, paymentPolicie: PaymentPolicies, userId: number) {
     const currency = currencies.getPaymentCurrency();
-    const totalAmount = this.calculateTotalAmount(dto, dto.selectedRooms, rates)
     const advancePaymentAmount = paymentPolicie.checkAPA(dto, totalAmount);
     return new Reservation(
       null,
@@ -77,24 +74,6 @@ export class Reservation {
       [1]
 
     )
-  }
-
-  private calculateTotalAmount(dto: ReservationDTO, rooms: Array<SelectedRooms>, rates: Array<RatesAndAvailability>): number {
-    let totalAmount = 0;
-
-    // Chequear restricciones de RatesaAndAvailability.
-    RatesAndAvailability.checkRatesConstrains(rates, dto);
-
-    for (const room of rooms) {
-      const roomId = room.roomTypeId;
-      const roomRates = rates.filter(r => r.roomTypeId === roomId);
-      const unitTotal = roomRates.reduce((acc, rate) => acc + rate.customRate, 0);
-      const quantity = room.quantity;
-
-      totalAmount += unitTotal * quantity;
-    }
-
-    return totalAmount;
   }
 
   // Logica para reservation status.
@@ -134,7 +113,5 @@ export class Reservation {
     return 0;
 
   }
-
-
 
 }
