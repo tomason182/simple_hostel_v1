@@ -54,6 +54,59 @@ export class Calendar {
     return true
 
   }
+
+  public calculateTotal(checkIn: Date, checkOut: Date, selectedRooms: Array<SelectedRoom>) {
+
+    let totalAmount = 0;
+
+    for (let date = checkIn.getTime(); date < checkOut.getTime(); this.nextDay(new Date(date))) {
+      for (const selectedRoom of selectedRooms) {
+        const roomTypeId = selectedRoom.roomTypeId;
+        const qty = selectedRoom.quantity
+
+        const calendarDay = this.calendarMapHelper(roomTypeId, new Date(date));
+        const dayRate = calendarDay.rate.customRate
+
+        totalAmount += dayRate * qty;
+      }
+    }
+
+    return totalAmount
+
+  }
+
+  public nextDay(date: Date) {
+    return date.setUTCDate(date.getUTCDate() + 1);
+  }
+
+  public getAvailability(roomTypeId: number, date: Date) {
+
+    const calendarDay = this.calendarMapHelper(roomTypeId, date)
+
+    const reservedQty = calendarDay.reservedQty;
+
+    return calendarDay.rate.roomsToSell - reservedQty;
+  }
+
+  public getRate(roomTypeId: number, date: Date) {
+    const calendarDay = this.calendarMapHelper(roomTypeId, date);
+
+    return calendarDay.rate.customRate;
+  }
+
+
+  public calendarMapHelper(roomTypeId: number, date: Date): CalendarDay {
+    const calendarDayMap = this.roomTypes.get(roomTypeId);
+    if (!calendarDayMap) {
+      throw new Error("NO_RATES_SET");
+    }
+    const calendarDay = calendarDayMap.get(date.getTime())
+    if (!calendarDay) {
+      throw new Error("NO_RATES_SET");
+    }
+
+    return calendarDay
+  }
 }
 
 class CalendarDay {
