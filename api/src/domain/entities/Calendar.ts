@@ -1,7 +1,6 @@
 import { SelectedRoom } from "../value-objects/SelectedRoom";
 import { RatesAndAvailability } from "./RatesAndAvailability";
 import { Reservation } from "./Reservation";
-import { RoomType } from "./RoomTypes";
 
 export class Calendar {
 
