@@ -68,8 +68,10 @@ export class Calendar {
 
   }
 
-  public nextDay(date: Date) {
-    return date.setUTCDate(date.getUTCDate() + 1);
+  public nextDay(date: Date): number {
+    const next = new Date(date);
+    next.setDate(next.getDate() + 1);
+    return next.getTime()
   }
 
   public getAvailability(roomTypeId: number, date: Date) {
