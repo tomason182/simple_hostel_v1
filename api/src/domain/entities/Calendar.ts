@@ -95,6 +95,12 @@ export class Calendar {
     if (!calendarDay) {
       throw new Error("NO_RATES_SET");
     }
+    if (calendarDay.getRate() <= 0) {
+      throw new Error("INVALID_RATE");
+    }
+
+    // Seria bueno comprobar que la tarifa no sea exageradamente menor que el resto de las tarifas.
+    // Pero aca no tenemos acceso al resto de las tarifas.
 
     return calendarDay
   }
