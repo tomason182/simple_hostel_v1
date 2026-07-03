@@ -44,13 +44,7 @@ export class Calendar {
       throw new Error("NO_RATES_SET");
     }
 
-    const reservedQty = calendarDay.reservedQty
-
-    if (calendarDay.rate.roomsToSell - reservedQty < qty) {
-      return false;
-    }
-
-    return true
+    return calendarDay.hasAvailabilidy(qty);
 
   }
 
@@ -63,8 +57,8 @@ export class Calendar {
         const roomTypeId = selectedRoom.roomTypeId;
         const qty = selectedRoom.quantity
 
-        const calendarDay = this.calendarMapHelper(roomTypeId, new Date(date));
-        const dayRate = calendarDay.rate.customRate
+        const calendarDay = this.getCalendarDay(roomTypeId, new Date(date));
+        const dayRate = calendarDay.getRate();
 
         totalAmount += dayRate * qty;
       }
@@ -80,21 +74,19 @@ export class Calendar {
 
   public getAvailability(roomTypeId: number, date: Date) {
 
-    const calendarDay = this.calendarMapHelper(roomTypeId, date)
+    const calendarDay = this.getCalendarDay(roomTypeId, date)
 
-    const reservedQty = calendarDay.reservedQty;
-
-    return calendarDay.rate.roomsToSell - reservedQty;
+    return calendarDay.getAvailability();
   }
 
   public getRate(roomTypeId: number, date: Date) {
-    const calendarDay = this.calendarMapHelper(roomTypeId, date);
+    const calendarDay = this.getCalendarDay(roomTypeId, date);
 
-    return calendarDay.rate.customRate;
+    return calendarDay.getRate();
   }
 
 
-  public calendarMapHelper(roomTypeId: number, date: Date): CalendarDay {
+  public getCalendarDay(roomTypeId: number, date: Date): CalendarDay {
     const calendarDayMap = this.roomTypes.get(roomTypeId);
     if (!calendarDayMap) {
       throw new Error("NO_RATES_SET");
@@ -111,9 +103,9 @@ export class Calendar {
 class CalendarDay {
 
   constructor(
-    public rate: RatesAndAvailability,
+    private rate: RatesAndAvailability,
     private reservations: Array<Reservation>,
-    public reservedQty: number = 0
+    private reservedQty: number = 0
   ) {
     this.rate = rate;
     this.reservations = reservations;
@@ -140,11 +132,19 @@ class CalendarDay {
     }
 
     return calendarDay;
+  };
 
+  getAvailability() {
+    return this.rate.roomsToSell - this.reservedQty
   }
 
-  addReservation(reservation: Reservation) {
-    this.reservations.push(reservation);
+  hasAvailabilidy(qty: number) {
+    return this.getAvailability() >= qty;
   }
+
+  getRate() {
+    return this.rate.customRate;
+  }
+
 }
 
