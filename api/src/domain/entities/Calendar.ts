@@ -58,7 +58,7 @@ export class Calendar {
 
     let totalAmount = 0;
 
-    for (let date = checkIn.getTime(); date < checkOut.getTime(); this.nextDay(new Date(date))) {
+    for (let date = checkIn.getTime(); date < checkOut.getTime(); date = this.nextDay(new Date(date))) {
       for (const selectedRoom of selectedRooms) {
         const roomTypeId = selectedRoom.roomTypeId;
         const qty = selectedRoom.quantity
