@@ -8,6 +8,7 @@ import { IPoliciesRepository } from "../domain/ports/IPoliciesRepository";
 import { IRatesAndAvailabilityRepository } from "../domain/ports/IRatesAndAvailabilityRepository";
 import { IReservationRepository } from "../domain/ports/IReservationRepository";
 import { Reservation } from "../domain/entities/Reservation";
+import { Calendar } from "../domain/entities/Calendar";
 
 export class ReservationService implements IReservationService {
 
@@ -17,14 +18,16 @@ export class ReservationService implements IReservationService {
     private currenciesRepository: ICurrenciesRepository,
     private policiesRepository: IPoliciesRepository,
     private ratesAndAvailabilityRepository: IRatesAndAvailabilityRepository,
-    private reservation: Reservation
+    private reservation: Reservation,
+    private calendar: Calendar,
   ) {
     this.reservationRepository = reservationRepository;
     this.guestRepository = guestRepository;
     this.currenciesRepository = currenciesRepository;
     this.policiesRepository = policiesRepository;
     this.ratesAndAvailabilityRepository = ratesAndAvailabilityRepository;
-    this.reservation = reservation
+    this.reservation = reservation;
+    this.calendar = calendar;
   }
 
   async createReservation(reservationDTO: ReservationDTO, guestDTO: GuestDTO, userId: number, propertyId: number): Promise<{ msg: string; }> {
@@ -43,20 +46,18 @@ export class ReservationService implements IReservationService {
     const checkOut = reservationDTO.checkOut;
     const roomTypes = reservationDTO.selectedRooms   // Es un array con los roomTypes seleccionados.
 
-    const ratesAndAvailability = await this.ratesAndAvailabilityRepository.getDateRange(propertyId, roomTypes, checkIn, checkOut);
+    const ratesAndAvailability = await this.ratesAndAvailabilityRepository.getRatesByPeriodAndRooms(propertyId, roomTypes, checkIn, checkOut);
+    const reservations = await this.reservationRepository.getReservationsByPeriodAndRooms(propertyId, roomTypes, checkIn, checkOut)
 
-    const reservations = await this.reservationRepository.getReservationsByPeriodAndRooms(propertyId, roomTypes, checkIn, checkOut);
+    const calendar = Calendar.build(ratesAndAvailability, reservations);
 
-    // Comprobar disponibilidad.
-    for (const rates of ratesAndAvailability) {
+    calendar.hasAvailability(roomTypes, checkIn, checkOut);
 
-      rates.checkConstrains(checkIn, checkOut, null);
-      if (rates.calculateAvailability(reservations) <= 0) {
-        throw new Error("NOT_AVAILABLE")
-      }
-    }
+    const reservationAmount = calendar.calculateTotal(checkIn, checkOut, roomTypes);
+
 
     const reservation = this.reservation.create(guestId, reservationDTO, ratesAndAvailability, currencies, paymentPolicies, userId);
+
 
 
 

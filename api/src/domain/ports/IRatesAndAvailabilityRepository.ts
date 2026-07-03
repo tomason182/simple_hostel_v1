@@ -1,6 +1,6 @@
 import { RatesAndAvailability } from "../entities/RatesAndAvailability";
-import { SelectedRooms } from "../value-objects/SelectedRooms";
+import { SelectedRoom } from "../value-objects/SelectedRoom";
 
 export interface IRatesAndAvailabilityRepository {
-  getDateRange(propertyId: number, roomTypes: Array<SelectedRooms>, checkIn: Date, checkOut: Date): Promise<Array<RatesAndAvailability>>;
+  getRatesByPeriodAndRooms(propertyId: number, roomTypes: Array<SelectedRoom>, checkIn: Date, checkOut: Date): Promise<Array<RatesAndAvailability>>;
 }
