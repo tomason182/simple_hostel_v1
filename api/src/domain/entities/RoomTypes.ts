@@ -1,11 +1,15 @@
 import { RoomTypeDTO } from "../dto/RoomTypeDTO";
+import { Room } from "./Room";
 
 export type RoomTypeLiteral = "dorm" | "private";
 export type Gender = "male" | "female" | "mixed";
 export type Amenities = Array<number>;
 
 export class RoomType {
-  private MAX_BEDS_ALLOWED = 50;
+  private MAX_BEDS_ALLOWED = 50;  // Esta variable no debe pertenecer a RoomType.
+  private rooms: Array<Room> = [];
+  private amenities: Amenities = [];
+  private isActive: boolean = true;
 
   constructor(
     public id: number | null,
@@ -15,11 +19,10 @@ export class RoomType {
     public gender: Gender,
     public maxOccupancy: number,
     public inventory: number,
-    public status: boolean,
-    public products: Array<Product>,
-    public amenities: Amenities,
     public createdAt: Date,
-    public updatedAt: Date
+    public updatedAt: Date,
+    public createdBy: number,
+    public updatedBy: number,
   ) {
     this.id = id;
     this.propertyId = propertyId;
@@ -28,40 +31,25 @@ export class RoomType {
     this.gender = gender;
     this.maxOccupancy = maxOccupancy;
     this.inventory = inventory;
-    this.status = status;
-    this.products = products;
-    this.amenities = amenities;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+    this.createdBy = createdBy;
+    this.updatedBy = updatedBy;
   };
 
+  static make(dto: RoomTypeDTO, userId: number) {
+    const roomType = new RoomType(null, dto.propertyId, dto.description, dto.type, dto.gender, dto.maxOccupancy, dto.inventory, new Date(), new Date(), userId, userId)
 
-  static fromDTO(dto: RoomTypeDTO): RoomType {
-
-    const products = this.makeProduct(dto)
-    const status = true                     // se marca activado.
-    const amenities: Amenities = [];
-
-    return new RoomType(
-      null, dto.propertyId, dto.description, dto.type, dto.gender, dto.maxOccupancy, dto.inventory, status, products, amenities, new Date(), new Date())
-
-
+    roomType.addRooms(roomType, dto.inventory)
   }
 
-  private static makeProduct(dto: RoomTypeDTO): Array<Product> {
-
-    const product = [];
-    for (let i = 0; i < dto.inventory; i++) {
-      const roomName = `Room ${i + 1}`;
-      const bedsArray = new Array(dto.maxOccupancy).fill(null);
-      const beds = bedsArray.map((bed, i) => bed = i + 1)
-
-      product.push(new Product(roomName, beds));
-    };
-
-    return product
+  private addRooms(roomType: RoomType, inventory: number) {
+    for (let i = 0; i < inventory; i++) {
+      const name = `Room ${i + 1}`;
+      const room = Room.make(roomType, name)
+      this.rooms.push(room)
+    }
   }
-
 
   public checkSameDescription(array: Array<RoomType>) {
 
@@ -74,7 +62,6 @@ export class RoomType {
     }
     return
   }
-
 
   public checkBedsLimit(array: Array<RoomType>): void {
     const newBeds = this.type === "private" ? this.inventory : this.inventory * this.maxOccupancy;
@@ -103,7 +90,6 @@ export class RoomType {
       return true;
     }
     return false;
-
   }
 
   // Getters y Setters
@@ -121,17 +107,5 @@ export class RoomType {
     }
     return this.inventory * this.maxOccupancy;
   }
-
-
 }
 
-export class Product {
-  constructor(
-    public roomName: string,
-    public beds: Array<number>
-  ) {
-    this.roomName = roomName;
-    this.beds = beds;
-  }
-
-}
