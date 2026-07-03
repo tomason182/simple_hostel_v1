@@ -104,7 +104,7 @@ class CalendarDay {
 
   constructor(
     private rate: RatesAndAvailability,
-    private reservations: Array<Reservation>,
+    private readonly reservations: Array<Reservation>,
     private reservedQty: number = 0
   ) {
     this.rate = rate;
