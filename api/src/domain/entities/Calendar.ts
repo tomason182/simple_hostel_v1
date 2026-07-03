@@ -34,17 +34,26 @@ export class Calendar {
     return calendar
   }
 
-  public hasAvailability(roomTypeId: number, qty: number, date: Date) {
-    const calendarDayMap = this.roomTypes.get(roomTypeId);
-    if (!calendarDayMap) {
-      throw new Error("NO_RATES_SET");
-    }
-    const calendarDay = calendarDayMap.get(date.getTime())
-    if (!calendarDay) {
-      throw new Error("NO_RATES_SET");
-    }
+  public hasAvailability(selectedRooms: Array<SelectedRoom>, checkIn: Date, checkOut: Date) {
+    for (let date = checkIn.getTime(); date < checkOut.getTime(); date = this.nextDay(new Date(date))) {
+      for (const selectedRoom of selectedRooms) {
 
-    return calendarDay.hasAvailabilidy(qty);
+        const calendarDayMap = this.roomTypes.get(selectedRoom.roomTypeId);
+        if (!calendarDayMap) {
+          throw new Error("NO_RATES_SET");
+        }
+
+        const calendarDay = calendarDayMap.get(date);
+        if (!calendarDay) {
+          throw new Error("NO_RATES_SET");
+        }
+
+        if (!calendarDay.hasAvailabilidy(selectedRoom.quantity)) {
+          throw new Error("NOT_AVAILABLE");
+        };
+      }
+
+    }
 
   }
 
