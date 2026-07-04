@@ -3,20 +3,28 @@ import { Room } from "./Room";
 export type BedType = "SINGLE" | "DOUBLE" | "BUNK_BED" | "KING"
 
 export class Bed {
+
   constructor(
     private id: number | null,
     private bedNumber: number,
-    private room: Room,
-    public bedType: BedType | null,
+    private bedType: BedType,
   ) {
     this.id = id;
     this.bedNumber = bedNumber;
-    this.room = room;
     this.bedType = bedType;
   }
 
+  static make(bedNum: number) {
+    return new Bed(
+      null,
+      bedNum,
+      "SINGLE"
+    );
 
-  static make(bedNumber: number, room: Room) {
-    return new Bed(null, bedNumber, room, null)
+  }
+
+  public changeBedType(bedType: BedType): void {
+    this.bedType = bedType;
   }
 }
+
