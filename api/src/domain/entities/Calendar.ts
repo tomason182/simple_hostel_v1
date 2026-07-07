@@ -1,167 +1,145 @@
-import { SelectedRoom } from "../value-objects/SelectedRoom";
 import { RatesAndAvailability } from "./RatesAndAvailability";
 import { Reservation } from "./Reservation";
 
 export class Calendar {
+  // roomTypeId --> BedId --> timestamp --> rate | reservation
+  private roomTypes = new Map<number, BedTimeline>();
+  private rates = new Map<number, Map<number, RatesAndAvailability>>();
 
-  private roomTypes = new Map<number, Map<number, CalendarDay>>();
+  private static buildRateIndex(rates: Array<RatesAndAvailability>): Map<number, Map<number, RatesAndAvailability>> {
+    const index = new Map<number, Map<number, RatesAndAvailability>>();
 
-  static build(rates: Array<RatesAndAvailability>, reservations: Array<Reservation>) {
-    const calendar = new Calendar();
-    // 1. Iterar sobre cada tarifa
     for (const rate of rates) {
-      let roomRates = calendar.roomTypes.get(rate.roomTypeId);
+      const roomTypeId = rate.roomTypeId;
       const timestamp = rate.date.getTime();
-      const calendarDay = CalendarDay.build(rate, reservations);
 
-      if (!roomRates) {
-        roomRates = new Map<number, CalendarDay>();
-        roomRates.set(timestamp, calendarDay);
+      let ratesTimeline = index.get(roomTypeId);
 
-        calendar.roomTypes.set(rate.roomTypeId, roomRates);
-        continue;
+      if (!ratesTimeline) {
+        ratesTimeline = new Map<number, RatesAndAvailability>();
+        index.set(roomTypeId, ratesTimeline);
       }
 
-      if (roomRates.has(timestamp)) {
+      if (ratesTimeline.has(timestamp)) {
         throw new Error("DUPLICATED_RATE_CONFIG");
       }
 
-      roomRates.set(timestamp, calendarDay);
-    };
-
-
-
-    return calendar
-  }
-
-  public hasAvailability(selectedRooms: Array<SelectedRoom>, checkIn: Date, checkOut: Date) {
-    for (let date = checkIn.getTime(); date < checkOut.getTime(); date = this.nextDay(new Date(date))) {
-      for (const selectedRoom of selectedRooms) {
-
-        const calendarDayMap = this.roomTypes.get(selectedRoom.roomTypeId);
-        if (!calendarDayMap) {
-          throw new Error("NO_RATES_SET");
-        }
-
-        const calendarDay = calendarDayMap.get(date);
-        if (!calendarDay) {
-          throw new Error("NO_RATES_SET");
-        }
-
-        if (!calendarDay.hasAvailabilidy(selectedRoom.quantity)) {
-          throw new Error("NOT_AVAILABLE");
-        };
-      }
+      ratesTimeline.set(timestamp, rate);
 
     }
-
+    return index;
   }
 
-  public calculateTotal(checkIn: Date, checkOut: Date, selectedRooms: Array<SelectedRoom>) {
+  public getRate(roomTypeId: number, timestamp: number): RatesAndAvailability {
+    const timeline = this.rates.get(roomTypeId);
 
-    let totalAmount = 0;
-
-    for (let date = checkIn.getTime(); date < checkOut.getTime(); date = this.nextDay(new Date(date))) {
-      for (const selectedRoom of selectedRooms) {
-        const roomTypeId = selectedRoom.roomTypeId;
-        const qty = selectedRoom.quantity
-
-        const calendarDay = this.getCalendarDay(roomTypeId, new Date(date));
-        const dayRate = calendarDay.getRate();
-
-        totalAmount += dayRate * qty;
-      }
+    if (!timeline) {
+      throw new Error("ROOM_TYPE_NOT_FOUND");
     }
 
-    return totalAmount
+    const rate = timeline.get(timestamp);
 
+    if (!rate) {
+      throw new Error("RATE_NOT_FOUND");
+    }
+
+    return rate;
   }
 
-  public nextDay(date: Date): number {
+  public nextDay(date: number): number {
     const next = new Date(date);
     next.setDate(next.getDate() + 1);
     return next.getTime()
   }
 
-  public getAvailability(roomTypeId: number, date: Date) {
+  static build(reservations: Array<Reservation>, rates: Array<RatesAndAvailability>): Calendar {
+    const calendar = new Calendar();
 
-    const calendarDay = this.getCalendarDay(roomTypeId, date)
-
-    return calendarDay.getAvailability();
-  }
-
-  public getRate(roomTypeId: number, date: Date) {
-    const calendarDay = this.getCalendarDay(roomTypeId, date);
-
-    return calendarDay.getRate();
-  }
-
-
-  public getCalendarDay(roomTypeId: number, date: Date): CalendarDay {
-    const calendarDayMap = this.roomTypes.get(roomTypeId);
-    if (!calendarDayMap) {
-      throw new Error("NO_RATES_SET");
-    }
-    const calendarDay = calendarDayMap.get(date.getTime())
-    if (!calendarDay) {
-      throw new Error("NO_RATES_SET");
-    }
-    if (calendarDay.getRate() <= 0) {
-      throw new Error("INVALID_RATE");
-    }
-
-    // Seria bueno comprobar que la tarifa no sea exageradamente menor que el resto de las tarifas.
-    // Pero aca no tenemos acceso al resto de las tarifas.
-
-    return calendarDay
-  }
-}
-
-class CalendarDay {
-
-  constructor(
-    private rate: RatesAndAvailability,
-    private readonly reservations: Array<Reservation>,
-    private reservedQty: number = 0
-  ) {
-    this.rate = rate;
-    this.reservations = reservations;
-  }
-
-  static build(rate: RatesAndAvailability, reservations: Array<Reservation>): CalendarDay {
-    const date = rate.date;
-    const roomTypeId = rate.roomTypeId;
-    const calendarDay = new CalendarDay(rate, []);
+    calendar.rates = Calendar.buildRateIndex(rates);
 
     for (const reservation of reservations) {
-      if (!reservation.isActiveOn(date)) {
-        continue;
+      // 1. Obtener los cuartos seleccionados en la reserva --> { roomTypeId, quantity, beds[]}
+      const selectedRooms = reservation.getSelectedRooms();
+      // 2. Iterar sobre cada cuarto para obtener roomTypeId y camas.
+      // Nota: Aqui podria haber un problema si a la reserva no se le asigno camas beds empty array.
+      for (const selectedRoom of selectedRooms) {
+        const roomTypeId = selectedRoom.getRoomTypeId();
+        const beds = selectedRoom.getBeds();
+
+        // 3. Iteramos sobre cada una de las camas que devuelve selectedRoom.
+        // NOTA. Estas camas pertenecen a un tipo de cuarto. Si el listado esta vacio no se produce la iteracion.
+        for (const bed of beds) {
+          const bedId = bed.getId();
+          // 4 Buscar en calendar.roomTypes si el roomTypeId ya fue agregado.
+          let bedTimeline = calendar.roomTypes.get(roomTypeId);
+
+          if (!bedTimeline) {
+            // 5. Si no fue agregado, se crea un bedTimeline nuevo y se lo agrega junto con roomTypeId a roomTypes.
+            bedTimeline = new BedTimeline();
+            calendar.roomTypes.set(roomTypeId, bedTimeline)
+
+          }
+          // 6. Para cada dia de estadia de la reserva se optiene el cuadro tarifario "rate".
+          for (let date = reservation.checkIn.getTime(); date < reservation.checkOut.getTime(); date = calendar.nextDay(date)) {
+            const rate = calendar.getRate(roomTypeId, date);
+            bedTimeline.add(reservation, rate, bedId, new Date(date));
+          }
+        }
       }
-
-      if (reservation.getQuantity(roomTypeId) <= 0) {
-        continue;
-      }
-
-      calendarDay.reservedQty += reservation.getQuantity(roomTypeId);
-
-      calendarDay.reservations.push(reservation);
-
     }
-
-    return calendarDay;
-  };
-
-  getAvailability() {
-    return this.rate.roomsToSell - this.reservedQty
+    return calendar;
   }
-
-  hasAvailabilidy(qty: number) {
-    return this.getAvailability() >= qty;
-  }
-
-  getRate() {
-    return this.rate.customRate;
-  }
-
 }
 
+class BedTimeline {
+  // bedId --> timestamps --> BedOccupancy
+  private beds = new Map<number, DayTimeline>();
+
+
+  public add(reservation: Reservation, rate: RatesAndAvailability, bedId: number, date: Date) {
+    const timestamp = date.getTime();
+
+    let dayTimeline = this.beds.get(bedId);
+
+    if (!dayTimeline) {
+      dayTimeline = new DayTimeline();
+      this.beds.set(bedId, dayTimeline)
+    }
+
+    if (dayTimeline.has(timestamp)) {
+      throw new Error("DOUBLE_ASSIGNMENT");
+    }
+
+    dayTimeline?.add(reservation, rate, timestamp);
+
+  }
+}
+
+class DayTimeline {
+  private day = new Map<number, BedOccupancy>;
+
+  public add(reservation: Reservation, rate: RatesAndAvailability, timestamp: number) {
+
+    const bedOccupancy = new BedOccupancy(reservation, rate);
+    this.day.set(timestamp, bedOccupancy);
+
+  }
+
+  public has(timestamp: number) {
+    return this.day.has(timestamp);
+  }
+}
+
+class BedOccupancy {
+  constructor(
+    private readonly reservation: Reservation,
+    private readonly rate: RatesAndAvailability,
+  ) {
+    this.reservation = reservation;
+    this.rate = rate;
+  }
+
+  public getReservationId() {
+    return this.reservation.getId();
+  }
+}
