@@ -1,11 +1,16 @@
 import { Room } from "./Room";
 
+export type RoomTypeLiteral = "DORM" | "PRIVATE";
+export type Gender = "MIXED" | "MALE" | "FEMALE";
+
 export class RoomType {
   private isActive: boolean = true;
   constructor(
     private id: number | null,
     private propertyId: number,
     private description: string,
+    private type: RoomTypeLiteral,
+    private gender: Gender,
     private rooms: Array<Room>,
   ) {
     this.id = id;
@@ -14,7 +19,7 @@ export class RoomType {
     this.rooms = rooms;
   }
 
-  static make(propertyId: number, description: string, inventary: number, maxOccupancy: number) {
+  static make(propertyId: number, description: string, type: RoomTypeLiteral, gender: Gender, inventary: number, maxOccupancy: number) {
     if (inventary <= 0) {
       throw new Error("INVALID_INVENTARY_VALUE");
     }
@@ -35,8 +40,9 @@ export class RoomType {
       null,
       propertyId,
       description,
+      type,
+      gender,
       rooms
-
     )
   }
 
