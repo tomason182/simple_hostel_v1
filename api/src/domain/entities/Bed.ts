@@ -23,6 +23,13 @@ export class Bed {
 
   }
 
+  public getId() {
+    if (this.id === null) {
+      throw new Error("BED_ID_NOT_ADDED");
+    }
+    return this.id;
+  }
+
   public changeBedType(bedType: BedType): void {
     this.bedType = bedType;
   }
