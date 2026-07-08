@@ -23,6 +23,16 @@ export class SelectedRoom {
     return this.beds;
   }
 
+  public assignBeds(beds: Array<Bed>): void {
 
+    if (beds.length !== this.quantity) {
+      throw new Error("BED_ASSIGNMENT_ERROR");
+    }
+    this.beds = [...beds];
+  }
+
+  public removeBeds(): void {
+    this.beds = [];
+  }
 
 }
