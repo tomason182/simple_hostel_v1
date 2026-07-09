@@ -5,11 +5,27 @@ export class BedOccupancy {
   constructor(
     private id: number | null,
     private date: Date,
-    private resevationId: number,
+    private reservationId: number,
     private bedId: number
   ) {
     this.date = date;
-    this.resevationId = resevationId;
+    this.reservationId = reservationId;
     this.bedId = bedId;
   }
+
+  // Getters
+
+  getBeds(): number {
+    return this.bedId;
+  }
+
+  getDate(): Date {
+    return this.date;
+  }
+
+  getReservation(): number {
+    return this.reservationId;
+  }
 }
+
+
