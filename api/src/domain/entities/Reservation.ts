@@ -2,11 +2,13 @@ import { ReservationDTO } from "../dto/ReservationDTO";
 import { Currencies } from "../value-objects/Currencies";
 import { PaymentPolicies } from "../value-objects/PaymentPolicies";
 import { SelectedRoom } from "../value-objects/SelectedRoom";
+import { Calendar } from "./Calendar";
 export type BookingSource = "BOOK_ENGINE" | "DIRECT" | "BOOKING.COM" | "HOSTELWORD.COM";
 export type ReservationStatus = "CONFIRMED" | "PENDING" | "CANCELED";
 export type PaymentStatus = "PARTIAL" | "FULL_PAID" | "PENDING";
 
 export class Reservation {
+  private totalAmount: number = 0;
   constructor(
     public id: number | null,
     public guestId: number,
@@ -14,7 +16,6 @@ export class Reservation {
     public bookingSource: BookingSource,
     public reservationStatus: ReservationStatus,
     public paymentStatus: PaymentStatus,
-    public totalAmount: number,
     public currency: string,
     public advancePaymentAmount: number,
     public checkIn: Date,
@@ -32,7 +33,6 @@ export class Reservation {
     this.bookingSource = bookingSource;
     this.reservationStatus = reservationStatus;
     this.paymentStatus = paymentStatus;
-    this.totalAmount = 0;
     this.currency = currency;
     this.advancePaymentAmount = advancePaymentAmount;
     this.checkIn = checkIn;
@@ -57,7 +57,6 @@ export class Reservation {
       dto.bookingSource,
       dto.reservationStatus,
       dto.paymentStatus,
-      totalAmount,
       currency,
       advancePaymentAmount,
       dto.checkIn,
@@ -88,6 +87,25 @@ export class Reservation {
       this.checkOut.getTime() > timestamp
     );
   };
+
+  public calculateTotalAmount(calendar: Calendar): number {
+    let total = 0;
+
+    for (const selectedRoom of this.selectedRooms) {
+      const roomTypeId = selectedRoom.getRoomTypeId();
+      const qty = selectedRoom.getQuantity();
+      for (let date = this.checkIn.getTime(); date < this.checkOut.getTime(); date = calendar.nextDay(date)) {
+        const day = calendar.getDay(roomTypeId, date);
+        const rate = day.getRate();
+        total += rate.customRate * qty;
+      }
+    }
+    return total
+  }
+
+  public setTotalAmount(amount: number): void {
+    this.totalAmount = amount;
+  }
 
   // Getters y Setters.
   public getId(): number {
