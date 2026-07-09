@@ -6,24 +6,30 @@ export class BedOccupancy {
     private id: number | null,
     private date: Date,
     private reservationId: number,
-    private bedId: number
+    private bedId: number,
+    private roomTypeId: number,
   ) {
     this.date = date;
     this.reservationId = reservationId;
     this.bedId = bedId;
+    this.roomTypeId = roomTypeId;
   }
 
   // Getters
 
-  getBeds(): number {
+  getBedId(): number {
     return this.bedId;
+  }
+
+  getRoomTypeId(): number {
+    return this.roomTypeId;
   }
 
   getDate(): Date {
     return this.date;
   }
 
-  getReservation(): number {
+  getReservationId(): number {
     return this.reservationId;
   }
 }
