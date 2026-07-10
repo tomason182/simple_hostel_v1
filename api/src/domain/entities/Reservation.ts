@@ -9,6 +9,7 @@ export type PaymentStatus = "PARTIAL" | "FULL_PAID" | "PENDING";
 
 export class Reservation {
   private totalAmount: number = 0;
+  private advancePaymentAmount: number = 0;
   constructor(
     public id: number | null,
     public guestId: number,
@@ -17,7 +18,6 @@ export class Reservation {
     public reservationStatus: ReservationStatus,
     public paymentStatus: PaymentStatus,
     public currency: string,
-    public advancePaymentAmount: number,
     public checkIn: Date,
     public checkOut: Date,
     public specialRequest: string,
@@ -34,7 +34,6 @@ export class Reservation {
     this.reservationStatus = reservationStatus;
     this.paymentStatus = paymentStatus;
     this.currency = currency;
-    this.advancePaymentAmount = advancePaymentAmount;
     this.checkIn = checkIn;
     this.checkOut = checkOut;
     this.specialRequest = specialRequest;
@@ -47,9 +46,8 @@ export class Reservation {
     this.setReservationStatus();
   };
 
-  static create(guestId: number, dto: ReservationDTO, totalAmount: number, currencies: Currencies, paymentPolicie: PaymentPolicies, userId: number) {
+  static create(guestId: number, dto: ReservationDTO, currencies: Currencies, userId: number) {
     const currency = currencies.getPaymentCurrency();
-    const advancePaymentAmount = paymentPolicie.checkAPA(dto, totalAmount);
     return new Reservation(
       null,
       guestId,
@@ -58,7 +56,6 @@ export class Reservation {
       dto.reservationStatus,
       dto.paymentStatus,
       currency,
-      advancePaymentAmount,
       dto.checkIn,
       dto.checkOut,
       dto.specialRequest,

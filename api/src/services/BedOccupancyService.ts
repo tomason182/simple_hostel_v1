@@ -1,9 +1,9 @@
 import { Bed } from "../domain/entities/Bed";
 import { Calendar } from "../domain/entities/Calendar";
-import { RatesAndAvailability } from "../domain/entities/RatesAndAvailability";
 import { Reservation } from "../domain/entities/Reservation";
 import { BedOccupancyRepository } from "../domain/ports/IBedOccupancyRepository";
 import { IRoomTypeRepository } from "../domain/ports/IRoomTypeRepository";
+import { SelectedRoom } from "../domain/value-objects/SelectedRoom";
 
 export class BedOccupancyService {
   constructor(
@@ -14,7 +14,7 @@ export class BedOccupancyService {
     this.roomTypeRepository = roomTypeRepository;
   }
 
-  public async assignBeds(reservation: Reservation, rates: Array<RatesAndAvailability>): Promise<Map<number, Map<number, number>>> {
+  public async assignBeds(reservation: Reservation, calendar: Calendar): Promise<Map<number, Map<number, number>>> {
 
     let occupiedBedsTimeline = new Map<number, Map<number, number>>();
     for (const selectedRoom of reservation.selectedRooms) {
@@ -27,10 +27,6 @@ export class BedOccupancyService {
       }
 
       const beds = roomType.getBeds();
-
-      const occupancyList = await this.bedOccupancyRepository.getOccupancy(roomTypeId, reservation.checkIn, reservation.checkOut);
-
-      const calendar = Calendar.build(rates, occupancyList);
 
       let availableBeds: Array<Bed> = [...beds];
       for (let date = reservation.checkIn.getTime(); date < reservation.checkOut.getTime(); date = calendar.nextDay(date)) {
@@ -64,6 +60,12 @@ export class BedOccupancyService {
     }
     return occupiedBedsTimeline;
 
+  }
+
+  public async getOccupancyList(selectedRooms: Array<SelectedRoom>, checkIn: Date, checkOut: Date) {
+    const occupancyList = await this.bedOccupancyRepository.getOccupancyBySelectedRooms(selectedRooms, checkIn, checkOut);
+
+    return occupancyList;
   }
 
 }
