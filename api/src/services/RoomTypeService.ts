@@ -19,14 +19,14 @@ export class RoomTypeService implements IRoomTypeService {
     // Se puede hacer en las rutas, en el accessControl para este caso de uso (accessControl.checkCanCreateRoomType());
 
     // Crear el RoomTYpe.
-    const newRoomType = RoomType.fromDTO(roomTypeDTO);
+    const newRoomType = RoomType.make(propertyId, roomTypeDTO.description, roomTypeDTO.type, roomTypeDTO.gender, roomTypeDTO.inventory, roomTypeDTO.maxOccupancy);
 
     // Traer todos los roomtypes de la propiedad.
     const roomTypes = await this.roomTypeRepository.getAllRoomTypes(propertyId);
 
-    // Hacer chequeos.
-    newRoomType.checkSameDescription(roomTypes);
-    newRoomType.checkBedsLimit(roomTypes);
+    // Hacer chequeos
+    // cantidad maxima de camas admitida.
+    // No permitir misma description en los tipos de cuartos.
 
     // 5. Guardar el RoomType
     await this.roomTypeRepository.save(newRoomType);
@@ -38,7 +38,7 @@ export class RoomTypeService implements IRoomTypeService {
     // 1. Comprobar que el usuario tenga permisos para actualizar un RoomType.
 
     // 2. Crear el roomType.
-    const currentRoomType = RoomType.fromDTO(roomTypeDTO);
+    const currentRoomType = RoomType.make(propertyId, roomTypeDTO.description, roomTypeDTO.type, roomTypeDTO.gender, roomTypeDTO.inventory, roomTypeDTO.maxOccupancy);
     const id = currentRoomType.getId();
 
 
