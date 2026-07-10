@@ -33,5 +33,6 @@ export class Bed {
   public changeBedType(bedType: BedType): void {
     this.bedType = bedType;
   }
+
 }
 

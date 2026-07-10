@@ -18,16 +18,12 @@ export class ReservationService implements IReservationService {
     private currenciesRepository: ICurrenciesRepository,
     private policiesRepository: IPoliciesRepository,
     private ratesAndAvailabilityRepository: IRatesAndAvailabilityRepository,
-    private reservation: Reservation,
-    private calendar: Calendar,
   ) {
     this.reservationRepository = reservationRepository;
     this.guestRepository = guestRepository;
     this.currenciesRepository = currenciesRepository;
     this.policiesRepository = policiesRepository;
     this.ratesAndAvailabilityRepository = ratesAndAvailabilityRepository;
-    this.reservation = reservation;
-    this.calendar = calendar;
   }
 
   async createReservation(reservationDTO: ReservationDTO, guestDTO: GuestDTO, userId: number, propertyId: number): Promise<{ msg: string; }> {
@@ -44,25 +40,28 @@ export class ReservationService implements IReservationService {
     // 3. buscar tarifas y disponibilidad.
     const checkIn = reservationDTO.checkIn;
     const checkOut = reservationDTO.checkOut;
-    const roomTypes = reservationDTO.selectedRooms   // Es un array con los roomTypes seleccionados.
+    const selectedRooms = reservationDTO.selectedRooms   // Es un array con los roomTypes seleccionados.
 
-    const ratesAndAvailability = await this.ratesAndAvailabilityRepository.getRatesByPeriodAndRooms(propertyId, roomTypes, checkIn, checkOut);
-    const reservations = await this.reservationRepository.getReservationsByPeriodAndRooms(propertyId, roomTypes, checkIn, checkOut)
+    const ratesAndAvailability = await this.ratesAndAvailabilityRepository.getRatesByPeriodAndRooms(propertyId, selectedRooms, checkIn, checkOut);
 
-    const calendar = Calendar.build(ratesAndAvailability, reservations);
+    // 4. Buscar reservas simultaneas.
+    // 5. Crear el calendario
+    const calendar = Calendar.build(ratesAndAvailability, bedOccupancy);
 
-    calendar.hasAvailability(roomTypes, checkIn, checkOut);
+    // 6. Comprobar usando el calendario que hay disponibilidad para los cuartos seleccionados.
+    // NOTA: Estamos pasando el conjunto de cuartos seleccionados "roomtypes".
+    calendar.hasAvailabilityBulk(selectedRooms, checkIn, checkOut);
 
-    const reservationAmount = calendar.calculateTotal(checkIn, checkOut, roomTypes);
+    // 7. Usar calendar para calcular el total de la reserva.
+    const totalAmount = calendar.calculateTotalBulk(selectedRooms, checkIn, checkOut);
 
+    // 8. Crear la reserva con los datos optenidos.
+    const reservation = Reservation.create(guestId, reservationDTO, totalAmount, currencies, paymentPolicies, userId);
 
-    const reservation = this.reservation.create(guestId, reservationDTO, ratesAndAvailability, currencies, paymentPolicies, userId);
-
-
-
-
-
-
+    // 9. Usar el calendario para asignar camas a la reserva.
+    calendar.assignBeds(reservation.getId());
+    // 10. guardar la reserva
+    await this.reservationRepository.save(reservation);
 
     return { msg: "RESERVATION_CREATED" }
 

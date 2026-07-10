@@ -1,5 +1,7 @@
 import { RatesAndAvailability } from "./RatesAndAvailability";
 import { BedOccupancy } from "./BedOccupancy";
+import { RoomType } from "./RoomTypes";
+import { SelectedRoom } from "../value-objects/SelectedRoom";
 
 export class Calendar {
   // roomTypeId --> timestamp -->  CalendarDay
@@ -73,7 +75,6 @@ export class Calendar {
     return day
   }
 
-
   public nextDay(date: number): number {
     const next = new Date(date);
     next.setDate(next.getDate() + 1);
@@ -90,12 +91,31 @@ class CalendarDay {
     this.rate = rate;
   }
 
+  public checkRoomsToSell(qty: number): void {
+    if (this.rate.roomsToSell < qty) {
+      throw new Error("NOT_AVAILABLE");
+    }
+  }
+
+  public checkAvailability(qty: number): void {
+    const occupiedBeds = this.getOccupiedBedsCount();
+    const roomsToSell = this.rate.roomsToSell;
+
+    if (roomsToSell - occupiedBeds < qty) {
+      throw new Error("NOT_AVAILABLE");
+    }
+  }
+
   public getRate(): RatesAndAvailability {
     return this.rate;
   }
 
   public getOccupancy() {
-    return this.occupancy
+    return this.occupancy;
+  }
+
+  public getOccupiedBedsCount(): number {
+    return this.occupancy.size;
   }
 
   public addOccupancy(bedId: number, reservationId: number) {

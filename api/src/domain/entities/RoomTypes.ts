@@ -1,4 +1,5 @@
 import { Room } from "./Room";
+import { Bed } from "./Bed";
 
 export type RoomTypeLiteral = "DORM" | "PRIVATE";
 export type Gender = "MIXED" | "MALE" | "FEMALE";
@@ -51,6 +52,18 @@ export class RoomType {
   }
   public activate() {
     this.isActive = true;
+  }
+
+  public getId(): number {
+    if (!this.id) {
+      throw new Error("NO_ROOM_TYPE_ID");
+    }
+    return this.id;
+  }
+
+  public getBeds(): ReadonlyArray<Bed> {
+    return this.rooms.flatMap(room => room.getBeds());
+
   }
 
 }
