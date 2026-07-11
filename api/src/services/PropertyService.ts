@@ -4,6 +4,7 @@ import { IAccessControlRepository } from "../domain/ports/IAccessControlReposito
 import { GeneralPolicies } from "../domain/value-objects/GeneralPolicies";
 import { UserRole } from "../domain/entities/AccessControl";
 import { GeneralPoliciesDTO, MinorPoliciesDTO, OtherPoliciesDTO, PaymentPoliciesDTO } from "../domain/dto/PoliciesDTO";
+import { ContactInfoDTO } from "../domain/dto/ContactInfoDTO";
 
 export class PropertyService implements IPropertyService {
   propertyRepository: IPropertyRepository;
@@ -13,6 +14,15 @@ export class PropertyService implements IPropertyService {
     this.propertyRepository = propertyRepository;
     this.accessControlRepository = accessControlRepository;
   }
+
+  async saveContactInfo(propertyId: number, contactInfoDTO: ContactInfoDTO): Promise<ContactInfoDTO> {
+
+    await this.propertyRepository.saveContactInfo(propertyId, contactInfoDTO);
+
+    return contactInfoDTO
+  }
+
+
 
 
 }

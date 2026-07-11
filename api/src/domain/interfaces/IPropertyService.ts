@@ -10,11 +10,11 @@ export interface IPropertyService {
 
   // ContactInfo.
   getContactInfo(propertyId: number): Promise<ContactInfoDTO>;
-  updateContactInfo(propertyId: number, userId: number, userRole: UserRole, contactInfoDTO: ContactInfoDTO): Promise<{ msg: string }>
+  saveContactInfo(propertyId: number, userId: number, userRole: UserRole, contactInfoDTO: ContactInfoDTO): Promise<{ msg: string }>
 
   // Address.
   getAddress(propertyId: number): Promise<AddressDTO>;
-  updateAddress(propertyId: number, userId: number, userRole: UserRole, addressDTO: AddressDTO): Promise<AddressDTO>;
+  saveAddress(propertyId: number, userId: number, userRole: UserRole, addressDTO: AddressDTO): Promise<AddressDTO>;
 
   // Currencies.
   getCurrencies(propertyId: number): Promise<CurrenciesDTO>;
