@@ -1,3 +1,5 @@
+import { BreakfastDTO } from "../dto/BreakfastDTO";
+
 export class Breakfast {
   constructor(
     private propertyId: number,
@@ -20,48 +22,23 @@ export class Breakfast {
 
   }
 
-  public make(propertyId: number, userId: number, is_included: boolean, is_served: boolean, price: number, from: string, to: string) {
+  static make(dto: BreakfastDTO, userId: number) {
     const updatedBy = userId;
     const updatedAt = new Date();
-    return new Breakfast(propertyId, is_included, is_served, price, from, to, updatedBy, updatedAt)
+    return new Breakfast(dto.propertyId, dto.isIncluded, dto.isServed, dto.price, dto.from, dto.to, updatedBy, updatedAt)
   }
 
-  public setIsServer(status: boolean, userId: number) {
-    if (status === false) {
-      this.isIncluded = false;
-      this.price = 0;
-      this.from = null;
-      this.to = null
-      this.updatedBy = userId;
-      this.updatedAt = new Date();
-    }
-  }
-
-  public setIsInculed(status: boolean, userId: number) {
-    if (status === true) {
-      this.isServed = true;
-    }
-    this.isIncluded = status;
-    this.updatedBy = userId;
-    this.updatedAt = new Date();
+  public update(breakfastDTO: BreakfastDTO, userId: number) {
+    return new Breakfast(
+      breakfastDTO.propertyId,
+      breakfastDTO.isIncluded,
+      breakfastDTO.isServed,
+      breakfastDTO.price,
+      breakfastDTO.from,
+      breakfastDTO.to,
+      userId,
+      new Date(),
+    )
 
   }
-
-  public setPrice(price: number, userId: number) {
-    if (price < 0) {
-      throw new Error("INVALID_PRICE_VALUE");
-    }
-    this.price = price;
-    this.updatedBy = userId;
-    this.updatedAt = new Date();
-  }
-
-  public setTime(from: string, to: string, userId: number) {
-    // Chequeo que sean time...
-    this.from = from;
-    this.to = to;
-    this.updatedBy = userId;
-    this.updatedAt = new Date();
-  }
-
 }
