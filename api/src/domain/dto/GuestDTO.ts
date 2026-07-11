@@ -9,8 +9,4 @@ export interface GuestDTO {
   city: string,
   country: string,
   alpa2code: string,
-  createdBy: number,
-  updatedBy: number,
-  createdAt: Date,
-  updatedAt: Date
 }

@@ -1,8 +1,11 @@
 import { GuestDTO } from "../dto/GuestDTO";
-
+export type Status = "ACTIVE" | "DEACTIVATE" | "BLOCKED"
 export class Guest {
+  private status: Status = "ACTIVE";
+
   constructor(
     public id: number | null,
+    public propertyId: number,
     public firstName: string,
     public lastName: string,
     public idNumber: string,
@@ -19,6 +22,7 @@ export class Guest {
     public updatedAt: Date
   ) {
     this.id = id;
+    this.propertyId = propertyId;
     this.firstName = firstName;
     this.lastName = lastName;
     this.idNumber = idNumber;
@@ -35,7 +39,7 @@ export class Guest {
     this.updatedAt = updatedAt;
   }
 
-  static fromDTO(dto: GuestDTO, userId: number): Guest {
+  static fromDTO(propertyId: number, userId: number, dto: GuestDTO): Guest {
     const createdBy = userId;
     const updatedBy = userId;
     const createdAt = new Date();
@@ -43,6 +47,7 @@ export class Guest {
 
     return new Guest(
       null,
+      propertyId,
       dto.firstName,
       dto.lastName,
       dto.idNumber,
@@ -58,6 +63,33 @@ export class Guest {
       createdAt,
       updatedAt
     )
+  }
+
+  public update(guestId: number, userId: number, dto: GuestDTO) {
+    const updatedBy = userId;
+    const updatedAt = new Date();
+    return new Guest(
+      guestId,
+      this.propertyId,
+      dto.firstName,
+      dto.lastName,
+      dto.idNumber,
+      dto.email,
+      dto.phoneNumber,
+      dto.phoneCode,
+      dto.street,
+      dto.city,
+      dto.country,
+      dto.alpa2code,
+      this.createdBy,
+      updatedBy,
+      this.createdAt,
+      updatedAt,
+    )
+  }
+
+  public setStatus(status: Status) {
+    this.status = status;
   }
 
   public getId(): number {
