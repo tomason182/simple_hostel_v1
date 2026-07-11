@@ -2,6 +2,7 @@ import { AddressDTO } from "../dto/AddressDTO";
 import { ContactInfoDTO } from "../dto/ContactInfoDTO";
 import { CurrenciesDTO } from "../dto/CurrenciesDTO";
 import { UserRole } from "../entities/AccessControl";
+import { ContactInfo } from "../value-objects/ContactInfo";
 
 export interface IPropertyService {
   // facilities
@@ -10,7 +11,7 @@ export interface IPropertyService {
 
   // ContactInfo.
   getContactInfo(propertyId: number): Promise<ContactInfoDTO>;
-  saveContactInfo(propertyId: number, userId: number, userRole: UserRole, contactInfoDTO: ContactInfoDTO): Promise<{ msg: string }>
+  saveContactInfo(propertyId: number, userId: number, contactInfoDTO: ContactInfoDTO): Promise<ContactInfoDTO>
 
   // Address.
   getAddress(propertyId: number): Promise<AddressDTO>;

@@ -7,12 +7,11 @@ export interface PoliciesDTO {
 
 export interface GeneralPoliciesDTO {
   minLengthStay: number;
-  maxLengthStay: number;
+  maxLengthStay: number | null;
   minAdvanceBooking: number;
-  breakfastIncluded: boolean;
   checkInFrom: string;
-  checkOutFrom: string;
-  checkInUntil: string;
+  checkOutFrom: string | null;
+  checkInUntil: string | null;
   checkOutUntil: string;
 };
 

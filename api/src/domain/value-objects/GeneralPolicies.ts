@@ -3,39 +3,67 @@ import { GeneralPoliciesDTO } from "../dto/PoliciesDTO";
 export class GeneralPolicies {
   constructor(
     public minLengthStay: number,
-    public maxLengthStay: number,
+    public maxLengthStay: number | null,
     public minAdvanceBooking: number,
-    public breakfastIncluded: boolean,
-    public checkInFrom: string | null,
+    public checkInFrom: string,
     public checkOutFrom: string | null,
     public checkInUntil: string | null,
-    public checkOutUntil: string | null,
+    public checkOutUntil: string,
+    public updatedAt: Date,
+    public updatedBy: number
 
   ) {
     this.minLengthStay = minLengthStay;
     this.maxLengthStay = maxLengthStay;
     this.minAdvanceBooking = minAdvanceBooking;
-    this.breakfastIncluded = breakfastIncluded;
     this.checkInFrom = checkInFrom;
     this.checkOutFrom = checkOutFrom;
     this.checkInUntil = checkInUntil;
     this.checkOutUntil = checkOutUntil;
+    this.updatedAt = updatedAt;
+    this.updatedBy = updatedBy;
 
-    if (minLengthStay < 0 || maxLengthStay < 0 || minAdvanceBooking < 0) {
+    if (minLengthStay < 0 || maxLengthStay !== null && maxLengthStay < 0 || minAdvanceBooking < 0) {
       throw new Error("GeneralPolicies Error: Values must be non-negative numbers");
     }
   }
 
-  static fromDTO(dto: GeneralPoliciesDTO): GeneralPolicies {
+  static fromDTO(dto: GeneralPoliciesDTO, userId: number): GeneralPolicies {
     return new GeneralPolicies(
       dto.minLengthStay,
       dto.maxLengthStay,
       dto.minAdvanceBooking,
-      dto.breakfastIncluded,
       dto.checkInFrom,
       dto.checkOutFrom,
       dto.checkInUntil,
-      dto.checkOutUntil
+      dto.checkOutUntil,
+      new Date(),
+      userId
     )
+  }
+  public toDTO(): GeneralPoliciesDTO {
+    return (
+      {
+        minLengthStay: this.minLengthStay,
+        maxLengthStay: this.maxLengthStay,
+        minAdvanceBooking: this.minAdvanceBooking,
+        checkInFrom: this.checkInFrom,
+        checkOutFrom: this.checkOutFrom,
+        checkInUntil: this.checkInUntil,
+        checkOutUntil: this.checkOutUntil
+      }
+    )
+  };
+
+  public update(dto: GeneralPoliciesDTO, userId: number) {
+    this.minLengthStay = dto.minLengthStay;
+    this.maxLengthStay = dto.maxLengthStay;
+    this.minAdvanceBooking = dto.minAdvanceBooking;
+    this.checkInFrom = dto.checkInFrom;
+    this.checkOutFrom = dto.checkOutFrom;
+    this.checkInUntil = dto.checkInUntil;
+    this.checkOutUntil = dto.checkOutUntil;
+    this.updatedAt = new Date();
+    this.updatedBy = userId;
   }
 }

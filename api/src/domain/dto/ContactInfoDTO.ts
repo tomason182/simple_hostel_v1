@@ -4,6 +4,4 @@ export interface ContactInfoDTO {
   phoneCalls: string;
   phoneWhatsappCode: string;
   phoneWhatsapp: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
