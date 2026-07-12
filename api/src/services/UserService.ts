@@ -3,6 +3,8 @@ import { IPropertyRepository } from "../domain/ports/IPropertyRepository";
 import { IAccessControlRepository } from "../domain/ports/IAccessControlRepository";
 import { jwtTokenGenerator } from "../utils/jwtTokenHelper";
 import { IUserService } from "../domain/interfaces/IUserService";
+import { UserDTO } from "../domain/dto/UserDTO";
+import { User } from "../domain/entities/User";
 
 export class UserService implements IUserService {
   userRepository: IUserRepository;
@@ -51,9 +53,21 @@ export class UserService implements IUserService {
 
     const token = jwtTokenGenerator(data, 60);
 
-
     return { token: token }
-
   };
+
+  async update(userDTO: UserDTO): Promise<UserDTO> {
+
+    let user = await this.userRepository.findById(userDTO.id);
+    if (!user) {
+      throw new Error("USER_NOT_FOUND");
+    }
+
+    user.update(userDTO);
+
+    await this.userRepository.save(user);
+
+    return userDTO;
+  }
 }
 

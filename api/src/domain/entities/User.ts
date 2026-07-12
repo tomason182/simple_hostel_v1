@@ -1,7 +1,8 @@
 import bcrypt from "bcrypt";
+import { UserDTO } from "../dto/UserDTO";
 
 export class User {
-  public readonly id: number | null;
+  private readonly id: number | null;
   public username: string;
   public firstName: string;
   public lastName: string | null;
@@ -99,6 +100,14 @@ export class User {
 
   getFirstName(): string {
     return this.firstName;
+  }
+
+  update(userDTO: UserDTO): void {
+    if (userDTO.username !== this.username) {
+      throw new Error("USERNAME_CAN_NOT_BE_CHANGE")
+    };
+    this.firstName = userDTO.firstname;
+    this.lastName = userDTO.lastname;
   }
 
 

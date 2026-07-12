@@ -1,8 +1,8 @@
 export interface UserDTO {
-  id?: number;
+  id: number;
   username: string;
   firstname: string;
-  lastname?: string;
+  lastname: string | null;
   hashPassword: string;
   isValidEmail: boolean;
   lastResendEmail: Date;
