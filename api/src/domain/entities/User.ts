@@ -58,13 +58,8 @@ export class User {
     }
   }
 
-  static setLastResendEmail() {
-    return new Date();
-  }
-
-
   // Metodos de instancia
-  async comparePassword(password: string): Promise<boolean> {
+  public async comparePassword(password: string): Promise<boolean> {
     try {
       return await bcrypt.compare(password, this.passwordHash);
     } catch (e) {
@@ -72,7 +67,11 @@ export class User {
     }
   };
 
-  async changePassword(newPassword: string, repeatPassword: string): Promise<void> {
+  public async changePassword(oldPassword: string, newPassword: string, repeatPassword: string): Promise<void> {
+
+    if (!this.comparePassword(oldPassword)) {
+      throw new Error("INVALID_PASSWORD")
+    }
     if (newPassword != repeatPassword) {
       throw new Error("Passwords doesnt match");
     }
@@ -81,10 +80,27 @@ export class User {
 
   }
 
+  public async resetPassword(newPass: string, repeatNewPass: string): Promise<void> {
+
+    if (newPass !== repeatNewPass) {
+      throw new Error("PASSWORD_DONT_MATCH");
+    }
+
+    this.passwordHash = await User.passwordHash(newPass);
+  }
+
   // Getters and Setters
   setLastResenEmail(): void {
     this.lastResendEmail = new Date()
   };
+
+  checkLastResendEmail(): boolean {
+    if (this.lastResendEmail.getTime() + this.waitingPeriod < new Date().getTime()) {
+      throw new Error("WAITING_PERIOD");
+    }
+
+    return true;
+  }
 
   getId(): number {
     const id = this.id;

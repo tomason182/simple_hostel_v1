@@ -40,5 +40,28 @@ export class EmailService {
 
   }
 
+  public async sendNewPasswordRequest(user: User): Promise<void> {
+    const tokenData = {
+      id: user.getId()
+    };
+    const token = jwtTokenGenerator(tokenData, 60);
+    const confirmationLink = process.env.BASE_URL + "/account/reset-pass/" + token;
+    const to = user.getUsername();
+    const subjet = "Solicitud reseteo de contraseña";
+    const templateName = "reset_password";
+    const data = {
+      logoUrl: process.env.LOGO_URL,
+      appName: process.env.APP_NAME,
+      webkitURL: process.env.WEBSITE_URL,
+      name: user.getFirstName(),
+      confirmationLink: confirmationLink,
+      year: new Date().getFullYear().toString(),
+      companyName: process.env.COMPANY_NAME,
+      supportEmail: process.env.SUPPORT_EMAIL
+    }
+
+    await this.emailRepository.sendEmail(to, subjet, templateName, data)
+  }
+
 
 }
