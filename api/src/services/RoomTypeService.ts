@@ -6,8 +6,9 @@ import { IRoomTypeRepository } from "../domain/ports/IRoomTypeRepository";
 import { IReservationRepository } from "../domain/ports/IReservationRepository";
 
 export class RoomTypeService implements IRoomTypeService {
-  roomTypeRepository: IRoomTypeRepository;
-  reservationRepository: IReservationRepository;
+  private roomTypeRepository: IRoomTypeRepository;
+  private reservationRepository: IReservationRepository;
+  private BED_LIMIT: number = 50;
 
   constructor(roomTypeRepository: IRoomTypeRepository, reservationRepository: IReservationRepository) {
     this.roomTypeRepository = roomTypeRepository;
@@ -52,18 +53,16 @@ export class RoomTypeService implements IRoomTypeService {
     // Traer todos los roomtypes de la propiedasd.
     const roomTypes = await this.roomTypeRepository.getAllRoomTypes(propertyId);
     // Chequeos para actualizar un Room Type.
-    currentRoomType.checkSameDescription(roomTypes);
-    currentRoomType.checkBedsLimit(roomTypes);    // Tener cuidado de no duplicar el roomType.
-
-    const hasCapacityDecrease = currentRoomType.hasCapacityDecrease(oldRoomType);
-
-    if (hasCapacityDecrease) {
-      const today = new Date();
-      const hasUpcomingReservations = await this.reservationRepository.hasUpcomingReservations(id, today);
-
-      if (hasUpcomingReservations) {
-        throw new Error("UPCOMMING_RESERVATIONS. ROOM_TYPE_COULD_NOT_UPDATE");
+    let bedsCount = 0;
+    for (const room of roomTypes) {
+      if (room.getDescription() === currentRoomType.getDescription()) {
+        throw new Error("DUPLICATED_DESCRIPTION_NAME");
       }
+      bedsCount += room.getBeds().length
+    }
+
+    if (bedsCount + currentRoomType.getBeds().length > this.BED_LIMIT) {
+      throw new Error("BED_LIMIT_EXCEED")
     }
 
     await this.roomTypeRepository.save(currentRoomType);

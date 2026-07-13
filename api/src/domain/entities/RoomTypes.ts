@@ -66,4 +66,8 @@ export class RoomType {
 
   }
 
+  public getDescription(): string {
+    return this.description;
+  }
+
 }
