@@ -74,13 +74,18 @@ export class AccountService implements IAccountService {
       throw new Error("ACCOUNT_ALREADY_VALIDATED");
     }
 
+    user.checkLastResendEmail();
+
     user.isEmailVerified = true;
+
+    // Habria que setear el nuevo lastReserndEmail y guardarlo en la bd.
+
 
     // Actualzar solamente
     await this.userRepository.validateEmail(user.getId());
 
     // Auto enviarme un email de aviso de registro.
-    const to = process.env.SUPPORT_EMAIL;
+    const to = process.env.SUPPORT_EMAIL || "support@simplehostel.net";
     const subject = "Se registro un nuevo hostel";
     const templateName = "new_register";
     const data = {

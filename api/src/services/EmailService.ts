@@ -63,5 +63,9 @@ export class EmailService {
     await this.emailRepository.sendEmail(to, subjet, templateName, data)
   }
 
+  async newRegister(to: string, subjetc: string, templateName: string, data: object): Promise<void> {
+    await this.emailRepository.sendEmail(to, subjetc, templateName, data);
+  }
+
 
 }
