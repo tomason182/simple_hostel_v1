@@ -6,6 +6,7 @@ import { IUserRepository } from "../domain/ports/IUserRepository";
 import { IAccessControlRepository } from "../domain/ports/IAccessControlRepository";
 import { EmailService } from "../services/EmailService";
 import { IAccountService } from "../domain/interfaces/IAccountService";
+import { jwtTokenValidator } from "../utils/jwtTokenHelper";
 
 export class AccountService implements IAccountService {
   constructor(
@@ -53,6 +54,46 @@ export class AccountService implements IAccountService {
 
       msg: "USER_REGISTER_SUCCESSFULLY"
     }
+  }
+
+  async validateAccount(token: string): Promise<{ msg: string }> {
+    const decoded = jwtTokenValidator(token);
+    if (!decoded || !decoded.sub) {
+      throw new Error("INVALID_OR_EXPIRED_TOKEN");
+    }
+
+    const id = decoded.sub.id;
+
+    const user = await this.userRepository.findById(id);
+
+    if (!user) {
+      throw new Error("USER_NOT_FOUND");
+    }
+
+    if (user.isEmailVerified) {
+      throw new Error("ACCOUNT_ALREADY_VALIDATED");
+    }
+
+    user.isEmailVerified = true;
+
+    // Actualzar solamente
+    await this.userRepository.validateEmail(user.getId());
+
+    // Auto enviarme un email de aviso de registro.
+    const to = process.env.SUPPORT_EMAIL;
+    const subject = "Se registro un nuevo hostel";
+    const templateName = "new_register";
+    const data = {
+      logoUrl: process.env.LOGO_URL || "",
+      name: user.getFirstName(),
+      email: user.getUsername(),
+    };
+
+    await this.emailService.newRegister(to, subject, templateName, data);
+
+    return { msg: "ACCOUNT_VALIDATED" }
+
+
   }
 
   async deleteAccount(username: string, password: string): Promise<{ msg: string; }> {
