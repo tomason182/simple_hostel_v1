@@ -61,7 +61,7 @@ export class PropertyService implements IPropertyService {
     return address.toDTO();
   }
 
-  async saveAndUpdateAddress(propertyId: number, addressDTO: AddressDTO, userId: number): Promise<AddressDTO> {
+  async saveAndUpdateAddress(propertyId: number, userId: number, addressDTO: AddressDTO): Promise<AddressDTO> {
     let address = await this.propertyRepository.getAddress(propertyId);
 
     if (!address) {

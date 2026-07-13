@@ -1,23 +1,33 @@
 import { AddressDTO } from "../dto/AddressDTO";
 import { ContactInfoDTO } from "../dto/ContactInfoDTO";
 import { CurrenciesDTO } from "../dto/CurrenciesDTO";
+import { GeneralPoliciesDTO, MinorPoliciesDTO, OtherPoliciesDTO, PaymentPoliciesDTO, PoliciesDTO } from "../dto/PoliciesDTO";
 import { UserRole } from "../entities/AccessControl";
 import { ContactInfo } from "../value-objects/ContactInfo";
 
 export interface IPropertyService {
   // facilities
-  getFacilities(propertyId: number): Promise<Array<number>>;
-  updateFacilities(facilities: Array<number>): Promise<{ msg: string }>;
+  // getFacilities(propertyId: number): Promise<Array<number>>;
+  // updateFacilities(facilities: Array<number>): Promise<{ msg: string }>;
 
   // ContactInfo.
   getContactInfo(propertyId: number): Promise<ContactInfoDTO>;
-  saveContactInfo(propertyId: number, userId: number, contactInfoDTO: ContactInfoDTO): Promise<ContactInfoDTO>
+  saveAndUpdateContactInfo(propertyId: number, userId: number, contactInfoDTO: ContactInfoDTO): Promise<ContactInfoDTO>
 
   // Address.
   getAddress(propertyId: number): Promise<AddressDTO>;
-  saveAddress(propertyId: number, userId: number, userRole: UserRole, addressDTO: AddressDTO): Promise<AddressDTO>;
+  saveAndUpdateAddress(propertyId: number, userId: number, addressDTO: AddressDTO): Promise<AddressDTO>;
+
+  // Policies
+  getPolicies(propertyId: number): Promise<PoliciesDTO>;
+
+  saveAndUpdateGeneralPolicies(propertyId: number, userId: number, generalDTO: GeneralPoliciesDTO): Promise<GeneralPoliciesDTO>;
+  saveAndUpdatePaymentPolicies(propertyId: number, userId: number, paymentDTO: PaymentPoliciesDTO): Promise<PaymentPoliciesDTO>;
+  saveAndUpdateMinorPolicies(propertyId: number, userId: number, minorDTO: MinorPoliciesDTO): Promise<MinorPoliciesDTO>;
+  saveAndUpdateOtherPolicies(propertyId: number, userId: number, otherDTO: OtherPoliciesDTO): Promise<OtherPoliciesDTO>;
+
 
   // Currencies.
-  getCurrencies(propertyId: number): Promise<CurrenciesDTO>;
-  updateCurrencies(propertyId: number, userId: number, userRole: UserRole, currenciesDTO: CurrenciesDTO): Promise<{ msg: string }>;
+  // getCurrencies(propertyId: number): Promise<CurrenciesDTO>;
+  // updateCurrencies(propertyId: number, userId: number, userRole: UserRole, currenciesDTO: CurrenciesDTO): Promise<{ msg: string }>;
 }
