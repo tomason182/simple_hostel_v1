@@ -1,6 +1,5 @@
 import type { BookingSource, PaymentStatus, ReservationStatus } from "../entities/Reservation";
-import type { SelectedRooms } from "../value-objects/SelectedRooms";
-
+import { SelectedRoom } from "../value-objects/SelectedRoom";
 export interface ReservationDTO {
   propertyId: number;
   bookingSource: BookingSource;
@@ -12,6 +11,6 @@ export interface ReservationDTO {
   checkIn: Date;
   checkOut: Date;
   specialRequest: string;
-  selectedRooms: Array<SelectedRooms>;
+  selectedRooms: Array<SelectedRoom>;
 
 }
