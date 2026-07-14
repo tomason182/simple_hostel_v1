@@ -6,7 +6,7 @@ export interface IUserRepository {
 
   save(user: User): Promise<void>;
 
-  findById(id: number): Promise<User>;
+  findById(id: number): Promise<User | null>;
 
   validateEmail(id: number): Promise<void>
 

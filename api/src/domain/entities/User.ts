@@ -118,6 +118,14 @@ export class User {
     return this.firstName;
   }
 
+  getPasswordHash(): string {
+    return this.passwordHash
+  }
+
+  getLastResendEmail(): Date {
+    return this.lastResendEmail
+  }
+
   update(userDTO: UserDTO): void {
     if (userDTO.username !== this.username) {
       throw new Error("USERNAME_CAN_NOT_BE_CHANGE")
