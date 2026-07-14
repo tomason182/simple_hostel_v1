@@ -1,4 +1,4 @@
-import { Pool, PoolClient, QueryResult } from "pg";
+import { Pool, PoolClient, QueryResult, QueryResultRow } from "pg";
 
 export class UnitOfWork {
   private connection: PoolClient | null = null;
@@ -49,12 +49,12 @@ export class UnitOfWork {
     this.transactionActive = false;
   }
 
-  async query<T = any>(
+  async query<T extends QueryResultRow>(
     sql: string,
     params?: unknown[]
   ): Promise<QueryResult<T>> {
     const connection = await this.getConnection();
-    return connection.query(sql, params)
+    return connection.query<T>(sql, params)
   }
 
   // ALTERNATIVA AL PROXY: En lugar de usar el Proxy se puede usar la siguiente funcion con callback.
