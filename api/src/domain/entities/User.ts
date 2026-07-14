@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { UserDTO } from "../dto/UserDTO";
 
 export class User {
-  private readonly id: number | null;
+  private id: number | null;
   public username: string;
   public firstName: string;
   public lastName: string | null;
@@ -105,9 +105,16 @@ export class User {
   getId(): number {
     const id = this.id;
     if (!id) {
-      throw new Error("User id is not set")
+      throw new Error("USER_ID_NOT_SET");
     }
-    return this.id;
+    return id;
+  }
+
+  setId(id: number): void {
+    if (id <= 0) {
+      throw new Error("INVALID_ID_VALUE");
+    }
+    this.id = id;
   }
 
   getUsername(): string {

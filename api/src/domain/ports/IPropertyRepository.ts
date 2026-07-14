@@ -8,17 +8,15 @@ import { PaymentPolicies } from "../value-objects/PaymentPolicies";
 import { Policies } from "../value-objects/Policies";
 
 export interface IPropertyRepository {
-  save(property: Property): Promise<void>;
-
-  findPropertyDetails(propertyId: number): Promise<Property>;
+  save(property: Property): Promise<Property>;
 
   findById(property: number): Promise<Property>;
 
   updateDescription(property: Property): Promise<void>;
 
   // Contact info
-  getContactInfo(propertyId: number): Promise<ContactInfo>;
-  saveContactInfo(propertyId: number, contactInfo: ContactInfo): Promise<void>
+  getContactInfo(propertyId: number): Promise<ContactInfo | null>;
+  saveContactInfo(propertyId: number, contactInfo: ContactInfo): Promise<void>;
 
   // Address
   getAddress(propertyId: number): Promise<Address>;

@@ -55,7 +55,7 @@ export class UserRepositoryPostgreSQL implements IUserRepository {
     );
   }
 
-  async save(user: User): Promise<void> {
+  async save(user: User): Promise<User> {
     const query = `INSERT INTO users (
                     username, 
                     first_name, 
@@ -66,9 +66,9 @@ export class UserRepositoryPostgreSQL implements IUserRepository {
                     avatar, 
                     created_at, 
                     updated_at
-                  ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
+                  ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`;
 
-    await this.uow.query(query, [
+    const result = await this.uow.query(query, [
       user.username,
       user.firstName,
       user.lastName,
@@ -78,7 +78,13 @@ export class UserRepositoryPostgreSQL implements IUserRepository {
       user.avatar,
       user.createdAt,
       user.updatedAt
-    ])
+    ]);
+
+    const id = result.rows[0].id;
+
+    user.setId(id);
+
+    return user;
   }
 
   async validateEmail(id: number): Promise<void> {

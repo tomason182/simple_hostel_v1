@@ -30,6 +30,7 @@ export class Property {
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.status = status;
+    this.profileStatus = profileStatus;
   };
 
   // Metodos de class
@@ -63,6 +64,13 @@ export class Property {
       throw new Error("PropertyId is not set");
     }
     return id
+  }
+
+  setId(id: number) {
+    if (id <= 0) {
+      throw new Error("INVALID_ID_VALUE");
+    }
+    this.id = id;
   }
 
 }

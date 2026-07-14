@@ -30,28 +30,27 @@ export class AccountService implements IAccountService {
     }
 
     // 2. Crear la entidad User.
-    const user = await User.createNewUser(username, password, firstname);
+    let user = await User.createNewUser(username, password, firstname);
 
     // 3. Guardar el usuario en la base de datos.
-    await this.userRepository.save(user);
+    user = await this.userRepository.save(user);
 
     // 4. Crear la entidad Property.
-    const property = Property.createNewProperty(propertyName);
+    let property = Property.createNewProperty(propertyName);
 
     // 5. Guardar la propiedad en la bd.
-    await this.propertyRepository.save(property);
+    property = await this.propertyRepository.save(property);
 
     // 6. Crear la entidad AccessControl.
-    const accessControl = AccessControl.createNewAccessControl(user.getId(), property.getId());
+    let accessControl = AccessControl.createNewAccessControl(user.getId(), property.getId());
 
     // 7. Guardar el accessControl.
-    await this.accessControlRepository.save(accessControl);
+    accessControl = await this.accessControlRepository.save(accessControl);
 
     // 8. Enviar email para validar cuenta.
     await this.emailService.validateAccountEmail(user, property, accessControl);
 
     return {
-
       msg: "USER_REGISTER_SUCCESSFULLY"
     }
   }
@@ -98,8 +97,6 @@ export class AccountService implements IAccountService {
     await this.emailService.newRegister(to, subject, templateName, data);
 
     return { msg: "ACCOUNT_VALIDATED" }
-
-
   }
 
   async deleteAccount(username: string, password: string): Promise<{ msg: string; }> {

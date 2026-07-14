@@ -4,7 +4,7 @@ export interface IUserRepository {
 
   findByUsername(username: string): Promise<User | null>;
 
-  save(user: User): Promise<void>;
+  save(user: User): Promise<User>;
 
   findById(id: number): Promise<User | null>;
 

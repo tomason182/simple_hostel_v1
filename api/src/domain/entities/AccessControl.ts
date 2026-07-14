@@ -39,6 +39,21 @@ export class AccessControl {
 
 
   // Getters and Setters.
+  public getId(): number {
+    const id = this.id;
+    if (!id) {
+      throw new Error("ACCESSCONTROL_ID_NOT_SET");
+    }
+    return id;
+  }
+
+  public setId(id: number): void {
+    if (id <= 0) {
+      throw new Error("INVALID_ID_VALUE");
+    }
+    this.id = id;
+  }
+
   public getPropertyId() {
     return this.propertyId;
   };
