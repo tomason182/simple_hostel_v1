@@ -109,7 +109,7 @@ export class UserService implements IUserService {
     // 5. Setear periodo de espera.
     user.setLastResenEmail();
 
-    await this.userRepository.save(user);
+    await this.userRepository.updateLastResendEmail(user);
 
     return { msg: "EMAIL_SENT" }
   }
@@ -117,12 +117,11 @@ export class UserService implements IUserService {
   public async resetPass(token: string, newPass: string, repeatNewPass: string): Promise<{ msg: "PASSWORD_UPDATED" }> {
     const decoded = jwtTokenValidator(token);
 
-    if (!decoded || !decoded.sub) {
+    if (!decoded) {
       throw new Error("INVALID_OR_EXPIRED_TOKEN");
     }
 
-    const data = decoded.sub;
-    const userId = data.id
+    const userId = decoded.data.id
 
     let user = await this.userRepository.findById(userId);
 

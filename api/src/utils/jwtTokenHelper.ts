@@ -1,5 +1,12 @@
 import { JwtPayload, sign, verify } from "jsonwebtoken";
 
+interface AccessTokenPayload extends JwtPayload {
+  data: {
+    id: number,
+    // otros campos.
+  }
+}
+
 
 export function jwtTokenGenerator(data: object, expirationTimeSeg: number): string {
   const jwtSecret = process.env.JWT_SECRET;
@@ -17,7 +24,7 @@ export function jwtTokenGenerator(data: object, expirationTimeSeg: number): stri
   return token
 }
 
-export function jwtTokenValidator(token: string): JwtPayload | string | false {
+export function jwtTokenValidator(token: string): AccessTokenPayload | false {
   const jwtSecret = process.env.JWT_SECRET;
 
   if (!jwtSecret) {
@@ -25,7 +32,7 @@ export function jwtTokenValidator(token: string): JwtPayload | string | false {
   }
 
   try {
-    const decoded = verify(token, jwtSecret);
+    const decoded = verify(token, jwtSecret) as AccessTokenPayload;
     return decoded;
   } catch (err) {
     return false;

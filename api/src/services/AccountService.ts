@@ -58,11 +58,11 @@ export class AccountService implements IAccountService {
 
   async validateAccount(token: string): Promise<{ msg: string }> {
     const decoded = jwtTokenValidator(token);
-    if (!decoded || !decoded.sub) {
+    if (!decoded) {
       throw new Error("INVALID_OR_EXPIRED_TOKEN");
     }
 
-    const id = decoded.sub.id;
+    const id = decoded.data.id;
 
     const user = await this.userRepository.findById(id);
 
@@ -76,12 +76,13 @@ export class AccountService implements IAccountService {
 
     user.checkLastResendEmail();
 
+    // No tiene sentido hacer aca user.isEmailVerified = true, porque lo hace la bd.
     user.isEmailVerified = true;
 
-    // Habria que setear el nuevo lastReserndEmail y guardarlo en la bd.
+    // ¿Habria que setear el nuevo lastReserndEmail y guardarlo en la bd?.
 
 
-    // Actualzar solamente
+    // Actualzar solamente validateEmail
     await this.userRepository.validateEmail(user.getId());
 
     // Auto enviarme un email de aviso de registro.
