@@ -1,13 +1,14 @@
 import { Bed } from "../domain/entities/Bed";
 import { Calendar } from "../domain/entities/Calendar";
 import { Reservation } from "../domain/entities/Reservation";
-import { BedOccupancyRepository } from "../domain/ports/IBedOccupancyRepository";
+import { IBedOccupancyRepository } from "../domain/ports/IBedOccupancyRepository";
 import { IRoomTypeRepository } from "../domain/ports/IRoomTypeRepository";
 import { SelectedRoom } from "../domain/value-objects/SelectedRoom";
+import { addDays } from "../utils/dateUtils";
 
 export class BedOccupancyService {
   constructor(
-    private bedOccupancyRepository: BedOccupancyRepository,
+    private bedOccupancyRepository: IBedOccupancyRepository,
     private roomTypeRepository: IRoomTypeRepository,
   ) {
     this.bedOccupancyRepository = bedOccupancyRepository;
@@ -29,7 +30,7 @@ export class BedOccupancyService {
       const beds = roomType.getBeds();
 
       let availableBeds: Array<Bed> = [...beds];
-      for (let date = reservation.checkIn.getTime(); date < reservation.checkOut.getTime(); date = calendar.nextDay(date)) {
+      for (let date = reservation.checkIn.getTime(); date < reservation.checkOut.getTime(); date = addDays(new Date(date), 1).getTime()) {
         const day = calendar.getDay(roomTypeId, date);
 
         day.checkRoomsToSell(qty);
@@ -48,7 +49,7 @@ export class BedOccupancyService {
       const assignedBeds = availableBeds.slice(0, qty);
 
       for (const bed of assignedBeds) {
-        for (let date = reservation.checkIn.getTime(); date < reservation.checkOut.getTime(); date = calendar.nextDay(date)) {
+        for (let date = reservation.checkIn.getTime(); date < reservation.checkOut.getTime(); date = addDays(new Date(date), 1).getTime()) {
           let dayOccupancy = occupiedBedsTimeline.get(date);
           if (!dayOccupancy) {
             dayOccupancy = new Map();
