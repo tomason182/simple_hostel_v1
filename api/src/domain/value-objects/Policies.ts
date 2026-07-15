@@ -6,10 +6,10 @@ import { PaymentPolicies } from "./PaymentPolicies";
 
 export class Policies {
   constructor(
-    public general: GeneralPolicies,
-    public payment: PaymentPolicies,
-    public minor: MinorPolicies,
-    public other: OtherPolicies,
+    public general: GeneralPolicies | null,
+    public payment: PaymentPolicies | null,
+    public minor: MinorPolicies | null,
+    public other: OtherPolicies | null,
   ) {
     this.general = general;
     this.payment = payment;
@@ -19,10 +19,10 @@ export class Policies {
 
   public toDTO(): PoliciesDTO {
     return {
-      general: this.general.toDTO(),
-      payment: this.payment.toDTO(),
-      minor: this.minor.toDTO(),
-      other: this.other.toDTO()
+      general: this.general ? this.general.toDTO() : null,
+      payment: this.payment ? this.payment.toDTO() : null,
+      minor: this.minor ? this.minor.toDTO() : null,
+      other: this.other ? this.other.toDTO() : null
     }
   }
 

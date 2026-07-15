@@ -105,12 +105,12 @@ export class PropertyService implements IPropertyService {
     let paymentPolicies = await this.propertyRepository.getPaymentPolicies(propertyId);
 
     if (!paymentPolicies) {
-      paymentPolicies = PaymentPolicies.fromDTO(paymentPolicies, userId)
+      paymentPolicies = PaymentPolicies.fromDTO(paymentPoliciesDTO, userId)
     } else {
       paymentPolicies.update(paymentPoliciesDTO, userId);
     }
 
-    await this.propertyRepository.savePayementPolicies(propertyId, paymentPolicies);
+    await this.propertyRepository.savePaymentPolicies(propertyId, paymentPolicies);
 
     return paymentPolicies.toDTO();
   }

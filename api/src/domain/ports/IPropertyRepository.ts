@@ -10,7 +10,7 @@ import { Policies } from "../value-objects/Policies";
 export interface IPropertyRepository {
   save(property: Property): Promise<Property>;
 
-  findById(property: number): Promise<Property>;
+  findById(property: number): Promise<Property | null>;
 
   updateDescription(property: Property): Promise<void>;
 
@@ -19,23 +19,23 @@ export interface IPropertyRepository {
   saveContactInfo(propertyId: number, contactInfo: ContactInfo): Promise<void>;
 
   // Address
-  getAddress(propertyId: number): Promise<Address>;
-  saveAddress(propertyId: number, address: Address): Promise<Address>;
+  getAddress(propertyId: number): Promise<Address | null>;
+  saveAddress(propertyId: number, address: Address): Promise<void>;
 
   // Policies
-  getPolicies(propertyId: number): Promise<Policies>
+  getPolicies(propertyId: number): Promise<Policies | null>
 
-  getGeneralPolicies(propertyId: number): Promise<GeneralPolicies>;
-  saveGeneralPolicies(propertyId: number, general: GeneralPolicies): Promise<GeneralPolicies>;
+  getGeneralPolicies(propertyId: number): Promise<GeneralPolicies | null>;
+  saveGeneralPolicies(propertyId: number, general: GeneralPolicies): Promise<void>;
 
-  getPaymentPolicies(propertyId: number): Promise<PaymentPolicies>;
-  savePayementPolicies(propertyId: number, paymentPolicies: PaymentPolicies): Promise<PaymentPolicies>;
+  getPaymentPolicies(propertyId: number): Promise<PaymentPolicies | null>;
+  savePaymentPolicies(propertyId: number, paymentPolicies: PaymentPolicies): Promise<void>;
 
-  getMinorPolicies(propertyId: number): Promise<MinorPolicies>;
-  saveMinorPolicies(propertyId: number, minorPolicies: MinorPolicies): Promise<MinorPolicies>;
+  getMinorPolicies(propertyId: number): Promise<MinorPolicies | null>;
+  saveMinorPolicies(propertyId: number, minorPolicies: MinorPolicies): Promise<void>;
 
-  getOtherPolicies(propertyId: number): Promise<OtherPolicies>;
-  saveOtherPolicies(propertyId: number, otherPolicies: OtherPolicies): Promise<OtherPolicies>;
+  getOtherPolicies(propertyId: number): Promise<OtherPolicies | null>;
+  saveOtherPolicies(propertyId: number, otherPolicies: OtherPolicies): Promise<void>;
 
 
 
