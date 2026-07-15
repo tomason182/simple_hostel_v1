@@ -4,7 +4,7 @@ export class Guest {
   private status: Status = "ACTIVE";
 
   constructor(
-    public id: number | null,
+    private id: number | null,
     public propertyId: number,
     public firstName: string,
     public lastName: string,
@@ -92,10 +92,11 @@ export class Guest {
     this.status = status;
   }
 
-  public getId(): number {
-    if (this.id === null) {
-      throw new Error("NULL_ID");
-    }
+  public getId(): number | null {
     return this.id
+  }
+
+  public setId(id: number): void {
+    this.id = id;
   }
 }
