@@ -2,15 +2,15 @@ import { GeneralPoliciesDTO } from "../dto/PoliciesDTO";
 
 export class GeneralPolicies {
   constructor(
-    public minLengthStay: number,
+    public minLengthStay: number | null,
     public maxLengthStay: number | null,
-    public minAdvanceBooking: number,
-    public checkInFrom: string,
+    public minAdvanceBooking: number | null,
+    public checkInFrom: string | null,
     public checkOutFrom: string | null,
     public checkInUntil: string | null,
-    public checkOutUntil: string,
-    public updatedAt: Date,
-    public updatedBy: number
+    public checkOutUntil: string | null,
+    public updatedAt: Date | null,
+    public updatedBy: number | null,
 
   ) {
     this.minLengthStay = minLengthStay;
@@ -23,7 +23,8 @@ export class GeneralPolicies {
     this.updatedAt = updatedAt;
     this.updatedBy = updatedBy;
 
-    if (minLengthStay < 0 || maxLengthStay !== null && maxLengthStay < 0 || minAdvanceBooking < 0) {
+
+    if (minLengthStay !== null && minLengthStay < 0 || maxLengthStay !== null && maxLengthStay < 0 || minAdvanceBooking !== null && minAdvanceBooking < 0 && minAdvanceBooking !== null) {
       throw new Error("GeneralPolicies Error: Values must be non-negative numbers");
     }
   }

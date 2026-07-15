@@ -2,13 +2,13 @@ import { OtherPoliciesDTO } from "../dto/PoliciesDTO";
 
 export class OtherPolicies {
   constructor(
-    public quietHoursFrom: string,
-    public quietHoursUntil: string,
-    public hasSmookingAreas: boolean,
-    public allowExternalGuest: boolean,
-    public allowPets: boolean,
-    public updatedAt: Date,
-    public updatedBy: number
+    public quietHoursFrom: string | null,
+    public quietHoursUntil: string | null,
+    public hasSmookingAreas: boolean | null,
+    public allowExternalGuest: boolean | null,
+    public allowPets: boolean | null,
+    public updatedAt: Date | null,
+    public updatedBy: number | null
   ) {
     this.quietHoursFrom = quietHoursFrom;
     this.quietHoursUntil = quietHoursUntil;

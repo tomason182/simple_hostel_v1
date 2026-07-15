@@ -2,13 +2,13 @@ import { MinorPoliciesDTO } from "../dto/PoliciesDTO";
 
 export class MinorPolicies {
   constructor(
-    public minCheckInAge: number,
-    public acceptChildren: boolean,
-    public minorsAdultSupervision: boolean,
-    public minChildAge: number,
-    public freeStayAge: number,
-    public updatedAt: Date,
-    public updatedBy: number
+    public minCheckInAge: number | null,
+    public acceptChildren: boolean | null,
+    public minorsAdultSupervision: boolean | null,
+    public minChildAge: number | null,
+    public freeStayAge: number | null,
+    public updatedAt: Date | null,
+    public updatedBy: number | null
   ) {
     this.minCheckInAge = minCheckInAge;
     this.acceptChildren = acceptChildren;
@@ -18,7 +18,7 @@ export class MinorPolicies {
     this.updatedAt = updatedAt;
     this.updatedBy = updatedBy;
 
-    if (minCheckInAge < 0 || minChildAge < 0 || freeStayAge < 0) {
+    if (minCheckInAge !== null && minCheckInAge < 0 || minChildAge !== null && minChildAge < 0 || freeStayAge !== null && freeStayAge < 0) {
       throw new Error("MinorPolicies Error: Ages must be non-negative");
     }
   };

@@ -1,39 +1,39 @@
 export interface PoliciesDTO {
-  general: GeneralPoliciesDTO;
-  payment: PaymentPoliciesDTO;
-  minor: MinorPoliciesDTO;
-  other: OtherPoliciesDTO;
+  general: GeneralPoliciesDTO | null;
+  payment: PaymentPoliciesDTO | null;
+  minor: MinorPoliciesDTO | null;
+  other: OtherPoliciesDTO | null;
 }
 
 export interface GeneralPoliciesDTO {
-  minLengthStay: number;
+  minLengthStay: number | null;
   maxLengthStay: number | null;
-  minAdvanceBooking: number;
-  checkInFrom: string;
+  minAdvanceBooking: number | null;
+  checkInFrom: string | null;
   checkOutFrom: string | null;
   checkInUntil: string | null;
-  checkOutUntil: string;
+  checkOutUntil: string | null;
 };
 
 export interface PaymentPoliciesDTO {
-  advancePaymentRequired: boolean;
-  depositAmount: number;
+  advancePaymentRequired: boolean | null;
+  depositAmount: number | null;
 };
 
 export interface MinorPoliciesDTO {
-  minCheckInAge: number;
-  acceptChildren: boolean;
-  minorsAdultSupervision: boolean;
-  minChildAge: number;
-  freeStayAge: number;
+  minCheckInAge: number | null;
+  acceptChildren: boolean | null;
+  minorsAdultSupervision: boolean | null;
+  minChildAge: number | null;
+  freeStayAge: number | null;
 };
 
 export interface OtherPoliciesDTO {
-  quietHoursFrom: string;
-  quietHoursUntil: string;
-  hasSmookingAreas: boolean;
-  allowExternalGuest: boolean;
-  allowPets: boolean;
+  quietHoursFrom: string | null;
+  quietHoursUntil: string | null;
+  hasSmookingAreas: boolean | null;
+  allowExternalGuest: boolean | null;
+  allowPets: boolean | null;
 };
 
 

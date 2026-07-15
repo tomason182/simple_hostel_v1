@@ -2,15 +2,15 @@ import { PaymentPoliciesDTO } from "../dto/PoliciesDTO";
 
 export class PaymentPolicies {
   constructor(
-    public advancePaymentRequired: boolean,
-    public depositAmount: number,
-    public updatedAt: Date,
-    public updatedBy: number,
+    public advancePaymentRequired: boolean | null,
+    public depositAmount: number | null,
+    public updatedAt: Date | null,
+    public updatedBy: number | null,
   ) {
     this.advancePaymentRequired = advancePaymentRequired;
     this.depositAmount = depositAmount;
 
-    if (depositAmount < 0) {
+    if (depositAmount !== null && depositAmount < 0) {
       throw new Error("PaymentPolicies Error: Deposit amount must be a positive number");
     }
   }
