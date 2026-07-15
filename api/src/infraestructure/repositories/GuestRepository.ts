@@ -81,4 +81,63 @@ export class GuestRepository implements IGuestRepository {
 
     return guest;
   }
+
+  async findById(guestId: number): Promise<Guest | null> {
+    const query = "SELECT * FROM guest WHERE guest_id = $1;";
+    const result = await this.uow.query(query, [guestId]);
+
+    const data = result.rows[0];
+    if (!data) {
+      return null;
+    }
+
+    return new Guest(
+      data.id,
+      data.property_id,
+      data.first_name,
+      data.last_name,
+      data.id_number,
+      data.email,
+      data.phone_number,
+      data.phone_code,
+      data.street,
+      data.city,
+      data.country,
+      data.alpha_2_code,
+      data.created_by,
+      data.updated_by,
+      data.created_at,
+      data.updated_at
+    );
+  }
+
+  async findByEmail(email: string): Promise<Guest | null> {
+    const query = "SELECT * FROM guest WHERE email = $1;";
+
+    const result = await this.uow.query(query, [email]);
+    const data = result.rows[0];
+
+    if (!data) {
+      return null
+    }
+
+    return new Guest(
+      data.id,
+      data.property_id,
+      data.first_name,
+      data.last_name,
+      data.id_number,
+      data.email,
+      data.phone_number,
+      data.phone_code,
+      data.street,
+      data.city,
+      data.country,
+      data.alpha_2_code,
+      data.created_by,
+      data.updated_by,
+      data.created_at,
+      data.updated_at
+    );
+  }
 }
