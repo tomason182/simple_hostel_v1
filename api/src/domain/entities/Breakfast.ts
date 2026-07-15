@@ -2,14 +2,14 @@ import { BreakfastDTO } from "../dto/BreakfastDTO";
 
 export class Breakfast {
   constructor(
-    private propertyId: number,
-    private isIncluded: boolean | null,
-    private isServed: boolean | null,
-    private price: number | null,
-    private from: string | null,
-    private to: string | null,
-    private updatedBy: number,
-    private updatedAt: Date
+    public propertyId: number,
+    public isIncluded: boolean | null,
+    public isServed: boolean | null,
+    public price: number | null,
+    public from: string | null,
+    public to: string | null,
+    public updatedBy: number,
+    public updatedAt: Date
   ) {
     this.propertyId = propertyId;
     this.isIncluded = isIncluded;
