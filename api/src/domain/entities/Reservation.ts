@@ -3,6 +3,7 @@ import { Currencies } from "../value-objects/Currencies";
 import { PaymentPolicies } from "../value-objects/PaymentPolicies";
 import { SelectedRoom } from "../value-objects/SelectedRoom";
 import { Calendar } from "./Calendar";
+import { addDays } from "../../utils/dateUtils";
 export type BookingSource = "BOOK_ENGINE" | "DIRECT" | "BOOKING.COM" | "HOSTELWORD.COM";
 export type ReservationStatus = "CONFIRMED" | "PENDING" | "CANCELED";
 export type PaymentStatus = "PARTIAL" | "FULL_PAID" | "PENDING";
@@ -91,7 +92,7 @@ export class Reservation {
     for (const selectedRoom of this.selectedRooms) {
       const roomTypeId = selectedRoom.getRoomTypeId();
       const qty = selectedRoom.getQuantity();
-      for (let date = this.checkIn.getTime(); date < this.checkOut.getTime(); date = calendar.nextDay(date)) {
+      for (let date = this.checkIn.getTime(); date < this.checkOut.getTime(); date = addDays(new Date(date), 1).getTime()) {
         const day = calendar.getDay(roomTypeId, date);
         const rate = day.getRate();
         total += rate.customRate * qty;
