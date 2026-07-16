@@ -56,23 +56,7 @@ export class GuestRepository implements IGuestRepository {
 
     }
 
-    const result = await this.uow.query(query, [
-      guest.propertyId,
-      guest.firstName,
-      guest.lastName,
-      guest.idNumber,
-      guest.email,
-      guest.phoneNumber,
-      guest.phoneCode,
-      guest.street,
-      guest.city,
-      guest.country,
-      guest.alpa2code,
-      guest.createdBy,
-      guest.createdAt,
-      guest.updatedBy,
-      guest.updatedAt
-    ]);
+    const result = await this.uow.query(query, params);
 
     if (guestId === null) {
       const id = result.rows[0].id;
