@@ -26,6 +26,18 @@ export class Room {
 
   }
 
+  public getId(): number | null {
+    return this.id;
+  }
+
+  public setId(id: number) {
+    this.id = id;
+  }
+
+  public getName(): string {
+    return this.name
+  }
+
   public getBeds(): Array<Bed> {
     return [...this.beds];
   }

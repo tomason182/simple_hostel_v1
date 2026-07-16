@@ -6,8 +6,8 @@ export class Bed {
 
   constructor(
     private id: number | null,
-    private bedNumber: number,
-    private bedType: BedType,
+    public bedNumber: number,
+    public bedType: BedType,
   ) {
     this.id = id;
     this.bedNumber = bedNumber;
@@ -28,6 +28,9 @@ export class Bed {
       throw new Error("BED_ID_NOT_ADDED");
     }
     return this.id;
+  }
+  public setId(id: number) {
+    this.id = id;
   }
 
   public changeBedType(bedType: BedType): void {

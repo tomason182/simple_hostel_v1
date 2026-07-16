@@ -8,11 +8,11 @@ export class RoomType {
   private isActive: boolean = true;
   constructor(
     private id: number | null,
-    private propertyId: number,
-    private description: string,
-    private type: RoomTypeLiteral,
-    private gender: Gender,
-    private rooms: Array<Room>,
+    public propertyId: number,
+    public description: string,
+    public type: RoomTypeLiteral,
+    public gender: Gender,
+    public rooms: Array<Room>,
   ) {
     this.id = id;
     this.propertyId = propertyId;
@@ -59,6 +59,14 @@ export class RoomType {
       throw new Error("NO_ROOM_TYPE_ID");
     }
     return this.id;
+  }
+
+  public setId(id: number) {
+    this.id = id;
+  }
+
+  public getRooms(): ReadonlyArray<Room> {
+    return [...this.rooms];
   }
 
   public getBeds(): ReadonlyArray<Bed> {
