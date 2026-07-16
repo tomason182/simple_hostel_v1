@@ -93,16 +93,4 @@ export class ReservationRepository implements IReservationRepository {
     return reservation;
   }
 
-  async hasUpcomingReservations(roomTypeId: number, today: Date): Promise<boolean> {
-
-  }
-
-  async getReservationsByPeriodAndRooms(propertyId: number, roomTypes: Array<SelectedRoom>, checkIn: Date, checkOut: Date): Promise<Array<Reservation>> {
-
-  }
-
-  async getReservationsByRoomTypeAndPeriod(roomType: RoomType, firstIn: Date, lastOut: Date): Promise<Array<Reservation>> {
-
-  }
-
 }

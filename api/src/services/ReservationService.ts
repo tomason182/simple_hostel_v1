@@ -33,10 +33,13 @@ export class ReservationService implements IReservationService {
 
   async createReservation(reservationDTO: ReservationDTO, guestDTO: GuestDTO, userId: number, propertyId: number): Promise<{ msg: string; }> {
     // 1. Crear el huesped y guardarlo.
-    const guest = Guest.fromDTO(guestDTO, userId);
+    const guest = Guest.fromDTO(propertyId, userId, guestDTO);
     await this.guestRepository.save(guest);
 
     const guestId = guest.getId();
+    if (guestId === null) {
+      throw new Error("GUEST_ID_NOT_SET")
+    }
 
     // 2. Buscar politicas de pago y monedas.
     const currencies = await this.currenciesRepository.get(propertyId);
