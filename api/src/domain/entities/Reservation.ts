@@ -105,13 +105,22 @@ export class Reservation {
     this.totalAmount = amount;
   }
 
+  public getTotalAmount(): number {
+    return this.totalAmount;
+  }
+
+  public getAdvancePaymentAmount(): number {
+    return this.advancePaymentAmount;
+  }
+
   // Getters y Setters.
-  public getId(): number {
-    if (!this.id) {
-      throw new Error("ID_NOT_SET");
-    }
+  public getId(): number | null {
     return this.id
   };
+
+  public setId(id: number): void {
+    this.id = id;
+  }
 
   public getSelectedRooms(): Array<SelectedRoom> {
     return this.selectedRooms;
