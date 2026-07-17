@@ -69,6 +69,10 @@ export class RoomType {
     return [...this.rooms];
   }
 
+  public setRoom(room: Room): void {
+    this.rooms.push(room);
+  }
+
   public getBeds(): ReadonlyArray<Bed> {
     return this.rooms.flatMap(room => room.getBeds());
 

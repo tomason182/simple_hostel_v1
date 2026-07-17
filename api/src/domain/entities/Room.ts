@@ -41,4 +41,5 @@ export class Room {
   public getBeds(): Array<Bed> {
     return [...this.beds];
   }
+
 }
