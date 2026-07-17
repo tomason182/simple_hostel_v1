@@ -20,7 +20,7 @@ export class BreakfastAndMealRepository implements IBreakfastAndMealRepository {
     return new Breakfast(data.property_id, data.is_inclueded, data.is_served, data.price, data.from, data.to, data.updated_by, data.updated_at);
   }
 
-  async save(propertyId: number, breakfast: Breakfast): Promise<void> {
+  async save(breakfast: Breakfast): Promise<void> {
     const query = `INSERT INTO breakfast (property_id, is_inclueded, is_served, price, from, to, updated_by, updated_at) 
                     VALUES ($1, $2, $3, $4, $5, $6, $7)
                     ON CONFLICT (property_id) 
@@ -34,7 +34,7 @@ export class BreakfastAndMealRepository implements IBreakfastAndMealRepository {
                     updated_at = EXCLUDED.updated_at;`;
 
     await this.uow.query(query, [
-      propertyId,
+      breakfast.propertyId,
       breakfast.isIncluded,
       breakfast.isServed,
       breakfast.price,
