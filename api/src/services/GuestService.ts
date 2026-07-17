@@ -1,31 +1,40 @@
 import { GuestDTO } from "../domain/dto/GuestDTO";
 import { Guest } from "../domain/entities/Guest";
+import { IGuestService } from "../domain/interfaces/IGuestService";
 import { IGuestRepository } from "../domain/ports/IGuestRepository";
 import { IPropertyRepository } from "../domain/ports/IPropertyRepository";
 
-export class GuestService {
+export class GuestService implements IGuestService {
   constructor(
     private readonly guestRepository: IGuestRepository, private readonly propertyRepository: IPropertyRepository) {
     this.guestRepository = guestRepository;
     this.propertyRepository = propertyRepository;
   }
 
-  public async create(propertyId: number, userId: number, guestDTO: GuestDTO): Promise<void> {
+  public async create(propertyId: number, userId: number, guestDTO: GuestDTO): Promise<Guest> {
     if (!this.propertyRepository.findById(propertyId)) {
       throw new Error("PROPERTY_NOT_FOUND");
     };
 
-    const guest = Guest.fromDTO(propertyId, userId, guestDTO);
+    let guest = Guest.fromDTO(propertyId, userId, guestDTO);
 
     // Chequear que el huesped no exista.
     if (!this.guestRepository.findByEmail(guest.email)) {
       throw new Error("GUEST_ALREADY_EXIST");
     }
 
-    await this.guestRepository.save(guest);
+    guest = await this.guestRepository.save(guest);
+
+    return guest;
   }
 
-  public async update(guestId: number, userId: number, guestDTO: GuestDTO) {
+  public async update(userId: number, guestDTO: GuestDTO): Promise<GuestDTO> {
+    const guestId = guestDTO.id;
+
+    if (!guestId) {
+      throw new Error("NO_GUEST_ID_PROVIDED");
+    }
+
     let guest = await this.guestRepository.findById(guestId)
     if (!guest) {
       throw new Error("GUEST_NOT_FOUND");
@@ -33,7 +42,9 @@ export class GuestService {
 
     guest.update(guestId, userId, guestDTO);
 
-    await this.guestRepository.save(guest);
+    guest = await this.guestRepository.save(guest);
+
+    return guest.toDTO();
   }
 
 

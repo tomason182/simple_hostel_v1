@@ -65,6 +65,23 @@ export class Guest {
     )
   }
 
+  public toDTO(): GuestDTO {
+    return {
+      id: this.id,
+      propertyId: this.propertyId,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      idNumber: this.idNumber,
+      email: this.email,
+      phoneNumber: this.phoneNumber,
+      phoneCode: this.phoneCode,
+      street: this.street,
+      city: this.city,
+      country: this.country,
+      alpa2code: this.alpa2code
+    }
+  }
+
   public update(guestId: number, userId: number, dto: GuestDTO) {
     const updatedBy = userId;
     const updatedAt = new Date();

@@ -1,4 +1,6 @@
 export interface GuestDTO {
+  id: number | null,
+  propertyId: number,
   firstName: string,
   lastName: string,
   idNumber: string,
