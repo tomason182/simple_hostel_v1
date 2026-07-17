@@ -10,17 +10,30 @@ export class AccountService {
   }
 
   // 1. Crear cuenta.
-  public async CreateAccount(req: Request, res: Response, next: NextFunction) {
+  public async createAccount(req: Request, res: Response, next: NextFunction) {
     try {
       const { username, password, firstname, propertyName } = req.body;
 
       const result = await this.accountService.createAccount(username, password, firstname, propertyName);
 
-      return res.status(200).json({ msg: result });
+      return res.status(200).json(result);
     } catch (err) {
       next(err);
     }
 
+  }
+
+  // 2. Validar cuenta.
+  public async validateAccount(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { token } = req.body;
+
+      const result = await this.accountService.validateAccount(token);
+
+      return res.status(200).json(result);
+    } catch (err) {
+      next(err)
+    }
   }
 
   // 2. Eliminar cuenta.

@@ -51,7 +51,7 @@ export class AccountService implements IAccountService {
     await this.emailService.validateAccountEmail(user, property, accessControl);
 
     return {
-      msg: "USER_REGISTER_SUCCESSFULLY"
+      msg: "USER_REGISTER_SUCCESS"
     }
   }
 
