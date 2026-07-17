@@ -2,6 +2,7 @@ import { OtherPoliciesDTO } from "../dto/PoliciesDTO";
 
 export class OtherPolicies {
   constructor(
+    public propertyId: number,
     public quietHoursFrom: string | null,
     public quietHoursUntil: string | null,
     public hasSmookingAreas: boolean | null,
@@ -10,6 +11,7 @@ export class OtherPolicies {
     public updatedAt: Date | null,
     public updatedBy: number | null
   ) {
+    this.propertyId = propertyId;
     this.quietHoursFrom = quietHoursFrom;
     this.quietHoursUntil = quietHoursUntil;
     this.hasSmookingAreas = hasSmookingAreas;
@@ -21,6 +23,7 @@ export class OtherPolicies {
 
   static fromDTO(dto: OtherPoliciesDTO, userId: number): OtherPolicies {
     return new OtherPolicies(
+      dto.propertyId,
       dto.quietHoursFrom,
       dto.quietHoursUntil,
       dto.hasSmookingAreas,
@@ -33,6 +36,7 @@ export class OtherPolicies {
 
   public toDTO(): OtherPoliciesDTO {
     return ({
+      propertyId: this.propertyId,
       quietHoursFrom: this.quietHoursFrom,
       quietHoursUntil: this.quietHoursUntil,
       hasSmookingAreas: this.hasSmookingAreas,
@@ -50,5 +54,4 @@ export class OtherPolicies {
     new Date();
     userId
   }
-
 }

@@ -18,7 +18,7 @@ export class PoliciesService implements IPoliciesService {
   }
 
   // Policies.
-  async updateGeneralPolicies(propertyId: number, userId: number, generalPoliciesDTO: GeneralPoliciesDTO): Promise<{ msg: string; }> {
+  async saveOrUpdateGeneralPolicies(userId: number, generalPoliciesDTO: GeneralPoliciesDTO): Promise<GeneralPoliciesDTO> {
     const accessControl = await this.accessControlRepository.findUser(userId);
 
     // Chequear que el rol permita cambios en GeneralPolicies.
@@ -26,55 +26,55 @@ export class PoliciesService implements IPoliciesService {
       throw new Error("PERMITION_DENIED");
     }
 
-    const generalPolicies = GeneralPolicies.fromDTO(generalPoliciesDTO, userId);
+    let generalPolicies = GeneralPolicies.fromDTO(generalPoliciesDTO, userId);
 
-    await this.policiesRepository.saveGeneralPolicies(propertyId, generalPolicies);
+    generalPolicies = await this.policiesRepository.saveGeneralPolicies(generalPolicies);
 
-    return { msg: "PROPERTY_UPDATED_SUCCESFULLY" };
+    return generalPolicies.toDTO();
 
   }
 
-  async updateMinorPolicies(propertyId: number, userId: number, minorPoliciesDTO: MinorPoliciesDTO): Promise<{ msg: string }> {
+  async saveOrUpdateMinorPolicies(userId: number, minorPoliciesDTO: MinorPoliciesDTO): Promise<MinorPoliciesDTO> {
     const accessControl = await this.accessControlRepository.findUser(userId);
 
     if (!accessControl.canEditPolicies()) {
       throw new Error("PERMITION_DENIED")
     }
 
-    const minorPolicies = MinorPolicies.fromDTO(minorPoliciesDTO, userId);
+    let minorPolicies = MinorPolicies.fromDTO(minorPoliciesDTO, userId);
 
-    await this.policiesRepository.saveMinorPolicies(propertyId, minorPolicies);
+    minorPolicies = await this.policiesRepository.saveMinorPolicies(minorPolicies);
 
-    return { msg: "PROPERTY_UPDATED_SUCCESFULLY" }
+    return minorPolicies.toDTO();
 
   }
 
-  async updateOtherPolicies(propertyId: number, userId: number, otherPoliciesDTO: OtherPoliciesDTO): Promise<{ msg: string }> {
+  async saveOrUpdateOtherPolicies(userId: number, otherPoliciesDTO: OtherPoliciesDTO): Promise<OtherPoliciesDTO> {
     const accessControl = await this.accessControlRepository.findUser(userId);
 
     if (!accessControl.canEditPolicies()) {
       throw new Error("PERMITION_DENIED");
     }
 
-    const otherPolicies = OtherPolicies.fromDTO(otherPoliciesDTO, userId);
+    let otherPolicies = OtherPolicies.fromDTO(otherPoliciesDTO, userId);
 
-    await this.policiesRepository.saveOtherPolicies(propertyId, otherPolicies);
+    otherPolicies = await this.policiesRepository.saveOtherPolicies(otherPolicies);
 
-    return { msg: "PROPERTY_UPDATED_SUCCESFULLY" }
+    return otherPolicies.toDTO();
   }
 
 
-  async updatePaymentPolicies(propertyId: number, userId: number, paymentPoliciesDTO: PaymentPoliciesDTO): Promise<{ msg: string }> {
+  async saveOrUpdatePaymentPolicies(userId: number, paymentPoliciesDTO: PaymentPoliciesDTO): Promise<PaymentPoliciesDTO> {
     const accessControl = await this.accessControlRepository.findUser(userId);
 
     if (!accessControl.canEditPolicies()) {
       throw new Error("PERMITION_DENIED");
     }
 
-    const paymentPolicies = PaymentPolicies.fromDTO(paymentPoliciesDTO, userId);
+    let paymentPolicies = PaymentPolicies.fromDTO(paymentPoliciesDTO, userId);
 
-    await this.policiesRepository.savePaymentPolicies(propertyId, paymentPolicies);
+    paymentPolicies = await this.policiesRepository.savePaymentPolicies(paymentPolicies);
 
-    return { msg: "PROPERTY_UPDATED_SUCCESFULLY" };
+    return paymentPolicies.toDTO();
   }
 }

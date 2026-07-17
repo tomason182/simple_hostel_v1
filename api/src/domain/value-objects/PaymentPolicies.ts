@@ -2,6 +2,7 @@ import { PaymentPoliciesDTO } from "../dto/PoliciesDTO";
 
 export class PaymentPolicies {
   constructor(
+    public propertyId: number,
     public advancePaymentRequired: boolean | null,
     public depositAmount: number | null,
     public updatedAt: Date | null,
@@ -16,11 +17,12 @@ export class PaymentPolicies {
   }
 
   static fromDTO(dto: PaymentPoliciesDTO, userId: number): PaymentPolicies {
-    return new PaymentPolicies(dto.advancePaymentRequired, dto.depositAmount, new Date(), userId)
+    return new PaymentPolicies(dto.propertyId, dto.advancePaymentRequired, dto.depositAmount, new Date(), userId)
   }
 
   public toDTO(): PaymentPoliciesDTO {
     return ({
+      propertyId: this.propertyId,
       advancePaymentRequired: this.advancePaymentRequired,
       depositAmount: this.depositAmount
     });
@@ -32,6 +34,5 @@ export class PaymentPolicies {
     this.updatedAt = new Date();
     this.updatedBy = userId;
   }
-
 
 }

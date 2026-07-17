@@ -2,6 +2,7 @@ import { GeneralPoliciesDTO } from "../dto/PoliciesDTO";
 
 export class GeneralPolicies {
   constructor(
+    public propertyId: number,
     public minLengthStay: number | null,
     public maxLengthStay: number | null,
     public minAdvanceBooking: number | null,
@@ -13,6 +14,7 @@ export class GeneralPolicies {
     public updatedBy: number | null,
 
   ) {
+    this.propertyId = propertyId;
     this.minLengthStay = minLengthStay;
     this.maxLengthStay = maxLengthStay;
     this.minAdvanceBooking = minAdvanceBooking;
@@ -31,6 +33,7 @@ export class GeneralPolicies {
 
   static fromDTO(dto: GeneralPoliciesDTO, userId: number): GeneralPolicies {
     return new GeneralPolicies(
+      dto.propertyId,
       dto.minLengthStay,
       dto.maxLengthStay,
       dto.minAdvanceBooking,
@@ -45,6 +48,7 @@ export class GeneralPolicies {
   public toDTO(): GeneralPoliciesDTO {
     return (
       {
+        propertyId: this.propertyId,
         minLengthStay: this.minLengthStay,
         maxLengthStay: this.maxLengthStay,
         minAdvanceBooking: this.minAdvanceBooking,
@@ -67,4 +71,9 @@ export class GeneralPolicies {
     this.updatedAt = new Date();
     this.updatedBy = userId;
   }
+
+  // ===================================
+  // Getters and Getters
+  // ===================================
+
 }

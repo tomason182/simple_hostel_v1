@@ -6,6 +6,7 @@ import { PaymentPolicies } from "./PaymentPolicies";
 
 export class Policies {
   constructor(
+    public propertyId: number,
     public general: GeneralPolicies | null,
     public payment: PaymentPolicies | null,
     public minor: MinorPolicies | null,
@@ -19,6 +20,7 @@ export class Policies {
 
   public toDTO(): PoliciesDTO {
     return {
+      propertyId: this.propertyId,
       general: this.general ? this.general.toDTO() : null,
       payment: this.payment ? this.payment.toDTO() : null,
       minor: this.minor ? this.minor.toDTO() : null,

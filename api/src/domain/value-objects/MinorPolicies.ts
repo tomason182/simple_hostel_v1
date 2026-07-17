@@ -2,6 +2,7 @@ import { MinorPoliciesDTO } from "../dto/PoliciesDTO";
 
 export class MinorPolicies {
   constructor(
+    public propertyId: number,
     public minCheckInAge: number | null,
     public acceptChildren: boolean | null,
     public minorsAdultSupervision: boolean | null,
@@ -10,6 +11,7 @@ export class MinorPolicies {
     public updatedAt: Date | null,
     public updatedBy: number | null
   ) {
+    this.propertyId = propertyId
     this.minCheckInAge = minCheckInAge;
     this.acceptChildren = acceptChildren;
     this.minorsAdultSupervision = minorsAdultSupervision;
@@ -25,6 +27,7 @@ export class MinorPolicies {
 
   static fromDTO(dto: MinorPoliciesDTO, userId: number): MinorPolicies {
     return new MinorPolicies(
+      dto.propertyId,
       dto.minCheckInAge,
       dto.acceptChildren,
       dto.minorsAdultSupervision,
@@ -37,6 +40,7 @@ export class MinorPolicies {
 
   public toDTO(): MinorPoliciesDTO {
     return ({
+      propertyId: this.propertyId,
       minCheckInAge: this.minCheckInAge,
       acceptChildren: this.acceptChildren,
       minorsAdultSupervision: this.minorsAdultSupervision,
@@ -54,5 +58,6 @@ export class MinorPolicies {
     this.updatedAt = new Date();
     this.updatedBy = userId;
   }
+
 }
 
