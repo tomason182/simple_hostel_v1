@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { IAccountService } from "../domain/interfaces/IAccountService"
 
 
-export class AccountService {
+export class AccountController {
   private readonly accountService: IAccountService;
 
   constructor(accountService: IAccountService) {
