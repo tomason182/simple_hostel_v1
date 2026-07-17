@@ -17,6 +17,11 @@ export class BedOccupancyService {
 
   public async assignBeds(reservation: Reservation, calendar: Calendar): Promise<Map<number, Map<number, number>>> {
 
+    const id = reservation.getId();
+    if (!id) {
+      throw new Error("NO_ID_SETUP_FOR_RESERVATION");
+    }
+
     let occupiedBedsTimeline = new Map<number, Map<number, number>>();
     for (const selectedRoom of reservation.selectedRooms) {
       const roomTypeId = selectedRoom.getRoomTypeId();
@@ -55,7 +60,7 @@ export class BedOccupancyService {
             dayOccupancy = new Map();
             occupiedBedsTimeline.set(date, dayOccupancy);
           }
-          dayOccupancy.set(bed.getId(), reservation.getId());
+          dayOccupancy.set(bed.getId(), id);
         }
       }
     }
