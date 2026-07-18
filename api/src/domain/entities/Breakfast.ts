@@ -1,4 +1,4 @@
-import { BreakfastDTO } from "../dto/BreakfastDTO";
+import { BreakfastInputDTO, BreakfastOutputDTO } from "../dto/BreakfastDTO";
 
 export class Breakfast {
   constructor(
@@ -8,8 +8,8 @@ export class Breakfast {
     public price: number | null,
     public from: string | null,
     public to: string | null,
-    public updatedBy: number,
-    public updatedAt: Date
+    public updatedBy: number | null,
+    public updatedAt: Date | null
   ) {
     this.propertyId = propertyId;
     this.isIncluded = isIncluded;
@@ -22,15 +22,15 @@ export class Breakfast {
 
   }
 
-  static make(dto: BreakfastDTO, userId: number) {
+  static make(dto: BreakfastInputDTO, userId: number, propertyId: number) {
     const updatedBy = userId;
     const updatedAt = new Date();
-    return new Breakfast(dto.propertyId, dto.isIncluded, dto.isServed, dto.price, dto.from, dto.to, updatedBy, updatedAt)
+    return new Breakfast(propertyId, dto.isIncluded, dto.isServed, dto.price, dto.from, dto.to, updatedBy, updatedAt)
   }
 
-  public update(breakfastDTO: BreakfastDTO, userId: number) {
+  public update(breakfastDTO: BreakfastInputDTO, userId: number, propertyId: number) {
     return new Breakfast(
-      breakfastDTO.propertyId,
+      propertyId,
       breakfastDTO.isIncluded,
       breakfastDTO.isServed,
       breakfastDTO.price,
@@ -39,6 +39,17 @@ export class Breakfast {
       userId,
       new Date(),
     )
-
+  }
+  public toOutPutDTO(): BreakfastOutputDTO {
+    return {
+      propertyId: this.propertyId,
+      isIncluded: this.isIncluded,
+      isServed: this.isServed,
+      price: this.price,
+      from: this.from,
+      to: this.to,
+      updatedBy: this.updatedBy,
+      updatedAt: this.updatedAt
+    }
   }
 }

@@ -13,11 +13,17 @@ export class BreakfastAndMealRepository implements IBreakfastAndMealRepository {
     const result = await this.uow.query(query, [propertyId]);
 
     const data = result.rows[0];
-    if (!data) {
-      return null;
-    };
 
-    return new Breakfast(data.property_id, data.is_inclueded, data.is_served, data.price, data.from, data.to, data.updated_by, data.updated_at);
+    return new Breakfast(
+      propertyId,
+      data.is_inclueded ?? null,
+      data.is_served ?? null,
+      data.price ?? null,
+      data.from ?? null,
+      data.to ?? null,
+      data.updated_by ?? null,
+      data.updated_at ?? null
+    );
   }
 
   async save(breakfast: Breakfast): Promise<void> {

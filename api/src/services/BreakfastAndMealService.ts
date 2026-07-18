@@ -1,15 +1,16 @@
-import { BreakfastDTO } from "../domain/dto/BreakfastDTO";
+import { BreakfastInputDTO, BreakfastOutputDTO } from "../domain/dto/BreakfastDTO";
 import { Breakfast } from "../domain/entities/Breakfast";
+import { IBreakfastAndMealService } from "../domain/interfaces/IBreakfastAndMealService";
 import { IBreakfastAndMealRepository } from "../domain/ports/IBreakfastAndMealRepositry";
 
-export class BreakfastAndMealService {
+export class BreakfastAndMealService implements IBreakfastAndMealService {
   constructor(
     private readonly breakfastRepository: IBreakfastAndMealRepository
   ) {
     this.breakfastRepository = breakfastRepository;
   }
 
-  public async getBreakfastSettigs(propertyId: number): Promise<Breakfast> {
+  public async getBreakfastSettings(propertyId: number): Promise<BreakfastOutputDTO> {
     const breakfast = await this.breakfastRepository.getBreakfastSettings(propertyId);
 
     if (!breakfast) {
@@ -19,19 +20,19 @@ export class BreakfastAndMealService {
     return breakfast;
   }
 
-  public async saveBreakfastSettings(userId: number, breakfastDTO: BreakfastDTO): Promise<BreakfastDTO> {
-    let breakfast = await this.breakfastRepository.getBreakfastSettings(breakfastDTO.propertyId);
+  public async saveOrUpdateBreakfastSettings(propertyId: number, userId: number, breakfastDTO: BreakfastInputDTO): Promise<BreakfastOutputDTO> {
+    let breakfast = await this.breakfastRepository.getBreakfastSettings(propertyId);
 
     if (!breakfast) {
-      breakfast = Breakfast.make(breakfastDTO, userId);
+      breakfast = Breakfast.make(breakfastDTO, userId, propertyId);
 
     } else {
-      breakfast.update(breakfastDTO, userId)
+      breakfast.update(breakfastDTO, userId, propertyId)
     }
 
     await this.breakfastRepository.save(breakfast);
 
-    return breakfastDTO;
+    return breakfast.toOutPutDTO();
 
   }
 }
