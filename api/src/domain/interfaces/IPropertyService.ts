@@ -1,24 +1,25 @@
 import { AddressDTO } from "../dto/AddressDTO";
 import { ContactInfoDTO } from "../dto/ContactInfoDTO";
 import { CurrenciesDTO } from "../dto/CurrenciesDTO";
-import { GeneralPoliciesDTO, MinorPoliciesDTO, OtherPoliciesDTO, PaymentPoliciesDTO, PoliciesDTO } from "../dto/PoliciesDTO";
-import { UserRole } from "../entities/AccessControl";
-import { ContactInfo } from "../value-objects/ContactInfo";
+import { Property } from "../entities/Property";
 
 export interface IPropertyService {
+
+  getProperty(propertyId: number): Promise<Property>;
+
   // facilities
   // getFacilities(propertyId: number): Promise<Array<number>>;
   // updateFacilities(facilities: Array<number>): Promise<{ msg: string }>;
 
   // ContactInfo.
   getContactInfo(propertyId: number): Promise<ContactInfoDTO>;
-  saveAndUpdateContactInfo(propertyId: number, userId: number, contactInfoDTO: ContactInfoDTO): Promise<ContactInfoDTO>
+  saveOrUpdateContactInfo(propertyId: number, userId: number, contactInfoDTO: ContactInfoDTO): Promise<ContactInfoDTO>
 
   // Address.
   getAddress(propertyId: number): Promise<AddressDTO>;
-  saveAndUpdateAddress(propertyId: number, userId: number, addressDTO: AddressDTO): Promise<AddressDTO>;
+  saveOrUpdateAddress(propertyId: number, userId: number, addressDTO: AddressDTO): Promise<AddressDTO>;
 
   // Currencies.
   // getCurrencies(propertyId: number): Promise<CurrenciesDTO>;
-  // updateCurrencies(propertyId: number, userId: number, userRole: UserRole, currenciesDTO: CurrenciesDTO): Promise<{ msg: string }>;
+  saveOrUpdateCurrencies(currenciesDTO: CurrenciesDTO): Promise<CurrenciesDTO>;
 }

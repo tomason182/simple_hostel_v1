@@ -5,6 +5,9 @@ import { IPropertyRepository } from "../domain/ports/IPropertyRepository";
 import { ContactInfo } from "../domain/value-objects/ContactInfo";
 import { AddressDTO } from "../domain/dto/AddressDTO";
 import { Address } from "../domain/value-objects/Address";
+import { CurrenciesDTO } from "../domain/dto/CurrenciesDTO";
+import { Currencies } from "../domain/value-objects/Currencies";
+import { PropertyDTO } from "../domain/dto/PropertyDTO";
 
 export class PropertyService implements IPropertyService {
   propertyRepository: IPropertyRepository;
@@ -15,6 +18,14 @@ export class PropertyService implements IPropertyService {
     this.accessControlRepository = accessControlRepository;
   }
 
+
+  // =========================================================
+  // Property
+  // =========================================================
+  async getProperty(propertyId: number): Promise<PropertyDTO> {
+    const property = await this.propertyRepository.getPropertyBasis(propertyId);
+
+  }
   // =========================================================
   // ContactInfo
   // =========================================================
@@ -28,7 +39,7 @@ export class PropertyService implements IPropertyService {
     return contactInfo.toDTO();
   }
 
-  async saveAndUpdateContactInfo(propertyId: number, userId: number, contactInfoDTO: ContactInfoDTO): Promise<ContactInfoDTO> {
+  async saveOrUpdateContactInfo(propertyId: number, userId: number, contactInfoDTO: ContactInfoDTO): Promise<ContactInfoDTO> {
     let contactInfo = await this.propertyRepository.getContactInfo(propertyId);
 
     if (!contactInfo) {
@@ -54,7 +65,7 @@ export class PropertyService implements IPropertyService {
     return address.toDTO();
   }
 
-  async saveAndUpdateAddress(propertyId: number, userId: number, addressDTO: AddressDTO): Promise<AddressDTO> {
+  async saveOrUpdateAddress(propertyId: number, userId: number, addressDTO: AddressDTO): Promise<AddressDTO> {
     let address = await this.propertyRepository.getAddress(propertyId);
 
     if (!address) {
@@ -66,6 +77,24 @@ export class PropertyService implements IPropertyService {
     await this.propertyRepository.saveAddress(propertyId, address);
 
     return address.toDTO()
+  }
+
+  // ======================================================
+  // Currencies
+  // ======================================================
+  async saverOrUpdateCurrencies(currenciesDTO: CurrenciesDTO): Promise<CurrenciesDTO> {
+    let currencies = await this.propertyRepository.getCurrencies(currenciesDTO.property_id);
+    if (!currencies) {
+      currencies = Currencies.make(currenciesDTO);
+    } else {
+      currencies.update(currenciesDTO);
+    }
+
+    await this.propertyRepository.saveCurrencies(currencies);
+
+
+    return currenciesDTO;
+
   }
 
 }

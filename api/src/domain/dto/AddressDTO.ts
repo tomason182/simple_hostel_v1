@@ -9,6 +9,6 @@ export interface AddressDTO {
   lat: number;
   lon: number;
   osmId: string;
-  updatedBy: number;
-  updatedAt: Date;
+  updatedBy: number | null;
+  updatedAt: Date | null;
 }

@@ -1,14 +1,13 @@
 import { Property } from "../../domain/entities/Property";
-import { IPoliciesRepository } from "../../domain/ports/IPoliciesRepository";
 import { IPropertyRepository } from "../../domain/ports/IPropertyRepository";
 import { Address } from "../../domain/value-objects/Address";
 import { ContactInfo } from "../../domain/value-objects/ContactInfo";
+import { Currencies } from "../../domain/value-objects/Currencies";
 import { UnitOfWork } from "../transactions/UnitOfWork";
 
 export class PropertyRepository implements IPropertyRepository {
-  constructor(private readonly uow: UnitOfWork, private readonly policiesRepository: IPoliciesRepository) {
+  constructor(private readonly uow: UnitOfWork) {
     this.uow = uow;
-    this.policiesRepository = policiesRepository;
   }
 
   async save(property: Property): Promise<Property> {
@@ -35,24 +34,6 @@ export class PropertyRepository implements IPropertyRepository {
 
     property.setId(id);
     return property;
-  }
-
-  async findById(propertyId: number): Promise<Property | null> {
-    const query = "SELECT * FROM property WHERE property_id = $1;";
-    const result = await this.uow.query(query, [propertyId]);
-    const data = result.rows[0];
-
-    if (!data) {
-      return null;
-    };
-
-    const address = await this.getAddress(propertyId);
-    const contactInfo = await this.getContactInfo(propertyId);
-    const policies = await this.policiesRepository.getPolicies(propertyId);
-    const profileStatus = "INCOMPLETE";   // Aca se comprueba si el perfil esta completo o no.
-
-    return new Property(data.id, data.property_name, address, contactInfo, policies, null, data.description, data.created_at, data.updated_at, data.status, profileStatus)
-
   }
 
   async updateDescription(property: Property): Promise<void> {
@@ -201,4 +182,56 @@ export class PropertyRepository implements IPropertyRepository {
     ]);
 
   }
+
+  // ============================================
+  // Currencies
+  // ============================================
+  async getCurrencies(propertyId: number): Promise<Currencies> {
+    const query = "SELECT * FROM currencies WHERE property_id = $1;";
+
+    const result = await this.uow.query(query, [propertyId]);
+    const data = result.rows[0];
+
+    const currencies = new Currencies();
+    currencies.setId(data.id ?? null);
+    currencies.setBaseCurrency(data.base_currency ?? null);
+    currencies.setPaymentCurrency(data.payment_currency ?? null);
+    currencies.updatedAt = data.updated_at ?? null;
+    currencies.updatedBy = data.updatedBy ?? null;
+
+    return currencies;
+  }
+
+  async saveCurrencies(currencies: Currencies): Promise<Currencies> {
+    const query = `INSERT INTO currencies (
+                                  property_id,
+                                  base_currency,
+                                  payment_currency,
+                                  updatedAt,
+                                  updatedBy )
+                  VALUES( 
+                      $1,
+                      $2,
+                      $3,
+                      $4,
+                      $5) ON CONFLICT (property_id) DO UPDATE
+                  SET
+                    base_currency = EXCLUDED.base_currency,
+                    payment_currency = EXCLUDED.payment_currency,
+                    updatedAt = EXCLUDED.updatedAt,
+                    updatedBy = EXCLUDED.updatedBy;`
+
+    await this.uow.query(query, [
+      currencies.getId(),
+      currencies.getBaseCurrency(),
+      currencies.getPaymentCurrency(),
+      currencies.updatedAt,
+      currencies.updatedBy
+    ]);
+
+    return currencies;
+
+  }
+
+
 }

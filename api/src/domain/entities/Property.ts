@@ -56,6 +56,10 @@ export class Property {
     return false
   }
 
+  public checkPropertyProfileStatus() {
+
+  }
+
 
   // Getters y Setters.
   getId(): number {
