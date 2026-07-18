@@ -1,6 +1,5 @@
-export interface GuestDTO {
+export interface GuestInputDTO {
   id: number | null,
-  propertyId: number,
   firstName: string,
   lastName: string,
   idNumber: string,
@@ -11,4 +10,23 @@ export interface GuestDTO {
   city: string,
   country: string,
   alpa2code: string,
+}
+
+export interface GuestOutputDTO {
+  id: number,
+  firstName: string,
+  lastName: string,
+  idNumber: string,
+  email: string,
+  phoneNumber: string,
+  phoneCode: string,
+  street: string,
+  city: string,
+  country: string,
+  alpa2code: string,
+  createdBy: number,
+  createdAt: Date,
+  updatedBy: number,
+  updatedAt: Date,
+
 }

@@ -8,6 +8,8 @@ export class GuestController {
 
   public async updateGuest(req: Request, res: Response, next: NextFunction) {
     try {
+      const { propertyId, userId } = req.user;
+
       const { userId, guestDTO } = req.body;
 
       const result = await this.guestService.update(userId, guestDTO);
