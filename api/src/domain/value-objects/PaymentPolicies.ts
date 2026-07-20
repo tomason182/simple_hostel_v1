@@ -1,4 +1,4 @@
-import { PaymentPoliciesDTO } from "../dto/PoliciesDTO";
+import { PaymentPoliciesDTO, PaymentPoliciesOutputDTO } from "../dto/PoliciesDTO";
 
 export class PaymentPolicies {
   constructor(
@@ -16,15 +16,17 @@ export class PaymentPolicies {
     }
   }
 
-  static fromDTO(dto: PaymentPoliciesDTO, userId: number): PaymentPolicies {
-    return new PaymentPolicies(dto.propertyId, dto.advancePaymentRequired, dto.depositAmount, new Date(), userId)
+  static fromDTO(dto: PaymentPoliciesDTO, userId: number, propertyId: number): PaymentPolicies {
+    return new PaymentPolicies(propertyId, dto.advancePaymentRequired, dto.depositAmount, new Date(), userId)
   }
 
-  public toDTO(): PaymentPoliciesDTO {
+  public toDTO(): PaymentPoliciesOutputDTO {
     return ({
       propertyId: this.propertyId,
       advancePaymentRequired: this.advancePaymentRequired,
-      depositAmount: this.depositAmount
+      depositAmount: this.depositAmount,
+      updatedAt: this.updatedAt,
+      updatedBy: this.updatedBy
     });
   }
 

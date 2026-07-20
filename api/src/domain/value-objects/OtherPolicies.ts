@@ -1,4 +1,4 @@
-import { OtherPoliciesDTO } from "../dto/PoliciesDTO";
+import { OtherPoliciesDTO, OtherPoliciesOutputDTO } from "../dto/PoliciesDTO";
 
 export class OtherPolicies {
   constructor(
@@ -21,9 +21,9 @@ export class OtherPolicies {
     this.updatedBy = updatedBy;
   }
 
-  static fromDTO(dto: OtherPoliciesDTO, userId: number): OtherPolicies {
+  static fromDTO(dto: OtherPoliciesDTO, userId: number, propertyId: number): OtherPolicies {
     return new OtherPolicies(
-      dto.propertyId,
+      propertyId,
       dto.quietHoursFrom,
       dto.quietHoursUntil,
       dto.hasSmookingAreas,
@@ -34,14 +34,16 @@ export class OtherPolicies {
     )
   }
 
-  public toDTO(): OtherPoliciesDTO {
+  public toDTO(): OtherPoliciesOutputDTO {
     return ({
       propertyId: this.propertyId,
       quietHoursFrom: this.quietHoursFrom,
       quietHoursUntil: this.quietHoursUntil,
       hasSmookingAreas: this.hasSmookingAreas,
       allowExternalGuest: this.allowExternalGuest,
-      allowPets: this.allowPets
+      allowPets: this.allowPets,
+      updatedAt: this.updatedAt,
+      updatedBy: this.updatedBy
     })
   }
 

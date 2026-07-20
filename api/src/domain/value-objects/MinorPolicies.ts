@@ -1,4 +1,4 @@
-import { MinorPoliciesDTO } from "../dto/PoliciesDTO";
+import { MinorPoliciesDTO, MinorPoliciesOutputDTO } from "../dto/PoliciesDTO";
 
 export class MinorPolicies {
   constructor(
@@ -25,9 +25,9 @@ export class MinorPolicies {
     }
   };
 
-  static fromDTO(dto: MinorPoliciesDTO, userId: number): MinorPolicies {
+  static fromDTO(dto: MinorPoliciesDTO, userId: number, propertyId: number): MinorPolicies {
     return new MinorPolicies(
-      dto.propertyId,
+      propertyId,
       dto.minCheckInAge,
       dto.acceptChildren,
       dto.minorsAdultSupervision,
@@ -38,14 +38,16 @@ export class MinorPolicies {
     )
   }
 
-  public toDTO(): MinorPoliciesDTO {
+  public toDTO(): MinorPoliciesOutputDTO {
     return ({
       propertyId: this.propertyId,
       minCheckInAge: this.minCheckInAge,
       acceptChildren: this.acceptChildren,
       minorsAdultSupervision: this.minorsAdultSupervision,
       minChildAge: this.minCheckInAge,
-      freeStayAge: this.freeStayAge
+      freeStayAge: this.freeStayAge,
+      updatedAt: this.updatedAt,
+      updatedBy: this.updatedBy
     })
   }
 
