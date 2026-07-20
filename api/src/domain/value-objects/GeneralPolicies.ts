@@ -1,4 +1,4 @@
-import { GeneralPoliciesDTO } from "../dto/PoliciesDTO";
+import { GeneralPoliciesDTO, GeneralPoliciesOutputDTO } from "../dto/PoliciesDTO";
 
 export class GeneralPolicies {
   constructor(
@@ -31,9 +31,9 @@ export class GeneralPolicies {
     }
   }
 
-  static fromDTO(dto: GeneralPoliciesDTO, userId: number): GeneralPolicies {
+  static fromDTO(dto: GeneralPoliciesDTO, userId: number, propertyId: number): GeneralPolicies {
     return new GeneralPolicies(
-      dto.propertyId,
+      propertyId,
       dto.minLengthStay,
       dto.maxLengthStay,
       dto.minAdvanceBooking,
@@ -45,7 +45,7 @@ export class GeneralPolicies {
       userId
     )
   }
-  public toDTO(): GeneralPoliciesDTO {
+  public toDTO(): GeneralPoliciesOutputDTO {
     return (
       {
         propertyId: this.propertyId,
@@ -55,7 +55,9 @@ export class GeneralPolicies {
         checkInFrom: this.checkInFrom,
         checkOutFrom: this.checkOutFrom,
         checkInUntil: this.checkInUntil,
-        checkOutUntil: this.checkOutUntil
+        checkOutUntil: this.checkOutUntil,
+        updatedAt: this.updatedAt,
+        updatedBy: this.updatedBy
       }
     )
   };
