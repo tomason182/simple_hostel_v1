@@ -18,7 +18,7 @@ export class PoliciesService implements IPoliciesService {
   }
 
   // Policies.
-  async saveOrUpdateGeneralPolicies(userId: number, generalPoliciesDTO: GeneralPoliciesDTO): Promise<GeneralPoliciesDTO> {
+  async saveOrUpdateGeneralPolicies(propertyId: number, userId: number, generalPoliciesDTO: GeneralPoliciesDTO): Promise<GeneralPoliciesDTO> {
     const accessControl = await this.accessControlRepository.findUser(userId);
 
     // Chequear que el rol permita cambios en GeneralPolicies.
@@ -34,7 +34,7 @@ export class PoliciesService implements IPoliciesService {
 
   }
 
-  async saveOrUpdateMinorPolicies(userId: number, minorPoliciesDTO: MinorPoliciesDTO): Promise<MinorPoliciesDTO> {
+  async saveOrUpdateMinorPolicies(propertyId: number, userId: number, minorPoliciesDTO: MinorPoliciesDTO): Promise<MinorPoliciesDTO> {
     const accessControl = await this.accessControlRepository.findUser(userId);
 
     if (!accessControl.canEditPolicies()) {
@@ -49,7 +49,7 @@ export class PoliciesService implements IPoliciesService {
 
   }
 
-  async saveOrUpdateOtherPolicies(userId: number, otherPoliciesDTO: OtherPoliciesDTO): Promise<OtherPoliciesDTO> {
+  async saveOrUpdateOtherPolicies(propertyId: number, userId: number, otherPoliciesDTO: OtherPoliciesDTO): Promise<OtherPoliciesDTO> {
     const accessControl = await this.accessControlRepository.findUser(userId);
 
     if (!accessControl.canEditPolicies()) {
@@ -64,7 +64,7 @@ export class PoliciesService implements IPoliciesService {
   }
 
 
-  async saveOrUpdatePaymentPolicies(userId: number, paymentPoliciesDTO: PaymentPoliciesDTO): Promise<PaymentPoliciesDTO> {
+  async saveOrUpdatePaymentPolicies(propertyId: number, userId: number, paymentPoliciesDTO: PaymentPoliciesDTO): Promise<PaymentPoliciesDTO> {
     const accessControl = await this.accessControlRepository.findUser(userId);
 
     if (!accessControl.canEditPolicies()) {
