@@ -1,4 +1,4 @@
-import { RatesAndAvailabilityDTO } from "../dto/RatesAndAvailabilityDTO";
+import { RatesAndAvailabilityDTO, RatesAndAvailabilityOutputDTO } from "../dto/RatesAndAvailabilityDTO";
 
 export class RatesAndAvailability {
   constructor(
@@ -47,6 +47,19 @@ export class RatesAndAvailability {
       new Date()
     );
   };
+
+  public toDTO(): RatesAndAvailabilityOutputDTO {
+    return {
+      propertyId: this.propertyId,
+      roomTypeId: this.roomTypeId,
+      date: this.date,
+      customRate: this.customRate,
+      roomsToSell: this.roomsToSell,
+      updatedAt: this.updatedAt,
+      updatedBy: this.updatedBy
+    }
+
+  }
 
   public update(propertyId: number, userId: number, dto: RatesAndAvailabilityDTO): void {
     if (this.propertyId !== propertyId) {
