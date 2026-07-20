@@ -26,7 +26,7 @@ export class PoliciesService implements IPoliciesService {
       throw new Error("PERMITION_DENIED");
     }
 
-    let generalPolicies = GeneralPolicies.fromDTO(generalPoliciesDTO, userId);
+    let generalPolicies = GeneralPolicies.fromDTO(generalPoliciesDTO, userId, propertyId);
 
     generalPolicies = await this.policiesRepository.saveGeneralPolicies(generalPolicies);
 
@@ -41,7 +41,7 @@ export class PoliciesService implements IPoliciesService {
       throw new Error("PERMITION_DENIED")
     }
 
-    let minorPolicies = MinorPolicies.fromDTO(minorPoliciesDTO, userId);
+    let minorPolicies = MinorPolicies.fromDTO(minorPoliciesDTO, userId, propertyId);
 
     minorPolicies = await this.policiesRepository.saveMinorPolicies(minorPolicies);
 
@@ -56,7 +56,7 @@ export class PoliciesService implements IPoliciesService {
       throw new Error("PERMITION_DENIED");
     }
 
-    let otherPolicies = OtherPolicies.fromDTO(otherPoliciesDTO, userId);
+    let otherPolicies = OtherPolicies.fromDTO(otherPoliciesDTO, userId, propertyId);
 
     otherPolicies = await this.policiesRepository.saveOtherPolicies(otherPolicies);
 
@@ -71,7 +71,7 @@ export class PoliciesService implements IPoliciesService {
       throw new Error("PERMITION_DENIED");
     }
 
-    let paymentPolicies = PaymentPolicies.fromDTO(paymentPoliciesDTO, userId);
+    let paymentPolicies = PaymentPolicies.fromDTO(paymentPoliciesDTO, userId, propertyId);
 
     paymentPolicies = await this.policiesRepository.savePaymentPolicies(paymentPolicies);
 
