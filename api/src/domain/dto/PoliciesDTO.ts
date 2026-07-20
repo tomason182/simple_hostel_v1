@@ -5,6 +5,12 @@ export interface PoliciesDTO {
   other: OtherPoliciesDTO | null;
 }
 
+export interface AuditableDTO {
+  propertyId: number,
+  updatedAt: Date | null,
+  updatedBy: number | null
+}
+
 export interface GeneralPoliciesDTO {
   minLengthStay: number | null;
   maxLengthStay: number | null;
@@ -15,10 +21,16 @@ export interface GeneralPoliciesDTO {
   checkOutUntil: string | null;
 };
 
+export interface GeneralPoliciesOutputDTO extends GeneralPoliciesDTO, AuditableDTO { };
+
 export interface PaymentPoliciesDTO {
   advancePaymentRequired: boolean | null;
   depositAmount: number | null;
 };
+
+export interface PaymentPoliciesOutputDTO extends PaymentPoliciesDTO, AuditableDTO { }
+
+
 
 export interface MinorPoliciesDTO {
   minCheckInAge: number | null;
@@ -28,6 +40,8 @@ export interface MinorPoliciesDTO {
   freeStayAge: number | null;
 };
 
+export interface MinorPoliciesOutputDTO extends MinorPoliciesDTO, AuditableDTO { }
+
 export interface OtherPoliciesDTO {
   quietHoursFrom: string | null;
   quietHoursUntil: string | null;
@@ -35,5 +49,7 @@ export interface OtherPoliciesDTO {
   allowExternalGuest: boolean | null;
   allowPets: boolean | null;
 };
+
+export interface OtherPoliciesOutputDTO extends OtherPoliciesDTO, AuditableDTO { };
 
 
