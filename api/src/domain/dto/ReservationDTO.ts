@@ -1,16 +1,21 @@
 import type { BookingSource, PaymentStatus, ReservationStatus } from "../entities/Reservation";
 import { SelectedRoom } from "../value-objects/SelectedRoom";
+
+interface AuditableDTO {
+  propertyId: number,
+  createdAt: Date,
+  createdBy: number,
+  updatedAt: Date,
+  updatedBy: number,
+}
 export interface ReservationDTO {
-  propertyId: number;
   bookingSource: BookingSource;
   reservationStatus: ReservationStatus;
   paymentStatus: PaymentStatus;
-  totalAmount: number;
-  currency: string;
-  advancePaymentAmount: number;
   checkIn: Date;
   checkOut: Date;
   specialRequest: string;
   selectedRooms: Array<SelectedRoom>;
-
 }
+
+export interface ReservationOutputDTO extends ReservationDTO, AuditableDTO { }
