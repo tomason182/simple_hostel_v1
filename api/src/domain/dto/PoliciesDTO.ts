@@ -1,5 +1,4 @@
 export interface PoliciesDTO {
-  propertyId: number;
   general: GeneralPoliciesDTO | null;
   payment: PaymentPoliciesDTO | null;
   minor: MinorPoliciesDTO | null;
@@ -7,7 +6,6 @@ export interface PoliciesDTO {
 }
 
 export interface GeneralPoliciesDTO {
-  propertyId: number;
   minLengthStay: number | null;
   maxLengthStay: number | null;
   minAdvanceBooking: number | null;
@@ -18,13 +16,11 @@ export interface GeneralPoliciesDTO {
 };
 
 export interface PaymentPoliciesDTO {
-  propertyId: number,
   advancePaymentRequired: boolean | null;
   depositAmount: number | null;
 };
 
 export interface MinorPoliciesDTO {
-  propertyId: number;
   minCheckInAge: number | null;
   acceptChildren: boolean | null;
   minorsAdultSupervision: boolean | null;
@@ -33,7 +29,6 @@ export interface MinorPoliciesDTO {
 };
 
 export interface OtherPoliciesDTO {
-  propertyId: number;
   quietHoursFrom: string | null;
   quietHoursUntil: string | null;
   hasSmookingAreas: boolean | null;
