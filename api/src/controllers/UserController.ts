@@ -10,7 +10,7 @@ export class UserController {
   }
 
   // 1. Autentificar usuario
-  private async authUser(req: Request, res: Response, next: NextFunction) {
+  public async authUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { username, password } = req.body;
 
