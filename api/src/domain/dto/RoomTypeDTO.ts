@@ -1,8 +1,17 @@
 import { RoomTypeLiteral } from "../entities/RoomTypes";
 import { Gender } from "../entities/RoomTypes";
 
-export interface RoomTypeDTO {
+interface AuditableDTO {
+  id: number;
   propertyId: number;
+  createdAt: Date;
+  createdBy: number;
+  updatedAt: Date;
+  updateBy: number;
+
+}
+
+export interface RoomTypeDTO {
   description: string;
   type: RoomTypeLiteral;
   gender: Gender;
