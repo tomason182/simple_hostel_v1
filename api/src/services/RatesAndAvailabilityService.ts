@@ -1,15 +1,16 @@
-import { RatesAndAvailabilityDTO } from "../domain/dto/RatesAndAvailabilityDTO";
+import { RatesAndAvailabilityDTO, RatesAndAvailabilityOutputDTO } from "../domain/dto/RatesAndAvailabilityDTO";
 import { RatesAndAvailability } from "../domain/entities/RatesAndAvailability";
+import { IRatesAndAvailabilityService } from "../domain/interfaces/IRatesAndAvailabilityService";
 import { IRatesAndAvailabilityRepository } from "../domain/ports/IRatesAndAvailabilityRepository";
 
-export class RatesAndAvailabilityService {
+export class RatesAndAvailabilityService implements IRatesAndAvailabilityService {
   constructor(
     private readonly ratesAndAvailabilityRepository: IRatesAndAvailabilityRepository,
   ) {
     this.ratesAndAvailabilityRepository = ratesAndAvailabilityRepository;
   }
 
-  async createOrUpdate(propertyId: number, userId: number, dto: RatesAndAvailabilityDTO): Promise<{ msg: string }> {
+  async createOrUpdate(propertyId: number, userId: number, dto: RatesAndAvailabilityDTO): Promise<RatesAndAvailabilityOutputDTO> {
     // 1. Comprobar que el cuarto correspnode a la propiedad.
 
     // 2. Buscar tarifa y disponibilidad para el dia.
@@ -27,8 +28,7 @@ export class RatesAndAvailabilityService {
     // 3. Guardar.
     await this.ratesAndAvailabilityRepository.save(propertyId, currentRate);
 
-    return { msg: "RATES_AVAILABILITY_UPDATED" }
-
+    return currentRate.toDTO()
   }
 
 
