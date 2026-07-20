@@ -15,7 +15,7 @@ export class RoomTypeService implements IRoomTypeService {
     this.reservationRepository = reservationRepository;
   }
 
-  async createRoomType(propertyId: number, userId: number, userRole: UserRole, roomTypeDTO: RoomTypeDTO): Promise<{ msg: string; }> {
+  async createRoomType(propertyId: number, userId: number, roomTypeDTO: RoomTypeDTO): Promise<{ msg: string; }> {
     // 1. Comprobar que el usuario tenga permisos para crear un RoomType.
     // Se puede hacer en las rutas, en el accessControl para este caso de uso (accessControl.checkCanCreateRoomType());
 
@@ -35,7 +35,7 @@ export class RoomTypeService implements IRoomTypeService {
     return { msg: "ROOM_TYPE_CREATED" };
   }
 
-  async updateRoomType(propertyId: number, userId: number, userRole: UserRole, roomTypeDTO: RoomTypeDTO): Promise<{ msg: string; }> {
+  async updateRoomType(propertyId: number, userId: number, roomTypeDTO: RoomTypeDTO): Promise<{ msg: string; }> {
     // 1. Comprobar que el usuario tenga permisos para actualizar un RoomType.
 
     // 2. Crear el roomType.
@@ -71,7 +71,7 @@ export class RoomTypeService implements IRoomTypeService {
 
   }
 
-  async deleteRoomType(propertyId: number, userId: number, userRole: UserRole, roomTypeId: number): Promise<{ msg: string; }> {
+  async deleteRoomType(propertyId: number, userId: number, roomTypeId: number): Promise<{ msg: string; }> {
     // 1. Comprobar que el usuario tenga permisos para eliminar un RoomType.
 
     // 2. Comprobar si el cuarto tiene reservas proximas.
