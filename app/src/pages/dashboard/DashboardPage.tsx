@@ -1,6 +1,12 @@
+import { useAuth } from "../../hooks/useAuth";
+
 function DashboardPage() {
+
+  const { user } = useAuth();
+
+
   return (
-    <h1>DashboarPage</h1>
+    <h1>DashboarPage{user?.name}</h1>
   );
 }
 
