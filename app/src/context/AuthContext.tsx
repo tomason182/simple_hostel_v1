@@ -1,4 +1,5 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import authService from "../services/AuthService";
 
 import type { ReactNode } from "react";
 
@@ -6,10 +7,14 @@ import type { User } from "../models/User";
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
-  login: (user: User, token: string) => void;
 
-  logout: () => void
+  loading: boolean;
+
+  login: (user: User) => void;
+
+  logout: () => void;
+
+  isAuthenticated: boolean;
 
 }
 
@@ -22,21 +27,37 @@ interface AuthProviderprops {
 
 export function AuthProvider({ children }: AuthProviderprops) {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const [token, setToken] = useState<string | null>(null);
+  const isAuthenticated = user !== null;
 
-  function login(user: User, token: string) {
+  useEffect(() => {
+    async function loadUser() {
+      try {
+        const user = await authService.me();
+
+        setLoading(false);
+
+        setUser(user);
+      } catch {
+        setUser(null);
+      }
+    }
+
+    loadUser();
+
+  }, []);
+
+  function login(user: User): void {
     setUser(user);
-    setToken(token);
   }
 
   function logout() {
     setUser(null);
-    setToken(null);
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

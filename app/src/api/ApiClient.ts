@@ -7,7 +7,7 @@ import { API_URL } from "../config/env.ts";
 
 class ApiClient {
   public async get<T>(endpoint: string): Promise<T> {
-    const response = await fetch((`${API_URL}${endpoint}`));
+    const response = await fetch((`${API_URL}${endpoint}`), { credentials: "include" });
 
     if (!response.ok) {
       throw new Error(response.statusText);
@@ -24,6 +24,7 @@ class ApiClient {
         headers: {
           "Content-Type": "application/json"
         },
+        credentials: "include",
         body: JSON.stringify(body),
       }
     );

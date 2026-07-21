@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DashboardLayout from "../layouts/dashboardLayout/DashboardLayout";
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import LoginPage from "../pages/login/LoginPage";
+import ProtectedRoute from "../components/protectedRoute/ProtectedRoute";
 
 
 function AppRoutes() {
@@ -13,7 +14,11 @@ function AppRoutes() {
 
         <Route path="/login" element={<LoginPage />} />
 
-        <Route element={<DashboardLayout />}>
+        <Route element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }>
 
           <Route
             path="/"

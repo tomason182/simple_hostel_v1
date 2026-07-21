@@ -21,7 +21,7 @@ function LoginPage() {
       setError(null);
       const response = await authService.login({ email, password });
 
-      login(response.user, response.token);
+      login(response.user);
 
       navigate("/");
     } catch (err) {
