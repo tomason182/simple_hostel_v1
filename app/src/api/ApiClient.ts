@@ -39,6 +39,32 @@ class ApiClient {
     return await response.json();
   }
 
+  public async put<TRequest, TResponse>(endpoint: string, body: TRequest): Promise<TResponse> {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      method: "PUT",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+
+    this.ensureSuccess(response);
+    return await response.json();
+  }
+
+  public async delete(endpoint: string): Promise<void> {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    this.ensureSuccess(response);
+  }
+
   private ensureSuccess(response: Response): void {
     if (!response.ok) {
       throw new Error(response.statusText);
@@ -46,4 +72,6 @@ class ApiClient {
   }
 };
 
-export default new ApiClient();
+const apiClient = new ApiClient();
+
+export default apiClient;
