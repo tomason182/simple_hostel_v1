@@ -10,6 +10,10 @@ class AuthService {
     return await apiClient.post<LoginInputDTO, LoginOutputDTO>("/auth/login", dto);
   }
 
+  async logout(): Promise<void> {
+    await apiClient.post("auth/logout");
+  }
+
   async me(): Promise<User> {
     return apiClient.get<User>("/auth/me")
   }

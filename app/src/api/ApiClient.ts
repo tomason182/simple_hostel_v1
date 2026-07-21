@@ -16,17 +16,22 @@ class ApiClient {
     return await response.json();
   }
 
-  public async post<TRequest, TResposne>(endpoint: string, body: TRequest): Promise<TResposne> {
+  public async post<TRequest, TResposne>(endpoint: string, body?: TRequest): Promise<TResposne> {
+
+    const options: RequestInit = {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+
+    if (body !== undefined) {
+      options.body = JSON.stringify(body);
+    }
 
     const response = await fetch(`${API_URL}${endpoint}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include",
-        body: JSON.stringify(body),
-      }
+      options
     );
 
     this.ensureSuccess(response);

@@ -12,7 +12,7 @@ interface AuthContextType {
 
   login: (user: User) => void;
 
-  logout: () => void;
+  logout: () => Promise<void>;
 
   isAuthenticated: boolean;
 
@@ -52,8 +52,13 @@ export function AuthProvider({ children }: AuthProviderprops) {
     setUser(user);
   }
 
-  function logout() {
-    setUser(null);
+  async function logout(): Promise<void> {
+    try {
+      await authService.logout();
+
+    } finally {
+      setUser(null);
+    }
   }
 
   return (
