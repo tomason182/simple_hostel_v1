@@ -12,28 +12,25 @@ import { AccountController } from "../controllers/AccountController";
 import { PropertyController } from "../controllers/PropertyController";
 import { UserController } from "../controllers/UserController";
 
-import { EmailServiceSMTP } from "../infraestructure/email/EmailRepositorySMTP";
 import { EmailService } from "../services/EmailService";
 
 
-export class Initializer {
+export class RequestContext {
   public readonly accountController: AccountController;
   public readonly userController: UserController;
   public readonly propertyController: PropertyController;
 
-  constructor(private readonly uow: UnitOfWork, private readonly emailRepository: EmailServiceSMTP) {
+  constructor(private readonly uow: UnitOfWork, private readonly emailService: EmailService) {
     this.uow = uow;
-    this.emailRepository = emailRepository;
+    this.emailService = emailService;
 
 
     const userRepository = new UserRepositoryPostgreSQL(this.uow);
     const propertyRepository = new PropertyRepository(this.uow);
     const accessControlRepository = new AccessControlRepository(this.uow);
 
-    const emailService = new EmailService(this.emailRepository);
-
-    const accountService = new AccountService(userRepository, propertyRepository, accessControlRepository, emailService);
-    const userService = new UserService(userRepository, accessControlRepository, propertyRepository, emailService);
+    const accountService = new AccountService(userRepository, propertyRepository, accessControlRepository, this.emailService);
+    const userService = new UserService(userRepository, accessControlRepository, propertyRepository, this.emailService);
     const propertyService = new PropertyService(propertyRepository, accessControlRepository);
 
     this.accountController = new AccountController(accountService);

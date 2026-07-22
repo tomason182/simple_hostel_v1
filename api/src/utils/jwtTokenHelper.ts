@@ -1,6 +1,6 @@
 import { JwtPayload, sign, verify } from "jsonwebtoken";
 
-interface AccessTokenPayload extends JwtPayload {
+export interface AccessTokenPayload extends JwtPayload {
   data: {
     id: number,
     // otros campos.
@@ -16,7 +16,7 @@ export function jwtTokenGenerator(data: object, expirationTimeSeg: number): stri
   }
 
   const payload = {
-    sub: data,
+    data,
   };
 
   const token: string = sign(payload, jwtSecret, { expiresIn: expirationTimeSeg });

@@ -9,8 +9,11 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
   }
 
   try {
-    const payload = jwtTokenValidator(token);
-    req.auth = payload.sub;
+    const decoded = jwtTokenValidator(token);
+    if (!decoded) {
+      return res.status(401).json({ msg: "INVALID_TOKEN" });
+    }
+    req.auth = decoded.data;
     next();
   } catch (err) {
     return res
