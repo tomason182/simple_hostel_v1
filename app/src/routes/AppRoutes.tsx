@@ -4,6 +4,7 @@ import DashboardLayout from "../layouts/dashboardLayout/DashboardLayout";
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import LoginPage from "../pages/login/LoginPage";
 import ProtectedRoute from "../components/protectedRoute/ProtectedRoute";
+import RoomTypePage from "../features/roomTypes/pages/RoomTypePages";
 
 
 function AppRoutes() {
@@ -26,6 +27,10 @@ function AppRoutes() {
           />
 
         </Route>
+        <Route
+          path="/room-types"
+          element={<RoomTypePage />}
+        />
 
       </Routes>
 

@@ -12,7 +12,7 @@ interface AuthContextType {
 
   login: (user: User) => void;
 
-  logout: () => Promise<void>;
+  logout: () => void;
 
   isAuthenticated: boolean;
 
@@ -29,7 +29,7 @@ export function AuthProvider({ children }: AuthProviderprops) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const isAuthenticated = user !== null;
+  let isAuthenticated = user !== null;
 
   useEffect(() => {
     async function loadUser() {
