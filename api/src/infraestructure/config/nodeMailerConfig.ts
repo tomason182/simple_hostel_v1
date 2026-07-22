@@ -1,5 +1,7 @@
-export function nodeMailerConfig() {
-  const config = {
+import SMTPTransport from "nodemailer/lib/smtp-transport";
+
+export function nodeMailerConfig(): SMTPTransport.Options {
+  return {
     host:
       process.env.NODE_ENV === "production"
         ? "smtp.hostinger.com"
@@ -15,5 +17,4 @@ export function nodeMailerConfig() {
     },
   };
 
-  return config;
 }
