@@ -26,11 +26,7 @@ export class AccountController {
   // 2. Validar cuenta.
   public async validateAccount(req: Request, res: Response, next: NextFunction) {
     try {
-      const { token } = req.params;
-
-      if (Array.isArray(token)) {
-        throw new Error("INVALID_ROUTE_PARAMETER");
-      }
+      const token = req.params.token as string;
 
       const result = await this.accountService.validateAccount(token);
 
