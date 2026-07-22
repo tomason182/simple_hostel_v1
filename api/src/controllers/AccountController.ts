@@ -2,10 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import { IAccountService } from "../domain/interfaces/IAccountService"
 
 
-interface ValidateAccountParams {
-  token: string;
-}
-
 export class AccountController {
   private readonly accountService: IAccountService;
 
@@ -28,9 +24,13 @@ export class AccountController {
   }
 
   // 2. Validar cuenta.
-  public async validateAccount(req: Request<ValidateAccountParams>, res: Response, next: NextFunction) {
+  public async validateAccount(req: Request, res: Response, next: NextFunction) {
     try {
       const { token } = req.params;
+
+      if (Array.isArray(token)) {
+        throw new Error("INVALID_ROUTE_PARAMETER");
+      }
 
       const result = await this.accountService.validateAccount(token);
 
