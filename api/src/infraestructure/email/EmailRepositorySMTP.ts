@@ -6,6 +6,7 @@ import mjml2html from "mjml";
 import Handlebars from "handlebars";
 import { convert } from "html-to-text"
 import { IEmailRepositorySMTP } from "../../domain/ports/IEmailRepository";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
 
 
 export class EmailServiceSMTP implements IEmailRepositorySMTP {
@@ -20,6 +21,14 @@ export class EmailServiceSMTP implements IEmailRepositorySMTP {
   constructor(config: nodemailer.TransportOptions) {
     this.transporter = nodemailer.createTransport(config);
 
+  }
+
+  static async create(config: SMTPTransport.Options) {
+    const service = new EmailServiceSMTP(config);
+
+    await service.initialize();
+
+    return service;
   }
 
   private async initialize(): Promise<void> {
