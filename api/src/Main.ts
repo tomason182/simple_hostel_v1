@@ -10,15 +10,15 @@ import { Pool } from "pg";
 
 
 export class Main {
-	private app: Express;
-	private pool: Pool;
+  private app: Express;
+  private pool: Pool;
   private baseUrl: string = "/api/v1";
 
-	
-	constructor(pool: Pool) {
-		this.pool = pool;
-		this.app = express();
-	}
+
+  constructor(pool: Pool) {
+    this.pool = pool;
+    this.app = express();
+  }
 
 
   private setupMiddlewares() {
@@ -54,15 +54,19 @@ export class Main {
 
     this.app.use(cors(corsOptions));
     this.app.use(express.json());
-    this.app.use(express.urlencoded({ extended: true}));
+    this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser(process.env.JWT_SECRET));
 
   };
 
+  private load() {
+
+  }
+
   private setupRoutes() {
     // Handler para rutas no encontradas
     this.app.use((req, res) => {
-      res.status(404).json({error: "Endpoint not found"});
+      res.status(404).json({ error: "Endpoint not found" });
     });
 
     // Manejo de errores
@@ -71,7 +75,7 @@ export class Main {
       if (err instanceof Error) {
         message = err.message;
       }
-      res.status(500).json({error: message})
+      res.status(500).json({ error: message })
 
       this.app.use(errorHandler);
 
@@ -79,7 +83,7 @@ export class Main {
 
 
     this.app.get("/health", (req, res) => {
-      res.json({status: "ok"});
+      res.json({ status: "ok" });
     })
   }
 
