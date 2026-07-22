@@ -7,6 +7,10 @@ import compression from "compression";
 import morgan from "morgan";
 import "dotenv/config";
 import { Pool } from "pg";
+import { EmailServiceSMTP } from "./infraestructure/email/EmailRepositorySMTP";
+import { nodeMailerConfig } from "./infraestructure/config/nodeMailerConfig";
+import { requestContextMiddleware } from "./infraestructure/http/middlewares/requestContextMiddleware";
+import { EmailService } from "./services/EmailService";
 
 
 export class Main {
@@ -60,6 +64,13 @@ export class Main {
   };
 
   private load() {
+
+    const pool = new Pool(postgreConfig());
+
+    const emailRepository = await EmailServiceSMTP.create(nodeMailerConfig());
+    const emailService = new EmailService(emailRepository);
+
+    this.app.use(requestContextMiddleware(pool, emailService))
 
   }
 

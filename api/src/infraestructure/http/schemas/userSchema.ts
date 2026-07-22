@@ -1,4 +1,4 @@
-import { Schema, ParamSchema } from "express-validator";
+import { ParamSchema } from "express-validator";
 
 const PASSWORD_RULES = {
   minLength: 8,
@@ -8,7 +8,7 @@ const PASSWORD_RULES = {
   minSymbols: 1,
 };
 
-const usernameValidator: ParamSchema = {
+export const usernameValidator: ParamSchema = {
   in: ["body"],
   trim: true,
   isString: {
@@ -36,7 +36,7 @@ const usernameValidator: ParamSchema = {
   },
 };
 
-const passwordValidator: ParamSchema = {
+export const passwordValidator: ParamSchema = {
   in: ["body"],
   exists: {
     bail: true,
@@ -64,7 +64,7 @@ const passwordValidator: ParamSchema = {
   },
 };
 
-const loginPasswordValidator: ParamSchema = {
+export const loginPasswordValidator: ParamSchema = {
   in: ["body"],
   trim: true,
   exists: {
@@ -81,7 +81,7 @@ const loginPasswordValidator: ParamSchema = {
   },
 };
 
-const firstNameValidator: ParamSchema = {
+export const firstNameValidator: ParamSchema = {
   in: ["body"],
   trim: true,
   exists: {
@@ -117,14 +117,6 @@ const lastNameValidator: ParamSchema = {
     },
     errorMessage: "Last name maximum length is 100 characters.",
   },
-};
-
-
-export const registrationSchema: Schema = {
-  username: usernameValidator,
-  password: passwordValidator,
-  firstName: firstNameValidator,
-  lastName: lastNameValidator
 };
 
 export const loginSchema = {
