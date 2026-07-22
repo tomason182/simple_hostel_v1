@@ -3,5 +3,7 @@ export interface IAccountService {
 
   validateAccount(token: string): Promise<{ msg: string }>;
 
+  resendValidationEmail(email: string): Promise<void>;
+
   deleteAccount(username: string, password: string): Promise<{ msg: string }>
 }

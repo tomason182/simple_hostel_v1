@@ -49,3 +49,7 @@ export const createAccountSchema: Schema = {
   captchaToken: captchaTokenValidator
 
 };
+
+export const resendEmailSchema: Schema = {
+  username: usernameValidator,
+}
