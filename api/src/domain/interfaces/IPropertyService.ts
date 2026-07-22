@@ -5,7 +5,7 @@ import { Property } from "../entities/Property";
 
 export interface IPropertyService {
 
-  getProperty(propertyId: number): Promise<Property>;
+  //getProperty(propertyId: number): Promise<Property>;
 
   // facilities
   // getFacilities(propertyId: number): Promise<Array<number>>;

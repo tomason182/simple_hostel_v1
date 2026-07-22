@@ -22,10 +22,7 @@ export class PropertyService implements IPropertyService {
   // =========================================================
   // Property
   // =========================================================
-  async getProperty(propertyId: number): Promise<PropertyDTO> {
-    const property = await this.propertyRepository.getPropertyBasis(propertyId);
 
-  }
   // =========================================================
   // ContactInfo
   // =========================================================
@@ -82,7 +79,7 @@ export class PropertyService implements IPropertyService {
   // ======================================================
   // Currencies
   // ======================================================
-  async saverOrUpdateCurrencies(currenciesDTO: CurrenciesDTO): Promise<CurrenciesDTO> {
+  async saveOrUpdateCurrencies(currenciesDTO: CurrenciesDTO): Promise<CurrenciesDTO> {
     let currencies = await this.propertyRepository.getCurrencies(currenciesDTO.property_id);
     if (!currencies) {
       currencies = Currencies.make(currenciesDTO);
