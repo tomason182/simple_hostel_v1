@@ -25,12 +25,11 @@ function AppRoutes() {
             path="/"
             element={<DashboardPage />}
           />
-
+          <Route
+            path="/room-types"
+            element={<RoomTypePage />}
+          />
         </Route>
-        <Route
-          path="/room-types"
-          element={<RoomTypePage />}
-        />
 
       </Routes>
 
