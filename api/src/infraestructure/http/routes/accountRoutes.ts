@@ -41,4 +41,6 @@ export function createAccountRoutes() {
     (req: Request, res: Response, next: NextFunction) => {
       req.context.accountController.resendValidationEmail(req, res, next)
     });
+
+  return router;
 }
