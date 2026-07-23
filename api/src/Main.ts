@@ -33,10 +33,13 @@ export class Main {
   }
 
   public async run(): Promise<void> {
+    console.log("Iniciando servicios...");
     await this.initializeServices();
 
+    console.log("Estableciendo middlewares...");
     this.setupMiddlewares();
 
+    console.log("Estableciendo rutas...");
     this.setupRoutes();
 
     const port = Number(process.env.PORT) || 3000;
@@ -48,8 +51,10 @@ export class Main {
 
 
   private async initializeServices(): Promise<void> {
+    console.log("Iniciando base de datos...")
     this.pool = new Pool(postgreSQLConfig());
 
+    console.log("Iniciando servicio SMTP...")
     const emailRepository = await EmailServiceSMTP.create(nodeMailerConfig());
 
     this.emailService = new EmailService(emailRepository);
