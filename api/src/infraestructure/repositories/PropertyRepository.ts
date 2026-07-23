@@ -138,6 +138,7 @@ export class PropertyRepository implements IPropertyRepository {
     const query = ` INSERT INTO address (
                           property_id,
                           house_number,
+                          street,
                           city,
                           postal_code,
                           state,
@@ -149,10 +150,11 @@ export class PropertyRepository implements IPropertyRepository {
                           updated_by,
                           updated_at
                       ) VALUES (
-                          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12
+                          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
                       ) ON CONFLICT (property_id) DO UPDATE
                           SET 
                             house_number = EXCLUDED.house_number,
+                            street = EXCLUDED.street,
                             city = EXCLUDED.city,
                             postal_code = EXCLUDED.postal_code,
                             state = EXCLUDED.state,
@@ -167,6 +169,7 @@ export class PropertyRepository implements IPropertyRepository {
     await this.uow.query(query, [
       propertyId,
       address.houseNumber,
+      address.street,
       address.city,
       address.postalCode,
       address.state,
