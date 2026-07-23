@@ -47,12 +47,16 @@ export class Reservation {
     this.setReservationStatus();
   };
 
-  static create(guestId: number, dto: ReservationDTO, currencies: Currencies, userId: number) {
+  static create(propertyId: number, guestId: number, dto: ReservationDTO, currencies: Currencies, userId: number) {
     const currency = currencies.getPaymentCurrency();
+
+    if (!currency) {
+      throw new Error("Reservation not created. PaymentCurrency not available");
+    }
     return new Reservation(
       null,
       guestId,
-      dto.propertyId,
+      propertyId,
       dto.bookingSource,
       dto.reservationStatus,
       dto.paymentStatus,
