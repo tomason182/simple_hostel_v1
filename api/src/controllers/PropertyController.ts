@@ -26,7 +26,7 @@ export class PropertyController {
   async saveOrUpdateContactInfo(req: Request, res: Response, next: NextFunction) {
     try {
       // Ambos propertyId y userId deberian venir en el token de autentificacion creo.
-      const { propertyId, userId } = req.user;
+      const { propertyId, userId } = req.auth;
       const { email, phoneCallsCode, phoneCalls, phoneWhatsapp, phoneWhatsappCode } = req.body;
 
       const contactInfoDTO: ContactInfoDTO = {
@@ -48,7 +48,7 @@ export class PropertyController {
 
   async saveOrUpdateAddress(req: Request, res: Response, next: NextFunction) {
     try {
-      const { propertyId, userId } = req.user;
+      const { propertyId, userId } = req.auth;
       const { houseNumber, street, city, postalCode, state, country, alpha2code, lat, lon, osmId } = req.body;
 
       const addressDTO: AddressDTO = {
@@ -77,7 +77,7 @@ export class PropertyController {
 
   async saveOrUpdateCurrencies(req: Request, res: Response, next: NextFunction) {
     try {
-      const { propertyId, userId } = req.user;
+      const { propertyId, userId } = req.auth;
       const { base_currency, payment_currency } = req.body;
       const dto: CurrenciesDTO = {
         property_id: propertyId,

@@ -9,7 +9,7 @@ export class RatesAndAvailabilityController {
 
   public async createOrUpdate(req: Request, res: Response, next: NextFunction) {
     try {
-      const { propertyId, userId } = req.user;
+      const { propertyId, userId } = req.auth;
 
       const dto: RatesAndAvailabilityDTO = {
         roomTypeId: req.body.roomTypeId,

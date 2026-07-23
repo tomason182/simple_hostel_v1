@@ -10,7 +10,7 @@ export class ReservationController {
 
   public async createReservation(req: Request, res: Response, next: NextFunction) {
     try {
-      const { propertyId, userId } = req.user;
+      const { propertyId, userId } = req.auth;
 
       const guestDTO: GuestDTO = {
         firstName: req.body.firstName,

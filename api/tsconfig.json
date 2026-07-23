@@ -10,7 +10,7 @@
     "types": [
       "node"
     ],
-    "outDir": "./api/dist",
-    "rootDir": "./api/src"
+    "outDir": "./dist",
+    "rootDir": "./src"
   }
 }

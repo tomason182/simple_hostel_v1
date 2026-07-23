@@ -11,7 +11,7 @@ export class PoliciesController {
 
   public async saveOrUpdateGeneralPolicies(req: Request, res: Response, next: NextFunction) {
     try {
-      const { propertyId, userId } = req.user;
+      const { propertyId, userId } = req.auth;
       const dto: GeneralPoliciesDTO = {
         minLengthStay: req.body.minLengthStay,
         maxLengthStay: req.body.maxLengthStay,
@@ -33,7 +33,7 @@ export class PoliciesController {
 
   public async saveOrUpdateMinorPolicies(req: Request, res: Response, next: NextFunction) {
     try {
-      const { propertyId, userId } = req.user;
+      const { propertyId, userId } = req.auth;
 
       const dto: MinorPoliciesDTO = {
         minCheckInAge: req.body.minCheckInAge,
@@ -54,7 +54,7 @@ export class PoliciesController {
 
   public async saveOrUpdateOtherPolicies(req: Request, res: Response, next: NextFunction) {
     try {
-      const { propertyId, userId } = req.user;
+      const { propertyId, userId } = req.auth;
 
       const dto: OtherPoliciesDTO = {
         quietHoursFrom: req.body.quietHoursFrom,
@@ -74,7 +74,7 @@ export class PoliciesController {
 
   public async saveOrUpdatePaymentPolicies(req: Request, res: Response, next: NextFunction) {
     try {
-      const { propertyId, userId } = req.user;
+      const { propertyId, userId } = req.auth;
 
       const dto: PaymentPoliciesDTO = {
         advancePaymentRequired: req.body.advancePaymentRequired,

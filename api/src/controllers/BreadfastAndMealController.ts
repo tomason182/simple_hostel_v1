@@ -10,7 +10,7 @@ export class BreakfastAndMealController {
   public async saveOrUpdateBreakfastSettings(req: Request, res: Response, next: NextFunction) {
     try {
 
-      const { propertyId, userId } = req.user;
+      const { propertyId, userId } = req.auth;
 
       const input: BreakfastInputDTO = {
         isServed: req.body.isServed,

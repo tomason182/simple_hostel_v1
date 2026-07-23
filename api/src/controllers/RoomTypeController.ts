@@ -9,7 +9,7 @@ export class RoomTypeController {
 
   public async createRoomType(req: Request, res: Response, next: NextFunction) {
     try {
-      const { propertyId, userId } = req.user;
+      const { propertyId, userId } = req.auth;
 
       const dto: RoomTypeDTO = {
         description: req.body.description,
