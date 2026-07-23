@@ -14,8 +14,7 @@ export class PropertyRepository implements IPropertyRepository {
     const query = `INSERT INTO property (
                       property_name, 
                       description, 
-                      property_status, 
-                      profile_status, 
+                      status,  
                       created_at, 
                       updated_at
                   ) VALUES ( $1, $2, $3, $4, $5, $6 );
@@ -25,7 +24,6 @@ export class PropertyRepository implements IPropertyRepository {
       property.propertyName,
       property.description,
       property.status,
-      property.profileStatus,
       property.createdAt,
       property.updatedAt
     ]);

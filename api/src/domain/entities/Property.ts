@@ -4,7 +4,6 @@ import { Policies } from "../value-objects/Policies";
 import { Currencies } from "../value-objects/Currencies";
 
 export type PropertyStatus = "ACTIVE" | "SUSPENDED" | "PENDING";
-export type ProfileStatus = "COMPLETE" | "INCOMPLETE";
 
 export class Property {
   constructor(
@@ -18,7 +17,6 @@ export class Property {
     public createdAt: Date,
     public updatedAt: Date,
     public status: PropertyStatus,
-    public profileStatus: ProfileStatus,
   ) {
     this.id = id;
     this.propertyName = propertyName;
@@ -30,17 +28,15 @@ export class Property {
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.status = status;
-    this.profileStatus = profileStatus;
   };
 
   // Metodos de class
   static createNewProperty(propertyName: string): Property {
     const propertyStatus = "PENDING";
-    const profileStatus = "INCOMPLETE";
     const createdAt = new Date();
     const updatedAt = new Date();
 
-    return new Property(null, propertyName, null, null, null, null, null, createdAt, updatedAt, propertyStatus, profileStatus);
+    return new Property(null, propertyName, null, null, null, null, null, createdAt, updatedAt, propertyStatus);
   }
 
   static updateDate() {
