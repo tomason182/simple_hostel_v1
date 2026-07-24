@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS properties (
   description TEXT,
   status VARCHAR(10) NOT NULL DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'ACTIVE', 'SUSPENDED')),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  updated_at TIMESTAMP
 );
 
 -- Crear tabla Access Control.
@@ -30,10 +30,10 @@ CREATE TABLE IF NOT EXISTS access_control (
   property_id BIGINT NOT NULL,
   role VARCHAR(10) NOT NULL CHECK(role IN ('OWNER', 'ADMIN', 'MANAGER', 'EMPLOYEE')),
 
-  UNIQUE(user_id, property_id)
+  UNIQUE(user_id, property_id),
 
   FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
+  FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE
 );
 
 -- Crear tabla addresses.
@@ -166,8 +166,8 @@ CREATE TABLE IF NOT EXISTS breakfast_and_meals (
   is_included BOOLEAN NOT NULL DEFAULT FALSE,
   is_serve BOOLEAN NOT NULL DEFAULT FALSE,
   price INT,
-  from VARCHAR(5),  -- 09:00
-  to VARCHAR(5),    -- 11:00
+  from TIME,  -- 09:00
+  to TIME,    -- 11:00
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP,
   updated_by BIGINT,
@@ -182,10 +182,10 @@ CREATE TABLE IF NOT EXISTS general_policies (
   min_length_stay INT,
   max_length_stay INT,
   min_advance_booking INT,
-  check_in_from VARCHAR(5),   -- 11:00
-  check_in_until VARCHAR(5),     -- 21:00
-  check_out_from VARCHAR(5),
-  check_out_until VARCHAR(5)
+  check_in_from TIME,   -- 11:00
+  check_in_until TIME,     -- 21:00
+  check_out_from TIME,
+  check_out_until TIME,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP,
   updated_by BIGINT,
@@ -225,8 +225,8 @@ CREATE TABLE IF NOT EXISTS minor_policies (
 -- crear tabla other policies
 CREATE TABLE IF NOT EXISTS other_policies (
   property_id BIGINT UNIQUE,
-  quiet_hours_from VARCHAR(5),
-  quiet_hours_until VARCHAR(5),
+  quiet_hours_from TIME,
+  quiet_hours_until TIME,
   has_smooking_areas BOOLEAN NOT NULL DEFAULT FALSE,
   allow_external_guest BOOLEAN NOT NULL DEFAULT FALSE,
   allow_pets BOOLEAN NOT NULL DEFAULT FALSE,
@@ -242,17 +242,21 @@ CREATE TABLE IF NOT EXISTS rates_and_availability (
   property_id BIGINT, -- Aqui no se si es necesario property_id ya que se relaciona con roomType.
   room_type_id BIGINT,
   date DATE NOT NULL,
-  custum_rate INT NOT NULL CHECK( custum_rate > 0),
+  custom_rate INT NOT NULL CHECK( custum_rate > 0),
   rooms_to_sell INT NOT NULL CHECK( rooms_to_sell >= 0),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP,
   updated_by BIGINT,
 
-  UNIQUE(property_id, room_type_id),
+  UNIQUE(room_type_id, date),
 
   FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
+  FOREIGN KEY(room_type_id) REFERENCES room_type(id) ON DELETE CASCADE,
   FOREIGN KEY(updated_by) REFERENCES users(id)
 );
+
+CREATE INDEX idx_rates_property_date ON rates_and_availability(property_id, date);
+CREATE INDEX idx_rates_room_type_date ON rates_and_availability(room_type_id, date);
 
 -- Crear tabla reservations
 CREATE TABLE IF NOT EXISTS reservations (
@@ -267,9 +271,15 @@ CREATE TABLE IF NOT EXISTS reservations (
   special_request VARCHAR(500),
   total_amount INT NOT NULL,
   advance_payment_amount INT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_by BIGINT NOT NULL,
+  updated_at TIMESTAMP,
+  updated_by BIGINT,
   
   FOREIGN KEY(property_id) REFERENCES property(id) ON DELETE CASCADE,
-  FOREIGN KEY(guest_id) REFERENCES guest(id)
+  FOREIGN KEY(guest_id) REFERENCES guest(id),
+  FOREIGN KEY(created_by) REFERENCES users(id),
+  FOREIGN KEY(updated_by) REFERENCES users(id)
 );
 
 
