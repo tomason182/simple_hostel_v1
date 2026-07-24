@@ -242,13 +242,13 @@ CREATE TABLE IF NOT EXISTS rates_and_availability (
   property_id BIGINT, -- Aqui no se si es necesario property_id ya que se relaciona con roomType.
   room_type_id BIGINT,
   date DATE NOT NULL,
-  custom_rate INT NOT NULL CHECK( custum_rate > 0),
+  custom_rate INT NOT NULL CHECK( custom_rate > 0),
   rooms_to_sell INT NOT NULL CHECK( rooms_to_sell >= 0),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP,
   updated_by BIGINT,
 
-  UNIQUE(room_type_id, date),
+  PRIMARY KEY(room_type_id, date),
 
   FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
   FOREIGN KEY(room_type_id) REFERENCES room_type(id) ON DELETE CASCADE,
@@ -263,24 +263,141 @@ CREATE TABLE IF NOT EXISTS reservations (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   property_id BIGINT NOT NULL,
   guest_id BIGINT NOT NULL,
-  booking_source VARCHAR(20) NOT NULL,
-  reservation_status VARCHAR(10) CHECK(reservation_status IN ('confirmed', 'canceled', 'pending')),
-  currency VARCHAR(3) NOT NULL,
+  currency_id BIGINT NOT NULL,
+  booking_source_id SMALLINT NOT NULL,
+  reservation_status_id SMALLINT NOT NULL,
+
   check_in DATE NOT NULL,
   check_out DATE NOT NULL,
   special_request VARCHAR(500),
-  total_amount INT NOT NULL,
-  advance_payment_amount INT NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+
+  -- subtotales, descuentos, impuestos, etc.
+  subtotal_amount NUMERIC(12,2) NOT NULL,
+  discount_amount NUMERIC(12,2) NOT NULL DEFAULT 0.00,
+  tax_amount NUMERIC(12,2) NOT NULL DEFAULT 0.00,
+  total_amount NUMERIC(12,2) NOT NULL,   -- subtotal - discount + taxes
+  required_deposit_amount NUMERIC(12,2) NOT NULL,
+
+  created_at TIMESTAMPZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   created_by BIGINT NOT NULL,
-  updated_at TIMESTAMP,
+  updated_at TIMESTAMPZ,
   updated_by BIGINT,
-  
+
+  CHECK(check_out > check_in),
+  CHECK(total_amount > 0),
+
   FOREIGN KEY(property_id) REFERENCES property(id) ON DELETE CASCADE,
   FOREIGN KEY(guest_id) REFERENCES guest(id),
+  FOREIGN KEY(currency_id) REFERENCES currencies(id),
+  FOREIGN KEY(booking_source_id) REFERENCES booking_source(id),
+  FOREIGN KEY(reservation_status_id) REFERENCES reservation_status(id),
   FOREIGN KEY(created_by) REFERENCES users(id),
   FOREIGN KEY(updated_by) REFERENCES users(id)
 );
+
+-- Crear tabla reservation_items
+CREATE TABLE IF NOT EXISTS reservation_items (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  reservation_id BIGINT NOT NULL,
+  room_type_id BIGINT NOT NULL,
+  
+  -- Cantidad de camas o cuartos comprados de este tipo
+  quantity INT NOT NULL DEFAULT 1,
+  
+  -- Precio acordado por unidad/noche al momento de reservar
+  unit_price NUMERIC(12, 2) NOT NULL,
+  subtotal NUMERIC(12, 2) NOT NULL,
+  
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  -- Validaciones
+  CONSTRAINT chk_positive_quantity CHECK (quantity > 0),
+  CONSTRAINT chk_positive_prices CHECK (unit_price >= 0 AND subtotal >= 0),
+
+  -- FKs
+  FOREIGN KEY(reservation_id) REFERENCES reservations(id) ON DELETE CASCADE,
+  FOREIGN KEY(room_type_id) REFERENCES room_types(id)
+);
+
+CREATE INDEX idx_reservation_items_reservation ON reservation_items(reservation_id);
+
+
+--crear tabla payment
+CREATE TABLE IF NOT EXISTS payments (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  reservation_id BIGINT NOT NULL,
+
+  -- Monto real recibido y su moneda
+  amount NUMERIC(12, 2) NOT NULL,
+  currency_id BIGINT NOT NULL,
+  
+  -- Tasa de conversión respecto a la moneda de la reserva (1.0000 si es la misma)
+  exchange_rate NUMERIC(12, 4) NOT NULL DEFAULT 1.0000,
+  
+  -- Clasificación del pago
+  payment_method_id VARCHAR(20) NOT NULL, -- ej: 'cash', 'card', 'transfer', 'stripe'
+  payment_status_id VARCHAR(20) NOT NULL, -- ej: 'completed', 'pending', 'refunded', 'failed'
+  
+  -- Referencia externa (número de lote, ID de transacción de MP/Stripe, etc.)
+  transaction_reference VARCHAR(100),
+  
+  -- Auditoría y Trazabilidad
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_by BIGINT NOT NULL,
+
+  -- Validaciones de integridad
+  CONSTRAINT chk_positive_payment_amount CHECK (amount > 0),
+  CONSTRAINT chk_positive_exchange_rate CHECK (exchange_rate > 0),
+
+  -- Foreign Keys
+  FOREIGN KEY(reservation_id) REFERENCES reservations(id) ON DELETE CASCADE,
+  FOREIGN KEY(currency_id) REFERENCES currencies(id),
+  FOREIGN KEY(payment_method_id) REFERENCES payment_methods(id),
+  FOREIGN KEY(payment_status_id) REFERENCES payment_statuses(id),
+  FOREIGN KEY(created_by) REFERENCES users(id)
+);
+
+-- Índice para consultar rápidamente todos los pagos de una reserva
+CREATE INDEX idx_payments_reservation ON payments(reservation_id);
+-- Índice para cierres de caja (pagos por fecha y usuario)
+CREATE INDEX idx_payments_date_user ON payments(created_at, created_by);
+
+-- Crear tabla reservation status.
+CREATE TABLE IF NOT EXISTS reservation_status (
+  id VARCHAR(20) PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  description VARCHAR(255),
+  is_active_inventory BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Inserción de catálogo de estados
+INSERT INTO reservation_status (id, name, description, is_active_inventory) VALUES
+  ('pending',     'Pendiente',     'Reserva creada/solicitada pero sin confirmar o sin depósito inicial.', TRUE),
+  ('confirmed',   'Confirmada',    'Reserva confirmada. Garantiza la disponibilidad de la cama/habitación.', TRUE),
+  ('checked_in',  'In House',      'El huésped ya realizó el check-in y se encuentra ocupando el hostel.', TRUE),
+  ('checked_out', 'Check-out',     'El huésped completó su estadía y liberó la cama.', FALSE),
+  ('cancelled',   'Cancelada',     'Reserva cancelada por el cliente o el hostel antes del ingreso.', FALSE),
+  ('no_show',     'No Presentado', 'El huésped no se presentó en la fecha de check-in sin avisar.', FALSE)
+ON CONFLICT (id) DO NOTHING;
+
+-- Crear tabla payment status.
+CREATE TABLE IF NOT EXISTS payment_status (
+  id VARCHAR(20) PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  description VARCHAR(255),
+  is_settled BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Inserción de catálogo de estados
+INSERT INTO payment_status (id, name, description, is_settled) VALUES
+  ('completed', 'Completado', 'El pago fue procesado correctamente y el dinero está efectivamente cobrado.', TRUE),
+  ('pending',   'Pendiente',  'El pago fue iniciado (ej. transferencia bancaria por verificar o pasarela externa) pero no acreditado.', FALSE),
+  ('failed',    'Fallido',    'Intento de pago rechazado por el banco o la pasarela de pagos.', FALSE),
+  ('refunded',  'Reembolsado','El pago fue devuelto total o parcialmente al cliente.', FALSE)
+ON CONFLICT (id) DO NOTHING;
 
 
 -- Crear tabla bed_occupancy.
@@ -297,8 +414,7 @@ CREATE TABLE IF NOT EXISTS bed_occupancy (
 
   FOREIGN KEY(bed_id) REFERENCES beds(id),
   FOREIGN KEY(reservation_id) REFERENCES reservations(id),
-  FOREIGN KEY(room_type_id) REFERENCES room_types(id),
-
+  FOREIGN KEY(room_type_id) REFERENCES room_types(id)
 );
 
 CREATE INDEX idx_bed_occupancy_room_type_dates ON bed_occupancy(room_type_id, check_in, check_out);
