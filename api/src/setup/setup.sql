@@ -166,8 +166,8 @@ CREATE TABLE IF NOT EXISTS breakfast_and_meals (
   is_included BOOLEAN NOT NULL DEFAULT FALSE,
   is_serve BOOLEAN NOT NULL DEFAULT FALSE,
   price INT,
-  from TIME,  -- 09:00
-  to TIME,    -- 11:00
+  breakfast_start_time TIME,  -- 09:00
+  breakfast_end_time TIME,    -- 11:00
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP,
   updated_by BIGINT,
