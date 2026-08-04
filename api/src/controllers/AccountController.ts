@@ -11,10 +11,13 @@ export class AccountController {
 
   // 1. Crear cuenta.
   public async createAccount(req: Request, res: Response, next: NextFunction) {
+
     try {
       const { username, password, firstname, propertyName } = req.body;
 
-      const result = await this.accountService.createAccount(username, password, firstname, propertyName);
+      const result = await req.context.execute(async () =>
+        this.accountService.createAccount(username, password, firstname, propertyName)
+        , true)
 
       return res.status(200).json(result);
     } catch (err) {

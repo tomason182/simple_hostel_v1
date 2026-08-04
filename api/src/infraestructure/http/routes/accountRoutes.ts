@@ -3,6 +3,9 @@ import { checkSchema, param } from "express-validator";
 import { createAccountSchema, resendEmailSchema } from "../schemas/accountSchema";
 import { validateRequest } from "../middlewares/validateRequest";
 import rateLimit from "express-rate-limit";
+import { requestContextMiddleware } from "../middlewares/requestContextMiddleware";
+import { Pool } from "pg";
+import { EmailService } from "../../../services/EmailService";
 
 const registerLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -13,7 +16,7 @@ const registerLimiter = rateLimit({
 });
 
 
-export function createAccountRoutes() {
+export function createAccountRoutes(pool: Pool, emailService: EmailService) {
   const router = express.Router();
 
   // 1. createAccount
@@ -22,6 +25,8 @@ export function createAccountRoutes() {
     registerLimiter,
     checkSchema(createAccountSchema),
     validateRequest,
+    requestContextMiddleware(pool, emailService),
+
     (req: Request, res: Response, next: NextFunction) => {
       req.context.accountController.createAccount(req, res, next)
     });

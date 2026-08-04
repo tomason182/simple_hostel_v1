@@ -99,6 +99,11 @@ export class AccountService implements IAccountService {
     return { msg: "ACCOUNT_VALIDATED" }
   }
 
+  async resendValidationEmail(email: string): Promise<void> {
+
+    return;
+  }
+
   async deleteAccount(username: string, password: string): Promise<{ msg: string; }> {
 
     // TODO. logica para eliminar cuenta.

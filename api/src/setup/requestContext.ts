@@ -39,4 +39,11 @@ export class RequestContext {
 
   }
 
+  public execute<T>(
+    callback: () => Promise<T>,
+    needTransaction = false
+  ) {
+    return this.uow.execute(callback, needTransaction);
+  }
+
 }

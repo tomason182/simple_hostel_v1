@@ -111,7 +111,7 @@ export class Main {
 
     this.app.use(`${this.baseUrl}/users`, createUserRouter());
 
-    this.app.use(`${this.baseUrl}/account`, createAccountRoutes());
+    this.app.use(`${this.baseUrl}/account`, createAccountRoutes(this.pool, this.emailService));
 
     // ...mas rutas
 
