@@ -29,11 +29,15 @@ CREATE TABLE IF NOT EXISTS access_control (
   user_id BIGINT NOT NULL,
   property_id BIGINT NOT NULL,
   role VARCHAR(10) NOT NULL CHECK(role IN ('OWNER', 'ADMIN', 'MANAGER', 'EMPLOYEE')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ,
+  updated_by BIGINT,
 
   UNIQUE(user_id, property_id),
 
   FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE
+  FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
+  FOREIGN KEY(updated_by) REFERENCES users(id)
 );
 
 -- Crear tabla addresses.
