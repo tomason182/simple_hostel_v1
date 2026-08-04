@@ -117,13 +117,12 @@ export class Main {
       }
     });
 
+
     this.app.use(`${this.baseUrl}/users`, createUserRouter());
 
-    this.app.use(`${this.baseUrl}/account`, createAccountRoutes(this.pool, this.emailService));
+    this.app.use(`${this.baseUrl}/accounts`, createAccountRoutes(this.pool, this.emailService));
 
     // ...mas rutas
-
-
 
 
     // Handler para rutas no encontradas
