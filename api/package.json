@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tanstack/react-query": "^5.101.3",
     "bcrypt": "^6.0.0",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
@@ -27,7 +26,6 @@
     "morgan": "^1.11.0",
     "nodemailer": "^9.0.1",
     "pg": "^8.22.0",
-    "react-router-dom": "^7.18.1",
     "sharp": "^0.35.3"
   },
   "devDependencies": {
