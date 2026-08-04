@@ -28,12 +28,16 @@ export class EmailServiceSMTP implements IEmailRepositorySMTP {
 
     await service.initialize();
 
+    console.log("smtp initialized")
+
     return service;
   }
 
   private async initialize(): Promise<void> {
     try {
+      console.log("Iniciando smtp")
       await this.transporter.verify();
+      console.log("final smtp verify")
     } catch (e) {
       throw new Error("Email Server verification failed");
     }

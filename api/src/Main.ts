@@ -45,7 +45,7 @@ export class Main {
     const port = Number(process.env.PORT) || 3000;
 
     this.app.listen(port, () => {
-      console.log(`Server listening on port ${3000}`);
+      console.log(`Server listening on port ${port}`);
     });
   }
 
@@ -56,6 +56,8 @@ export class Main {
 
     console.log("Iniciando servicio SMTP...")
     const emailRepository = await EmailServiceSMTP.create(nodeMailerConfig());
+
+    console.log("Creando instancia emailService");
 
     this.emailService = new EmailService(emailRepository);
   }
@@ -105,8 +107,14 @@ export class Main {
 
   private setupRoutes() {
 
-    this.app.get("/health", (req, res) => {
-      res.json({ status: "ok" });
+    this.app.get("/health", async (req, res) => {
+      try{
+        await this.pool.query("SELECT 1");
+
+        return res.status(200).json({status:"ok", db:"up"});
+      }catch(err){
+        return res.status(400).json(err)
+      }
     });
 
     this.app.use(`${this.baseUrl}/users`, createUserRouter());

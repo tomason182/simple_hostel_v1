@@ -6,7 +6,7 @@ async function bootstrap() {
     await main.run();
 
   } catch (err) {
-    console.error("Ups!...Arranque de la aplicacion fallido.")
+    console.error("Ups!...Arranque de la aplicacion fallido.". err)
   }
 }
 
