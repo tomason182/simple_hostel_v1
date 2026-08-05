@@ -1,0 +1,14 @@
+<mjml>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+
+        <mj-text font-size="20px" color="#F45E43" font-family="helvetica">Se registro un nuevo hostel:</mj-text>
+        
+        <mj-text>Nombre: {{name}}</mj-text>
+        <mj-text>Username: {{email }}</mj-text>
+
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

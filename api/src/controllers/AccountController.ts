@@ -31,7 +31,10 @@ export class AccountController {
     try {
       const token = req.params.token as string;
 
-      const result = await this.accountService.validateAccount(token);
+      const result = await req.context.execute(async () =>
+        this.accountService.validateAccount(token),
+        false
+      );
 
       return res.status(200).json(result);
     } catch (err) {

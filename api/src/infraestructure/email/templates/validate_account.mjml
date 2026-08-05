@@ -60,7 +60,7 @@
         </mj-text>
 
         <mj-text>
-					Antes de empezar a gestionar tu hostel, por favor verifica tu dirección de correo 										electrónico haciendo clic en el botón de abajo.
+					Antes de empezar a gestionar tu hostel, por favor verifica tu dirección de correo electrónico haciendo clic en el botón de abajo.
         </mj-text>
 
         <mj-button href="{{confirmationLink}}">

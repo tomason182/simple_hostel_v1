@@ -12,7 +12,7 @@ export class EmailService {
     this.emailRepository = emailRepository;
   }
 
-  async validateAccountEmail(user: User, property: Property, accessControl: AccessControl): Promise<void> {
+  async validateAccountEmail(user: User, property: Property, accessControl: AccessControl): Promise<string> {
     const tokenData = {
       id: user.getId(),
       propertyId: property.getId(),
@@ -32,6 +32,8 @@ export class EmailService {
     }
 
     await this.emailRepository.sendEmail(to, subject, templateName, data);
+
+    return token;
 
   }
 

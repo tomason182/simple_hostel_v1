@@ -33,16 +33,35 @@ async function createAccount(username, password, firstName, propertyName, accept
 
     const response = await fetch(url, options);
 
-    console.log(response.status);
-    console.log(response.headers.get("content-type"))
+    const body = await response.json();
 
-    console.log(await response.json());
+    console.log(body);
+
+    return body.token;
   } catch (err) {
     console.log(err)
   }
 
 }
 
+async function validateAccount(token) {
+  try {
+    const url = baseUrl + "/accounts/validation/" + token;
+    console.log(url);
+
+    const response = await fetch(url);
+
+    console.log(await response.json())
+
+
+  } catch (err) {
+    throw new Error("Error on validateAccount", err);
+  }
+}
+
+// ======================================================
+// Iniciando TESTS.
+// ====================================================== 
 const user = {
   username: "tomas2@mail.com",
   password: "&tomAs_useR182",
@@ -52,4 +71,17 @@ const user = {
   captchaToken: "captcha",
 }
 
-createAccount(user.username, user.password, user.firstName, user.propertyName, user.acceptTerms, user.captchaToken);
+async function runTest() {
+
+  // Crear Cuenta
+  const token = await createAccount(user.username, user.password, user.firstName, user.propertyName, user.acceptTerms, user.captchaToken);
+
+
+  // Validar cuenta
+  validateAccount(token);
+}
+
+runTest();
+
+
+

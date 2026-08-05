@@ -21,7 +21,7 @@ export class AccountService implements IAccountService {
     this.emailService = emailService;
   };
 
-  async createAccount(username: string, password: string, firstName: string, propertyName: string): Promise<{ msg: string }> {
+  async createAccount(username: string, password: string, firstName: string, propertyName: string): Promise<{ msg: string, token: string }> {
     // 1. Comprobar si el usuario existe.
     const userExist = await this.userRepository.findByUsername(username);
 
@@ -38,10 +38,8 @@ export class AccountService implements IAccountService {
     // 3. Guardar el usuario en la base de datos.
     user = await this.userRepository.save(user);
 
-    console.log("usuario creado con exito.")
 
     // 4. Crear la entidad Property.
-    console.log("creando la propiedad y access control...");
     let property = Property.createNewProperty(propertyName);
 
     // 5. Guardar la propiedad en la bd.
@@ -53,16 +51,14 @@ export class AccountService implements IAccountService {
     // 7. Guardar el accessControl.
     accessControl = await this.accessControlRepository.save(accessControl);
 
-    console.log("Propiedad y access control creados.");
 
     // 8. Enviar email para validar cuenta.
-    console.log("enviando email de validación");
-    await this.emailService.validateAccountEmail(user, property, accessControl);
+    const token = await this.emailService.validateAccountEmail(user, property, accessControl);
 
-    console.log("Email enviado con exito.");
 
     return {
-      msg: "USER_REGISTER_SUCCESS"
+      msg: "USER_REGISTER_SUCCESS",
+      token: token
     }
   }
 
@@ -79,7 +75,7 @@ export class AccountService implements IAccountService {
     if (!user) {
       throw new Error("USER_NOT_FOUND");
     }
-
+    // *2
     if (user.isEmailVerified) {
       throw new Error("ACCOUNT_ALREADY_VALIDATED");
     }
@@ -90,17 +86,20 @@ export class AccountService implements IAccountService {
     user.isEmailVerified = true;
 
     // ¿Habria que setear el nuevo lastReserndEmail y guardarlo en la bd?.
+    // En realidad creo que no porque el email aqui se valida. de haber un segundo intento 
+    // es rechazado en *2
 
 
     // Actualzar solamente validateEmail
     await this.userRepository.validateEmail(user.getId());
 
+    // La tabla Properties tiene una columna STATUS. ¿La actualizamos tambien acá?
+
     // Auto enviarme un email de aviso de registro.
     const to = process.env.SUPPORT_EMAIL || "support@simplehostel.net";
     const subject = "Se registro un nuevo hostel";
-    const templateName = "new_register";
+    const templateName = "new_hostel";
     const data = {
-      logoUrl: process.env.LOGO_URL || "",
       name: user.getFirstName(),
       email: user.getUsername(),
     };

@@ -32,7 +32,7 @@ export function createAccountRoutes(pool: Pool, emailService: EmailService) {
     });
 
   // 2. validateAccount
-  router.get("/validate-account/:token",
+  router.get("/validation/:token",
     param("token").isJWT().withMessage("Invalid JWT token"),
     validateRequest,
     (req: Request, res: Response, next: NextFunction) => {
