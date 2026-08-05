@@ -52,6 +52,11 @@ export class Property {
     return false
   }
 
+  public activeProperty() {
+    this.status = "ACTIVE";
+    this.updatedAt = new Date();
+  }
+
   public checkPropertyProfileStatus() {
 
   }

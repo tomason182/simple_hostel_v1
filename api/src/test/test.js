@@ -59,6 +59,35 @@ async function validateAccount(token) {
   }
 }
 
+async function logInUser(username, password) {
+  try {
+    const url = baseUrl + "/users/auth";
+
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username,
+        password
+      })
+
+    }
+
+    const response = await fetch(url, options);
+
+    const setCookie = response.headers.get("set-cookie");
+
+    console.log("Cookies: ", setCookie);
+
+    console.log(await response.json());
+
+  } catch (err) {
+    console.error("Error on login user", err);
+  }
+}
+
 // ======================================================
 // Iniciando TESTS.
 // ====================================================== 
@@ -74,11 +103,16 @@ const user = {
 async function runTest() {
 
   // Crear Cuenta
+  console.log("Creando cuenta...")
   const token = await createAccount(user.username, user.password, user.firstName, user.propertyName, user.acceptTerms, user.captchaToken);
 
-
   // Validar cuenta
-  validateAccount(token);
+  console.log("Validando cuenta...");
+  await validateAccount(token);
+
+  // Log in user
+  console.log("Logeando al usuario...");
+  await logInUser(user.username, user.password);
 }
 
 runTest();

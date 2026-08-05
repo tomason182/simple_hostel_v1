@@ -68,6 +68,7 @@ export class AccountService implements IAccountService {
     }
 
     const id = decoded.data.id;
+    const propertyId = decoded.data.propertyId;
 
     const user = await this.userRepository.findById(id);
 
@@ -93,6 +94,11 @@ export class AccountService implements IAccountService {
     await this.userRepository.validateEmail(user.getId());
 
     // La tabla Properties tiene una columna STATUS. ¿La actualizamos tambien acá?
+    const property = await this.propertyRepository.findById(propertyId);
+
+    property.activeProperty();
+
+    await this.propertyRepository.update(property);
 
     // Auto enviarme un email de aviso de registro.
     const to = process.env.SUPPORT_EMAIL || "support@simplehostel.net";

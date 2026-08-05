@@ -1,4 +1,4 @@
-import { Property } from "../../domain/entities/Property";
+import { Property, PropertyStatus } from "../../domain/entities/Property";
 import { IPropertyRepository } from "../../domain/ports/IPropertyRepository";
 import { Address } from "../../domain/value-objects/Address";
 import { ContactInfo } from "../../domain/value-objects/ContactInfo";
@@ -12,7 +12,7 @@ export class PropertyRepository implements IPropertyRepository {
 
 
   async findById(property_id: number): Promise<Property> {
-    const query = `SELECT FROM * properties WHERE property_id = $1;`;
+    const query = `SELECT * FROM properties WHERE id = $1;`;
 
     const result = await this.uow.query(query, [property_id]);
 
@@ -60,9 +60,22 @@ export class PropertyRepository implements IPropertyRepository {
     return property;
   }
 
-  async updateDescription(property: Property): Promise<void> {
-    const query = "INSERT INTO properties (description) VALUES ($1)";
-    await this.uow.query(query, [property.description]);
+  async update(property: Property): Promise<Property> {
+    const query = `UPDATE properties
+                      SET property_name = $1,
+                          description = $2,
+                          status = $3,
+                          updated_at= $4
+                    `;
+
+    await this.uow.query(query, [
+      property.propertyName,
+      property.description,
+      property.status,
+      property.updatedAt
+    ])
+
+    return property;
   }
 
   // =======================================

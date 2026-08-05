@@ -1,8 +1,11 @@
 import { JwtPayload, sign, verify } from "jsonwebtoken";
+import { UserRole } from "../domain/entities/AccessControl";
 
 export interface AccessTokenPayload extends JwtPayload {
   data: {
     id: number,
+    propertyId: number,
+    role: UserRole
     // otros campos.
   }
 }

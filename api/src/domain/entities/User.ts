@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { UserDTO } from "../dto/UserDTO";
+import { UserDTO, UserOutputDTO } from "../dto/UserDTO";
 
 export class User {
   private id: number | null;
@@ -89,6 +89,18 @@ export class User {
     this.passwordHash = await User.passwordHash(newPass);
   }
 
+  public toDTO(): UserOutputDTO {
+    return {
+      id: this.id,
+      username: this.username,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      avatar: this.avatar,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
+    }
+  }
+
   // Getters and Setters
   setLastResenEmail(): void {
     this.lastResendEmail = new Date()
@@ -137,8 +149,8 @@ export class User {
     if (userDTO.username !== this.username) {
       throw new Error("USERNAME_CAN_NOT_BE_CHANGE")
     };
-    this.firstName = userDTO.firstname;
-    this.lastName = userDTO.lastname;
+    this.firstName = userDTO.firstName;
+    this.lastName = userDTO.lastName;
   }
 
 

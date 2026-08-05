@@ -3,8 +3,7 @@ import { IPropertyRepository } from "../domain/ports/IPropertyRepository";
 import { IAccessControlRepository } from "../domain/ports/IAccessControlRepository";
 import { jwtTokenGenerator, jwtTokenValidator } from "../utils/jwtTokenHelper";
 import { IUserService } from "../domain/interfaces/IUserService";
-import { UserDTO } from "../domain/dto/UserDTO";
-import { User } from "../domain/entities/User";
+import { UserDTO, UserOutputDTO } from "../domain/dto/UserDTO";
 import { EmailService } from "./EmailService";
 
 export class UserService implements IUserService {
@@ -20,7 +19,7 @@ export class UserService implements IUserService {
     this.emailService = emailService;
   }
 
-  async authUser(username: string, password: string): Promise<{ token: string }> {
+  async authUser(username: string, password: string): Promise<{ token: string, expiresIn: number, user: UserOutputDTO }> {
 
     // 1. Buscar el usuario por username
     const user = await this.userRepository.findByUsername(username);
@@ -53,10 +52,11 @@ export class UserService implements IUserService {
 
     // 5. Generar credenciales.
     const data = { userId, propertyId, role };
+    const expiresIn = 60;
 
-    const token = jwtTokenGenerator(data, 60);
+    const token = jwtTokenGenerator(data, expiresIn);
 
-    return { token: token }
+    return { token: token, expiresIn: expiresIn, user: user.toDTO() }
   };
 
   public async update(userDTO: UserDTO): Promise<UserDTO> {

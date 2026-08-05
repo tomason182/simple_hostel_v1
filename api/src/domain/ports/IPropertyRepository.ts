@@ -1,5 +1,5 @@
 import { CurrenciesDTO } from "../dto/CurrenciesDTO";
-import { Property } from "../entities/Property";
+import { Property, PropertyStatus } from "../entities/Property";
 import { Address } from "../value-objects/Address";
 import { ContactInfo } from "../value-objects/ContactInfo";
 import { Currencies } from "../value-objects/Currencies";
@@ -9,7 +9,8 @@ export interface IPropertyRepository {
 
   findById(property: number): Promise<Property>;
 
-  updateDescription(property: Property): Promise<void>;
+
+  update(property: Property): Promise<Property>;
 
   // Contact info
   getContactInfo(propertyId: number): Promise<ContactInfo | null>;

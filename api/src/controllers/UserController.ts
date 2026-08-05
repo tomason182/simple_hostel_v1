@@ -18,7 +18,15 @@ export class UserController {
         this.userService.authUser(username, password),
         false
       )
-      res.status(200).json({ token: result.token })
+      res
+        .cookie("access_token", result.token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+          maxAge: 1000 * 60 * result.expiresIn,
+        })
+        .status(200)
+        .json({ user: result.user })
     } catch (e) {
       next(e)
     }

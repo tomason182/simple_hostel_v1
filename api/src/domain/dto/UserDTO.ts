@@ -1,12 +1,11 @@
 export interface UserDTO {
   id: number;
   username: string;
-  firstname: string;
-  lastname: string | null;
+  firstName: string;
+  lastName: string | null;
   hashPassword: string;
   isValidEmail: boolean;
   lastResendEmail: Date;
-  role: string;
   avatar: string;
   createdAt: Date;
   updateAt: Date;
@@ -18,4 +17,14 @@ export interface CreateUserDTO {
   firstname: string;
   lastname?: string;
   password: string;
+}
+
+export interface UserOutputDTO {
+  id: number | null,
+  username: string,
+  firstName: string,
+  lastName: string | null,
+  avatar: string | null,
+  createdAt: Date,
+  updatedAt: Date
 }
