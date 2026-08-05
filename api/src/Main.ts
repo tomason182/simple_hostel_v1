@@ -101,7 +101,9 @@ export class Main {
     this.app.use(this.baseUrl, apiLimiter);
 
 
-    this.app.use(requestContextMiddleware(this.pool, this.emailService))
+    this.app.use(requestContextMiddleware(this.pool, this.emailService));
+
+
   };
 
 
@@ -138,9 +140,9 @@ export class Main {
       }
       res.status(500).json({ error: message })
 
-      this.app.use(errorHandler);
-
     }
+
+    this.app.use(errorHandler);
 
   }
 }
