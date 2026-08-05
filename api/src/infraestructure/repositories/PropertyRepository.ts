@@ -10,6 +10,32 @@ export class PropertyRepository implements IPropertyRepository {
     this.uow = uow;
   }
 
+
+  async findById(property_id: number): Promise<Property> {
+    const query = `SELECT FROM * properties WHERE property_id = $1;`;
+
+    const result = await this.uow.query(query, [property_id]);
+
+    const data = result.rows[0];
+
+    if (!data) {
+      throw new Error("PROPERTY_NOT_FOUND");
+    }
+
+    return new Property(
+      data.id,
+      data.property_name,
+      null,
+      null,
+      null,
+      null,
+      data.description || null,
+      data.created_at,
+      data.updated_at,
+      data.status)
+
+  }
+
   async save(property: Property): Promise<Property> {
     const query = `INSERT INTO properties (
                       property_name, 
@@ -35,7 +61,7 @@ export class PropertyRepository implements IPropertyRepository {
   }
 
   async updateDescription(property: Property): Promise<void> {
-    const query = "INSERT INTO property (description) VALUES ($1)";
+    const query = "INSERT INTO properties (description) VALUES ($1)";
     await this.uow.query(query, [property.description]);
   }
 

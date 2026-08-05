@@ -7,7 +7,7 @@ import { Currencies } from "../value-objects/Currencies";
 export interface IPropertyRepository {
   save(property: Property): Promise<Property>;
 
-  // findById(property: number): Promise<Property | null>;
+  findById(property: number): Promise<Property>;
 
   updateDescription(property: Property): Promise<void>;
 

@@ -14,8 +14,10 @@ export class UserController {
     try {
       const { username, password } = req.body;
 
-      const result = await this.userService.authUser(username, password);
-
+      const result = await req.context.execute(async () =>
+        this.userService.authUser(username, password),
+        false
+      )
       res.status(200).json({ token: result.token })
     } catch (e) {
       next(e)

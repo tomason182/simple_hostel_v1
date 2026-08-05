@@ -33,7 +33,6 @@ export class AccountService implements IAccountService {
     console.log("creando el usuario...");
     let user = await User.createNewUser(username, password, firstName);
 
-    console.log(firstName);
 
     // 3. Guardar el usuario en la base de datos.
     user = await this.userRepository.save(user);

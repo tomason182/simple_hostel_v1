@@ -3,6 +3,9 @@ import { checkSchema } from "express-validator";
 import { loginSchema } from "../schemas/userSchema";
 import { validateRequest } from "../middlewares/validateRequest";
 import rateLimit from "express-rate-limit";
+import { Pool } from "pg";
+import { EmailService } from "../../../services/EmailService";
+import { requestContextMiddleware } from "../middlewares/requestContextMiddleware";
 
 
 const loginLimiter = rateLimit({
@@ -15,8 +18,7 @@ const loginLimiter = rateLimit({
 
 
 
-export function createUserRouter() {
-
+export function createUserRouter(pool: Pool, emailService: EmailService) {
   const router = express.Router();
 
   router.post(
@@ -24,6 +26,7 @@ export function createUserRouter() {
     loginLimiter,
     checkSchema(loginSchema),
     validateRequest,
+    requestContextMiddleware(pool, emailService),
     (req: Request, res: Response, next: NextFunction) => {
       req.context.userController.authUser(req, res, next)
     });

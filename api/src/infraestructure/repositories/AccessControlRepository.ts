@@ -8,7 +8,7 @@ export class AccessControlRepository implements IAccessControlRepository {
     this.uow = uow;
   }
 
-  async findUser(userId: number): Promise<AccessControl | null> {
+  async findUser(userId: number): Promise<AccessControl> {
     const query = "SELECT * FROM access_control WHERE user_id = $1;";
 
     const result = await this.uow.query(query, [userId]);
@@ -16,7 +16,7 @@ export class AccessControlRepository implements IAccessControlRepository {
     const data = result.rows[0];
 
     if (!data) {
-      return null;
+      throw new Error("ACCESS_CONTROL_NOT_SET");
     }
 
     return new AccessControl(data.id, data.user_id, data.property_id, data.role, data.created_at, data.updated_at);

@@ -108,17 +108,17 @@ export class Main {
   private setupRoutes() {
 
     this.app.get("/health", async (req, res) => {
-      try{
+      try {
         await this.pool.query("SELECT 1");
 
-        return res.status(200).json({status:"ok", db:"up"});
-      }catch(err){
+        return res.status(200).json({ status: "ok", db: "up" });
+      } catch (err) {
         return res.status(400).json(err)
       }
     });
 
 
-    this.app.use(`${this.baseUrl}/users`, createUserRouter());
+    this.app.use(`${this.baseUrl}/users`, createUserRouter(this.pool, this.emailService));
 
     this.app.use(`${this.baseUrl}/accounts`, createAccountRoutes(this.pool, this.emailService));
 
