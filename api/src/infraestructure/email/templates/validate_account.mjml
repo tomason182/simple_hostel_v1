@@ -1,0 +1,121 @@
+<mjml>
+  <mj-head>
+    <mj-title>Validate your SimpleHostel account</mj-title>
+
+    <mj-attributes>
+      <mj-all
+        font-family="Helvetica, Arial, sans-serif"
+        color="#374151"
+      />
+
+      <mj-text
+        font-size="16px"
+        line-height="24px"
+      />
+
+      <mj-button
+        background-color="#2563eb"
+        color="#ffffff"
+        border-radius="6px"
+        font-size="16px"
+        font-weight="bold"
+        padding="16px 24px"
+      />
+    </mj-attributes>
+  </mj-head>
+
+  <mj-body background-color="#f4f6f8">
+
+    <mj-section background-color="#ffffff" padding="40px 30px">
+
+      <mj-column>
+
+        <mj-text
+          align="center"
+          font-size="30px"
+          font-weight="bold"
+          color="#2563eb"
+        >
+          SimpleHostel
+        </mj-text>
+
+        <mj-divider
+          border-color="#e5e7eb"
+          border-width="1px"
+        />
+
+        <mj-text
+          font-size="24px"
+          font-weight="bold"
+        >
+          Bienvenido!
+        </mj-text>
+
+        <mj-text>
+          Hola, <strong>{{name}}</strong>,
+        </mj-text>
+
+        <mj-text>
+          Gracias por crear tu cuenta de SimpleHostel.
+        </mj-text>
+
+        <mj-text>
+					Antes de empezar a gestionar tu hostel, por favor verifica tu dirección de correo 										electrónico haciendo clic en el botón de abajo.
+        </mj-text>
+
+        <mj-button href="{{confirmationLink}}">
+          Verificar cuenta
+        </mj-button>
+
+        <mj-text font-size="14px" color="#6b7280">
+Si el botón no funciona, copia y pega este enlace en tu navegador:
+        </mj-text>
+
+        <mj-text
+          font-size="13px"
+          color="#2563eb"
+        >
+          {{verificationLink}}
+        </mj-text>
+
+        <mj-divider
+          border-color="#e5e7eb"
+        />
+
+        <mj-text
+          font-size="14px"
+          color="#6b7280"
+        >
+          Si no creaste esta cuenta, puedes ignorar este correo electrónico sin problemas.
+        </mj-text>
+
+      </mj-column>
+
+    </mj-section>
+
+    <mj-section padding="20px">
+
+      <mj-column>
+
+        <mj-text
+          align="center"
+          font-size="13px"
+          color="#9ca3af"
+        >
+          © {{year}} SimpleHostel
+        </mj-text>
+
+        <mj-text
+          align="center"
+          font-size="13px"
+          color="#9ca3af"
+        >
+          Helping independent hostels manage reservations with ease.
+        </mj-text>
+
+      </mj-column>
+
+    </mj-section>
+
+  </mj-body>
+</mjml>

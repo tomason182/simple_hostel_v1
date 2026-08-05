@@ -26,14 +26,9 @@ export class EmailService {
     const subject = "Confirma tu correo electrónico";
     const templateName = "validate_account";
     const data = {
-      logoUrl: process.env.LOGO_URL,
-      appName: process.env.APP_NAME,
-      websiteURL: process.env.WEBSITE_URL,
       name: user.getFirstName(),
       confirmationLink: confirmationLink,
-      year: new Date().getFullYear.toString(),
-      companyName: process.env.COMPANY_NAME,
-      supportEmail: process.env.SUPPORT_EMAIL
+      year: new Date().getFullYear().toString(),
     }
 
     await this.emailRepository.sendEmail(to, subject, templateName, data);

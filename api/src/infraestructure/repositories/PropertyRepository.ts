@@ -11,13 +11,13 @@ export class PropertyRepository implements IPropertyRepository {
   }
 
   async save(property: Property): Promise<Property> {
-    const query = `INSERT INTO property (
+    const query = `INSERT INTO properties (
                       property_name, 
                       description, 
                       status,  
                       created_at, 
                       updated_at
-                  ) VALUES ( $1, $2, $3, $4, $5, $6 );
+                  ) VALUES ( $1, $2, $3, $4, $5 )
                   RETURNING id`;
 
     const result = await this.uow.query(query, [

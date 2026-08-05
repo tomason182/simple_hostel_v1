@@ -1,7 +1,7 @@
 const port = "3000";
-if(!port) throw new Error("Port is not set");
+if (!port) throw new Error("Port is not set");
 
-const baseUrl = "http://localhost:" +  port + "/api/v1";
+const baseUrl = "http://localhost:" + port + "/api/v1";
 let response;
 // 1. EndPoint GET/health
 async function checkHealth() {
@@ -12,12 +12,12 @@ async function checkHealth() {
   console.log(await response.json());
 }
 // 2. Crear cuenta
-async function createAccount(username, password, firstName, propertyName){
+async function createAccount(username, password, firstName, propertyName, acceptTerms, captchaToken) {
   try {
     const url = baseUrl + "/accounts/create-account";
     console.log(url)
     const options = {
-      method:"POST",
+      method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
@@ -25,17 +25,31 @@ async function createAccount(username, password, firstName, propertyName){
         username,
         password,
         firstName,
-        propertyName
+        propertyName,
+        acceptTerms,
+        captchaToken
       })
     }
 
     const response = await fetch(url, options);
 
+    console.log(response.status);
+    console.log(response.headers.get("content-type"))
+
     console.log(await response.json());
-  }catch(err){
+  } catch (err) {
     console.log(err)
   }
 
 }
 
-createAccount("tomas", "1234", "tomas", "La Casa del Viajero")
+const user = {
+  username: "tomas2@mail.com",
+  password: "&tomAs_useR182",
+  firstName: "Tomas",
+  acceptTerms: true,
+  propertyName: "La Casa del Viajero",
+  captchaToken: "captcha",
+}
+
+createAccount(user.username, user.password, user.firstName, user.propertyName, user.acceptTerms, user.captchaToken);

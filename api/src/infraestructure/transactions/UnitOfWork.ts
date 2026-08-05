@@ -54,7 +54,7 @@ export class UnitOfWork {
     params?: unknown[]
   ): Promise<QueryResult<T>> {
     const connection = await this.getConnection();
-    return connection.query<T>(sql, params)
+    return connection.query(sql, params)
   }
 
   // ALTERNATIVA AL PROXY: En lugar de usar el Proxy se puede usar la siguiente funcion con callback.
@@ -63,6 +63,7 @@ export class UnitOfWork {
 
     try {
       if (needTransaction) {
+        console.log("Iniciando transaccion en bd.");
         await this.begin();
       }
 
@@ -76,6 +77,7 @@ export class UnitOfWork {
 
     } catch (e) {
       await this.rollback();
+      console.log("Se hizo roolback por fallo en callback");
       throw e;
     } finally {
       this.release();

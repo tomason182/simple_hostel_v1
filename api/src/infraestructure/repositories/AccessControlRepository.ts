@@ -30,7 +30,8 @@ export class AccessControlRepository implements IAccessControlRepository {
                       role, 
                       created_at, 
                       updated_at
-                    ) VALUES ($1, $2, $3, $4, $5); RETURNING id;`;
+                    ) VALUES ($1, $2, $3, $4, $5) RETURNING id;`;
+
 
     const result = await this.uow.query(query, [
       accessControl.userId,

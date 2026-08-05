@@ -1,4 +1,4 @@
-export type UserRole = "admin" | "manager" | "employee";
+export type UserRole = "OWNER" | "ADMIN" | "MANAGER" | "EMPLOYEE";
 
 export class AccessControl {
   public id: number | null;
@@ -22,7 +22,7 @@ export class AccessControl {
 
   // Metodos de clase.
   static createNewAccessControl(userId: number, propertyId: number): AccessControl {
-    const role = "admin";
+    const role = "ADMIN";
     const createdAt = new Date();
     const updatedAt = new Date();
 
@@ -31,7 +31,7 @@ export class AccessControl {
 
   // Metodos de instancia.
   canEditPolicies() {
-    if (this.role === "admin" || this.role === "manager") {
+    if (this.role === "ADMIN" || this.role === "MANAGER") {
       return true;
     }
     return false;
