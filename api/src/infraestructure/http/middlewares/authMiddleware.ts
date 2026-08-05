@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { jwtTokenValidator } from "../../../utils/jwtTokenHelper";
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
-  const token = req.signedCookies["jwt"];
+  const token = req.signedCookies["access_token"];
 
   if (!token) {
     return res.status(401).json({ msg: "Unauthorized" });
@@ -17,7 +17,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
     next();
   } catch (err) {
     return res
-      .cookie("jwt", "", {
+      .cookie("access_token", "", {
         path: "/",
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
