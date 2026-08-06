@@ -20,11 +20,11 @@ export interface CreateUserDTO {
 }
 
 export interface UserOutputDTO {
-  id: number | null,
-  username: string,
-  firstName: string,
-  lastName: string | null,
-  avatar: string | null,
-  createdAt: Date,
-  updatedAt: Date
+  id: number;
+  username: string;
+  firstName: string;
+  lastName: string | null;
+  avatar: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }

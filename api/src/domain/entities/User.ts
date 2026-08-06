@@ -90,6 +90,9 @@ export class User {
   }
 
   public toDTO(): UserOutputDTO {
+    if (this.id === null) {
+      throw new Error("USER_NOT_EXISTS");
+    }
     return {
       id: this.id,
       username: this.username,
