@@ -1,14 +1,11 @@
 import styles from "./Auth.module.css";
 
-export default function RegisterForm() {
+export function RegisterForm() {
 
 
   return (
     <form className={styles.form}>
-      <label className={styles.label}>
-        Correo electrónico
-        <input type="email" className={styles.input} />
-      </label>
+
 
       <label className={styles.label}>
         Nombre
@@ -21,6 +18,11 @@ export default function RegisterForm() {
       </label>
 
       <label className={styles.label}>
+        Correo electrónico
+        <input type="email" className={styles.input} />
+      </label>
+
+      <label className={styles.label}>
         Contraseña
         <input type="password" className={styles.input} />
       </label>
@@ -29,6 +31,15 @@ export default function RegisterForm() {
         Repetir contraseña
         <input type="password" className={styles.input} />
       </label>
+
+      <label className="label acceptTerms">
+        <input type="checkbox" />
+        Aceptar términos y condiciones
+      </label>
+
+      <button className={styles.button}>
+        Registrarse
+      </button>
 
 
     </form>
