@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { AuthRepository } from "../repositories/AuthRepository";
+import { AuthRepository } from "../../repositories/AuthRepository";
+import styles from "./LoginForm.module.css";
 
 const repository = new AuthRepository();
 
@@ -30,12 +31,17 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input value={username} onChange={(e) => setUsername(e.target.value)} />
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <label className={styles.label}>
+        Usuario:
+        <input value={username} onChange={(e) => setUsername(e.target.value)} className={styles.input} />
+      </label>
+      <label className={styles.label}>
+        Contraseña:
+        <input value={password} onChange={(e) => setPassword(e.target.value)} className={styles.input} />
+      </label>
 
-      <input value={password} onChange={(e) => setPassword(e.target.value)} />
-
-      <button>Ingresar</button>
+      <button className={styles.button}>Ingresar</button>
 
     </form>
   )
