@@ -18,6 +18,8 @@ import { requestContextMiddleware } from "./infraestructure/http/middlewares/req
 
 import { createAccountRoutes } from "./infraestructure/http/routes/accountRoutes";
 import { createUserRouter } from "./infraestructure/http/routes/userRoutes";
+import { AppError } from "./errors/AppError";
+import { ValidationError } from "./errors/ValidationError";
 
 
 export class Main {
@@ -135,11 +137,22 @@ export class Main {
 
     // Manejo de errores
     const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-      let message = "Unexpected goblal error occurred";
-      if (err instanceof Error) {
-        message = err.message;
+      if (err instanceof ValidationError) {
+        return res.status(err.statusCode).json({
+          code: err.code,
+          errors: err.errors
+        })
       }
-      res.status(500).json({ error: message })
+
+      if (err instanceof AppError) {
+        return res.status(err.statusCode).json({
+          code: err.code
+        })
+      }
+
+      return res.status(500).json({
+        code: "INTERNAL_SERVER_ERROR"
+      })
 
     }
 

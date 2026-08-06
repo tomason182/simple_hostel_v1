@@ -13,11 +13,13 @@ export function validateRequest(req: Request, res: Response, next: NextFunction)
   const issues: ValidationIssue[] = errors.map(err => {
     const fieldError = err as FieldValidationError;
 
+
     return {
       field: fieldError.path,
       code: fieldError.msg
     }
   })
+
 
   throw new ValidationError(issues);
 
