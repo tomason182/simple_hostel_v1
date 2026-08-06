@@ -32,10 +32,13 @@ export function RegisterForm() {
         <input type="password" className={styles.input} />
       </label>
 
-      <label className="label acceptTerms">
+
+      <label className={styles.acceptTerms}>
         <input type="checkbox" />
         Aceptar términos y condiciones
       </label>
+
+
 
       <button className={styles.button}>
         Registrarse

@@ -14,14 +14,20 @@
   text-align: left;
 }
 
-.input {
+.acceptTerms {
+  font-size: 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
   width: 100%;
-  padding: 0.4rem 0.7rem;
-  background-color: var(--code-bg);
-  border: 1px solid var(--border)
 }
+
+
 
 .button {
   padding: 0.33rem 0.9rem;
   cursor: pointer;
+  color: var(--text)
 }
