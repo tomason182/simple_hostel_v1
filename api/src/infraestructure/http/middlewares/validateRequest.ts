@@ -1,12 +1,24 @@
 import { NextFunction, Request, Response } from "express";
-import { validationResult } from "express-validator";
+import { validationResult, type FieldValidationError } from "express-validator";
+import { ValidationError, ValidationIssue } from "../../../errors/ValidationError";
 
 export function validateRequest(req: Request, res: Response, next: NextFunction) {
-  const errors = validationResult(req);
+  const errors = validationResult(req).array();
 
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+  if (!errors.length) {
+
+    return next();
   }
 
-  next();
+  const issues: ValidationIssue[] = errors.map(err => {
+    const fieldError = err as FieldValidationError;
+
+    return {
+      field: fieldError.path,
+      code: fieldError.msg
+    }
+  })
+
+  throw new ValidationError(issues);
+
 }
