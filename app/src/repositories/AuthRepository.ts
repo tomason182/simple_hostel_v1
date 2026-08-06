@@ -1,4 +1,5 @@
 import type { LoginRequestDTO, LoginResponseDTO } from "../dtos/authDTO";
+import type { registerRequestDTO, registerResponseDTO } from "../dtos/registerDTO";
 
 
 export class AuthRepository {
@@ -25,7 +26,30 @@ export class AuthRepository {
 
   }
 
-}
+  public async register(dto: registerRequestDTO): Promise<registerResponseDTO> {
+    const url = this.baseUrl + "/accounts/create-account";
 
+    const options: RequestInit = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(dto)
+    };
+
+    const response = await fetch(url, options);
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      console.log(data);
+      throw new Error("Error al registar usuario")
+    }
+
+    return data
+  }
+
+}
 
 
