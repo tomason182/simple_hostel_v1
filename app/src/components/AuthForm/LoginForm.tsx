@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AuthRepository } from "../../repositories/AuthRepository";
-import styles from "./LoginForm.module.css";
+import styles from "./Auth.module.css";
 
 const repository = new AuthRepository();
 
