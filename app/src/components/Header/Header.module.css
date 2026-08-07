@@ -1,0 +1,24 @@
+.topBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.navigation {
+  font-size: 0.875rem;
+}
+
+.navigation ul {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navigation ul li {
+  cursor: pointer;
+  border: 1px solid var(--border);
+  width: 100%;
+}
