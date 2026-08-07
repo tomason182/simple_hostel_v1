@@ -107,3 +107,19 @@ input[type="checkbox"] {
   width: auto;
   background-color: var(--code-bg);
 }
+
+
+/* =====================================
+ * Errores
+ * =====================================
+ * */
+
+.error-input,
+.error-checkbox {
+  font-size: 10px;
+  color: red;
+}
+
+.error-checkbox {
+  display: block;
+}

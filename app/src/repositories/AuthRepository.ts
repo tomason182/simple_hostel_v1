@@ -1,5 +1,6 @@
 import type { LoginRequestDTO, LoginResponseDTO } from "../dtos/authDTO";
 import type { registerRequestDTO, registerResponseDTO } from "../dtos/registerDTO";
+import { ApiError } from "../error/ApiError";
 
 
 export class AuthRepository {
@@ -18,11 +19,15 @@ export class AuthRepository {
 
     const response = await fetch(url, options);
 
+    const data = await response.json();
+
     if (!response.ok) {
-      console.log(await response.json())
-      throw new Error("Credenciales inválidas");
+      throw new ApiError(
+        data.code,
+        data.errors
+      )
     }
-    return await response.json();
+    return data;
 
   }
 
@@ -43,8 +48,11 @@ export class AuthRepository {
     const data = await response.json()
 
     if (!response.ok) {
-      console.log(data);
-      throw new Error("Error al registar usuario")
+      console.log(data)
+      throw new ApiError(
+        data.code,
+        data.errors
+      )
     }
 
     return data
