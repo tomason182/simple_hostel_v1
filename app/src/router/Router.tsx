@@ -4,6 +4,7 @@ import { Navigate } from "react-router";
 import { LoginPage } from "../pages/LoginPage";
 import { RegisterPage } from "../pages/RegisterPage";
 import { MainLayout } from "../layouts/MainLayout/MainLayout";
+import { Home } from "../pages/Home/Home";
 
 export const router = createBrowserRouter([
   {
@@ -23,7 +24,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/home",
-        element: <h1>Home Page</h1>
+        element: <Home />
       },
       {
         path: "/calendar",

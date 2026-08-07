@@ -48,8 +48,6 @@
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
   margin: 0 auto;
   text-align: center;
   border-inline: 1px solid var(--border);
@@ -64,7 +62,8 @@ body {
 }
 
 main {
-  flex: 1
+  flex: 1;
+  padding: 2rem 0;
 }
 
 h1,
@@ -112,6 +111,12 @@ input[type="checkbox"] {
   background-color: var(--code-bg);
 }
 
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 24px
+}
 
 /* =====================================
  * Errores
