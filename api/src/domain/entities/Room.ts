@@ -42,4 +42,8 @@ export class Room {
     return [...this.beds];
   }
 
+  public getOccupancy(): number {
+    return this.beds.length
+  }
+
 }

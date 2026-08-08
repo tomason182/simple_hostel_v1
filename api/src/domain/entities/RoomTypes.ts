@@ -1,5 +1,6 @@
 import { Room } from "./Room";
 import { Bed } from "./Bed";
+import { RoomTypeResponseDTO, RoomTypeRequestDTO } from "../dto/RoomTypeDTO";
 
 export type RoomTypeLiteral = "DORM" | "PRIVATE";
 export type Gender = "MIXED" | "MALE" | "FEMALE";
@@ -13,14 +14,59 @@ export class RoomType {
     public type: RoomTypeLiteral,
     public gender: Gender,
     public rooms: Array<Room>,
+    public createdAt: Date,
+    public createdBy: number,
+    public updatedAt: Date,
+    public updatedBy: number
+
   ) {
     this.id = id;
     this.propertyId = propertyId;
     this.description = description;
+    this.type = type;
+    this.gender = gender;
     this.rooms = rooms;
+    this.createdAt = createdAt;
+    this.createdBy = createdBy;
+    this.updatedAt = updatedAt;
+    this.updatedBy = updatedBy;
   }
 
-  static make(propertyId: number, description: string, type: RoomTypeLiteral, gender: Gender, inventary: number, maxOccupancy: number) {
+  public toDTO(): RoomTypeResponseDTO {
+    if (this.id === null) {
+      throw new Error("INVALID_ROOM_TYPE");
+    }
+
+    return {
+      id: this.id,
+      propertyId: this.propertyId,
+      description: this.description,
+      gender: this.gender,
+      type: this.type,
+      inventory: this.calcInventory(),
+      maxOccupancy: this.calcMaxOccupancy(),
+      createdAt: this.createdAt,
+      createdBy: this.createdBy,
+      updatedAt: this.updatedAt,
+      updatedBy: this.updatedBy
+
+    }
+  }
+
+  private calcInventory(): number {
+    return this.rooms.length
+  }
+
+  private calcMaxOccupancy(): number {
+    let occ = 0;
+    for (const room of this.rooms) {
+      occ += room.getOccupancy();
+    }
+
+    return occ;
+  }
+
+  static make(propertyId: number, description: string, type: RoomTypeLiteral, gender: Gender, inventary: number, maxOccupancy: number, userId: number) {
     if (inventary <= 0) {
       throw new Error("INVALID_INVENTARY_VALUE");
     }
@@ -43,7 +89,11 @@ export class RoomType {
       description,
       type,
       gender,
-      rooms
+      rooms,
+      new Date(),
+      userId,
+      new Date(),
+      userId
     )
   }
 

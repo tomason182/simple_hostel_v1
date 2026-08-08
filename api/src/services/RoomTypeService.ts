@@ -1,6 +1,5 @@
-import { RoomTypeDTO } from "../domain/dto/RoomTypeDTO";
+import { RoomTypeRequestDTO, RoomTypeResponseDTO } from "../domain/dto/RoomTypeDTO";
 import { RoomType } from "../domain/entities/RoomTypes";
-import { UserRole } from "../domain/entities/AccessControl";
 import { IRoomTypeService } from "../domain/interfaces/IRoomTypeService";
 import { IRoomTypeRepository } from "../domain/ports/IRoomTypeRepository";
 import { IReservationRepository } from "../domain/ports/IReservationRepository";
@@ -15,12 +14,12 @@ export class RoomTypeService implements IRoomTypeService {
     this.reservationRepository = reservationRepository;
   }
 
-  async createRoomType(propertyId: number, userId: number, roomTypeDTO: RoomTypeDTO): Promise<{ msg: string; }> {
+  async createRoomType(propertyId: number, userId: number, roomTypeDTO: RoomTypeRequestDTO): Promise<{ msg: string; }> {
     // 1. Comprobar que el usuario tenga permisos para crear un RoomType.
     // Se puede hacer en las rutas, en el accessControl para este caso de uso (accessControl.checkCanCreateRoomType());
 
     // Crear el RoomTYpe.
-    const newRoomType = RoomType.make(propertyId, roomTypeDTO.description, roomTypeDTO.type, roomTypeDTO.gender, roomTypeDTO.inventory, roomTypeDTO.maxOccupancy);
+    const newRoomType = RoomType.make(propertyId, roomTypeDTO.description, roomTypeDTO.type, roomTypeDTO.gender, roomTypeDTO.inventory, roomTypeDTO.maxOccupancy, userId);
 
     // Traer todos los roomtypes de la propiedad.
     const roomTypes = await this.roomTypeRepository.getAllRoomTypes(propertyId);
@@ -35,11 +34,11 @@ export class RoomTypeService implements IRoomTypeService {
     return { msg: "ROOM_TYPE_CREATED" };
   }
 
-  async updateRoomType(propertyId: number, userId: number, roomTypeDTO: RoomTypeDTO): Promise<{ msg: string; }> {
+  async updateRoomType(propertyId: number, userId: number, roomTypeDTO: RoomTypeRequestDTO): Promise<{ msg: string; }> {
     // 1. Comprobar que el usuario tenga permisos para actualizar un RoomType.
 
     // 2. Crear el roomType.
-    const currentRoomType = RoomType.make(propertyId, roomTypeDTO.description, roomTypeDTO.type, roomTypeDTO.gender, roomTypeDTO.inventory, roomTypeDTO.maxOccupancy);
+    const currentRoomType = RoomType.make(propertyId, roomTypeDTO.description, roomTypeDTO.type, roomTypeDTO.gender, roomTypeDTO.inventory, roomTypeDTO.maxOccupancy, userId);
     const id = currentRoomType.getId();
 
 
@@ -77,12 +76,21 @@ export class RoomTypeService implements IRoomTypeService {
     // 2. Comprobar si el cuarto tiene reservas proximas.
 
     // 3. En lugar de eliminar se cambia es status a false.
+    return { msg: "TODO" }
   }
 
-  async getAllRoomTypes(propertyId: number): Promise<Array<RoomTypeDTO>> {
+  async getAllRoomTypes(propertyId: number): Promise<RoomTypeResponseDTO[]> {
     // 1. Buscar todos los roomTypes de la propiedad.
 
-    // 
+    let dtos: RoomTypeResponseDTO[] = []
+    const roomTypes = await this.roomTypeRepository.getAllRoomTypes(propertyId);
+
+    for (const roomType of roomTypes) {
+      dtos.push(roomType.toDTO());
+    }
+
+    return dtos;
+
   }
 
-}; 
+}

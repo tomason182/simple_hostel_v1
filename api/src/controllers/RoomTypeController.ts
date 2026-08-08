@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { IRoomTypeService } from "../domain/interfaces/IRoomTypeService";
-import { RoomTypeDTO } from "../domain/dto/RoomTypeDTO";
+import { RoomTypeRequestDTO } from "../domain/dto/RoomTypeDTO";
 
 export class RoomTypeController {
   constructor(private readonly roomTypeService: IRoomTypeService) {
@@ -11,7 +11,7 @@ export class RoomTypeController {
     try {
       const { propertyId, userId } = req.auth;
 
-      const dto: RoomTypeDTO = {
+      const dto: RoomTypeRequestDTO = {
         description: req.body.description,
         type: req.body.type,
         gender: req.body.gender,
@@ -25,6 +25,19 @@ export class RoomTypeController {
 
     } catch (err) {
       next(err);
+    }
+  }
+
+  public async getAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { propertyId } = req.auth;
+
+      const result = await this.roomTypeService.getAllRoomTypes(propertyId);
+
+      return res.status(200).json(result);
+
+    } catch (e) {
+      next(e)
     }
   }
 }

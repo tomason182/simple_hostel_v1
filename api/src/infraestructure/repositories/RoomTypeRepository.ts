@@ -10,6 +10,10 @@ interface RoomTypeRow {
   description: string;
   type: RoomTypeLiteral;
   gender: Gender;
+  createdAt: Date;
+  createdBy: number;
+  updatedAt: Date;
+  updatedBy: number;
 }
 
 interface RoomRow {
@@ -32,12 +36,16 @@ export class RoomTypeRepository implements IRoomTypeRepository {
 
   public async save(roomType: RoomType): Promise<RoomType> {
 
-    const roomTypeQuery = "INSERT INTO room_type (property_id, description, type, gender) VALUES ($1, $2, $3, $4) RETURNING id;";
+    const roomTypeQuery = "INSERT INTO room_type (property_id, description, type, gender, createdAt, createdBy, updatedAt, updatedBy) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;";
     const roomTypeResult = await this.uow.query<RoomTypeRow>(roomTypeQuery, [
       roomType.propertyId,
       roomType.description,
       roomType.type,
-      roomType.gender
+      roomType.gender,
+      roomType.createdAt,
+      roomType.createdBy,
+      roomType.updatedAt,
+      roomType.updatedBy
     ]);
 
     roomType.setId(roomTypeResult.rows[0].id);
@@ -101,12 +109,12 @@ export class RoomTypeRepository implements IRoomTypeRepository {
 
     const data = roomTypeResult.rows[0];
 
-    const roomType = new RoomType(data.id, data.property_id, data.description, data.type, data.gender, rooms);
+    const roomType = new RoomType(data.id, data.property_id, data.description, data.type, data.gender, rooms, data.createdAt, data.createdBy, data.updatedAt, data.updatedBy);
     return roomType
 
   }
 
-  public async getAllRoomTypes(propertyId: number): Promise<Array<RoomType>> {
+  public async getAllRoomTypes(propertyId: number): Promise<RoomType[]> {
     const roomTypesQuery = "SELECT * FROM room_type WHERE property_id = $1;";
     const roomsQuery = "SELECT * FROM room WHERE room_type_id = ANY($1);";
     const bedsQuery = "SELECT * FROM bed WHERE room_id = ANY($1);";
@@ -157,7 +165,7 @@ export class RoomTypeRepository implements IRoomTypeRepository {
     for (const row of roomTypesResult.rows) {
       const rooms = roomsByRoomTypeId.get(row.id) ?? [];
 
-      roomTypes.push(new RoomType(row.id, row.property_id, row.description, row.type, row.gender, rooms));
+      roomTypes.push(new RoomType(row.id, row.property_id, row.description, row.type, row.gender, rooms, row.createdAt, row.createdBy, row.updatedAt, row.updatedBy));
     }
 
     return roomTypes
