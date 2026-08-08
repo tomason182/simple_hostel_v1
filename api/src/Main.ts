@@ -20,6 +20,7 @@ import { createAccountRoutes } from "./infraestructure/http/routes/accountRoutes
 import { createUserRouter } from "./infraestructure/http/routes/userRoutes";
 import { AppError } from "./errors/AppError";
 import { ValidationError } from "./errors/ValidationError";
+import { createRoomTypeRoutes } from "./infraestructure/http/routes/RoomTypeRoutes";
 
 
 export class Main {
@@ -125,6 +126,8 @@ export class Main {
     this.app.use(`${this.baseUrl}/users`, createUserRouter(this.pool, this.emailService));
 
     this.app.use(`${this.baseUrl}/accounts`, createAccountRoutes(this.pool, this.emailService));
+
+    this.app.use(`${this.baseUrl}/room-types`, createRoomTypeRoutes(this.pool, this.emailService));
 
 
     // ...mas rutas
