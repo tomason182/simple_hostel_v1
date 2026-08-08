@@ -44,8 +44,48 @@ CREATE TABLE IF NOT EXISTS access_control (
 -- Crear tabla contact_info.
 -- Crear tabla currencies.
 -- Crear tabla room types.
--- Crear tabla room_types.
+CREATE TABLE IF NOT EXISTS room_types (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  property_id BIGINT NOT NULL,
+  description VARCHAR(255),
+  gender VARCHAR(10) NOT NULL CHECK(gender IN ('male', 'female', 'mixed')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_by BIGINT,
+  updated_at TIMESTAMPTZ,
+  updated_by BIGINT,
+
+  FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
+  FOREIGN KEY(updated_by) REFERENCES users(id),
+  FOREIGN KEY(created_by) REFERENCES users(id)
+);
+
+-- Crear tabla room.
+CREATE TABLE IF NOT EXISTS rooms (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  room_type_id BIGINT NOT NULL,
+  name VARCHAR(100),
+
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ,
+  updated_by BIGINT,
+
+  FOREIGN KEY(room_type_id) REFERENCES room_types(id) ON DELETE CASCADE,
+  FOREIGN KEY(updated_by) REFERENCES users(id)
+);
 -- Crear tabla beds.
+CREATE TABLE IF NOT EXISTS beds (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  room_id BIGINT NOT NULL,
+  bed_number INT NOT NULL,
+  bed_type VARCHAR(10) CHECK(bed_type IN ('single', 'doble', 'bunk_bed', 'king')),
+
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ,
+  updated_by BIGINT,
+
+  FOREIGN KEY(room_id) REFERENCES rooms(id) ON DELETE CASCADE,
+  FOREIGN KEY(updated_by) REFERENCES users(id)
+);
 -- Crear tabla guests.
 -- Crear tabla breakfast_and_meals
   -- Crear tabla general policies
