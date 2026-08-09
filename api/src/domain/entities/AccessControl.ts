@@ -1,3 +1,5 @@
+import { AccessControlDTO } from "../dto/AccessControlDTO";
+
 export type UserRole = "OWNER" | "ADMIN" | "MANAGER" | "EMPLOYEE";
 
 export class AccessControl {
@@ -19,7 +21,15 @@ export class AccessControl {
     this.updatedAt = updatedAt;
   };
 
-
+  public toDTO(): AccessControlDTO {
+    return {
+      userId: this.userId,
+      propertyId: this.propertyId,
+      role: this.role,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
+    }
+  }
   // Metodos de clase.
   static createNewAccessControl(userId: number, propertyId: number): AccessControl {
     const role = "ADMIN";

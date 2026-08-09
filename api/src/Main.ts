@@ -154,7 +154,9 @@ export class Main {
       }
 
       return res.status(500).json({
-        code: "INTERNAL_SERVER_ERROR"
+
+        code: "INTERNAL_SERVER_ERROR",
+        error: err
       })
 
     }

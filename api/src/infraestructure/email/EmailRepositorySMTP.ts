@@ -1,5 +1,6 @@
 import nodemailer, { Transporter, SendMailOptions } from "nodemailer";
-import path from "path";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import fs from "node:fs/promises";
 import crypto from "node:crypto";
 import mjml2html from "mjml";
@@ -7,6 +8,7 @@ import Handlebars from "handlebars";
 import { convert } from "html-to-text"
 import { IEmailRepositorySMTP } from "../../domain/ports/IEmailRepository";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
+import { AppError } from "../../errors/AppError";
 
 
 export class EmailServiceSMTP implements IEmailRepositorySMTP {
@@ -57,6 +59,9 @@ export class EmailServiceSMTP implements IEmailRepositorySMTP {
       let compiledTemplate = this.templateCache.get(templateName);
 
       if (!compiledTemplate) {
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = path.dirname(__filename);
+
         const mjmlTemplatePath = path.join(__dirname, "./templates", `${templateName}.mjml`);
         const mjmlTemplate = await fs.readFile(mjmlTemplatePath, "utf8");
 
@@ -72,7 +77,7 @@ export class EmailServiceSMTP implements IEmailRepositorySMTP {
       const { html, errors } = await mjml2html(mjmlWithData, { minify: false });   // No minificamos html aqui. Vulneravilidad html-minifier. Ver si ya esta solucionado
 
       if (errors.length) {
-        throw new Error("Error converting mjml to html")
+        throw new AppError("Error converting mjml to html", 404, "MJML_ERROR")
       }
 
       // 4. Minificar HTML.
@@ -96,6 +101,7 @@ export class EmailServiceSMTP implements IEmailRepositorySMTP {
       await this.transporter.sendMail(mailOptions);
 
     } catch (e) {
+      console.log(e)
       if (e instanceof Error) {
         throw new Error(`Fail to send email: ${e.message}`);
       } else {

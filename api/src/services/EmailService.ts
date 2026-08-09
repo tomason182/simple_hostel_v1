@@ -31,6 +31,8 @@ export class EmailService {
       year: new Date().getFullYear().toString(),
     }
 
+    console.log("Se creo el token")
+
     await this.emailRepository.sendEmail(to, subject, templateName, data);
 
     return token;

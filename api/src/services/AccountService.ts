@@ -7,6 +7,7 @@ import { IAccessControlRepository } from "../domain/ports/IAccessControlReposito
 import { EmailService } from "../services/EmailService";
 import { IAccountService } from "../domain/interfaces/IAccountService";
 import { jwtTokenValidator } from "../utils/jwtTokenHelper";
+import { AppError } from "../errors/AppError";
 
 export class AccountService implements IAccountService {
   constructor(
@@ -26,7 +27,7 @@ export class AccountService implements IAccountService {
     const userExist = await this.userRepository.findByUsername(username);
 
     if (userExist !== null) {
-      throw new Error("USER_EXIST");
+      throw new AppError("USER_EXIST", 404, "USER_EXIST");
     }
 
     // 2. Crear la entidad User.
@@ -44,17 +45,17 @@ export class AccountService implements IAccountService {
     // 5. Guardar la propiedad en la bd.
     property = await this.propertyRepository.save(property);
 
+
     // 6. Crear la entidad AccessControl.
     let accessControl = AccessControl.createNewAccessControl(user.getId(), property.getId());
 
     // 7. Guardar el accessControl.
     accessControl = await this.accessControlRepository.save(accessControl);
 
-
     // 8. Enviar email para validar cuenta.
     const token = await this.emailService.validateAccountEmail(user, property, accessControl);
 
-
+    console.log("el token: ", token)
     return {
       msg: "USER_REGISTER_SUCCESS",
       token: token

@@ -26,7 +26,7 @@ export class UserController {
           maxAge: 1000 * 60 * result.expiresIn,
         })
         .status(200)
-        .json({ user: result.user })
+        .json({ user: result.user, accessControl: result.accessControl })
     } catch (e) {
       next(e)
     }

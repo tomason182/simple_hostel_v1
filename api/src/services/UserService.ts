@@ -5,6 +5,7 @@ import { jwtTokenGenerator, jwtTokenValidator } from "../utils/jwtTokenHelper";
 import { IUserService } from "../domain/interfaces/IUserService";
 import { UserDTO, UserOutputDTO } from "../domain/dto/UserDTO";
 import { EmailService } from "./EmailService";
+import { AccessControlDTO } from "../domain/dto/AccessControlDTO";
 
 export class UserService implements IUserService {
   userRepository: IUserRepository;
@@ -19,7 +20,7 @@ export class UserService implements IUserService {
     this.emailService = emailService;
   }
 
-  async authUser(username: string, password: string): Promise<{ token: string, expiresIn: number, user: UserOutputDTO }> {
+  async authUser(username: string, password: string): Promise<{ token: string, expiresIn: number, user: UserOutputDTO, accessControl: AccessControlDTO }> {
 
     // 1. Buscar el usuario por username
     const user = await this.userRepository.findByUsername(username);
@@ -33,6 +34,7 @@ export class UserService implements IUserService {
 
     // 3. Obtener el accessControl.
     const accessControl = await this.accessControl.findUser(userId);
+
 
     // 4. Obtener propertyId y role.
     const propertyId = accessControl.getPropertyId();
@@ -56,7 +58,7 @@ export class UserService implements IUserService {
 
     const token = jwtTokenGenerator(data, expiresIn);
 
-    return { token: token, expiresIn: expiresIn, user: user.toDTO() }
+    return { token: token, expiresIn: expiresIn, user: user.toDTO(), accessControl: accessControl.toDTO() }
   };
 
   public async update(userDTO: UserDTO): Promise<UserDTO> {
