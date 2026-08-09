@@ -2,7 +2,7 @@ import { ParamSchema } from "express-validator";
 import { Gender, RoomTypeLiteral } from "../../../domain/entities/RoomTypes";
 
 const roomTypeLiteral: RoomTypeLiteral[] = ["PRIVATE", "DORM"]
-const gender: Gender[] = ["MIXED", "MALE", "FEMALE"];
+const gender: Gender[] = ["mixed", "male", "female"];
 
 
 const descriptionValidator: ParamSchema = {

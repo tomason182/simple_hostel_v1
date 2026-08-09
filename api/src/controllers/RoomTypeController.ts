@@ -30,7 +30,7 @@ export class RoomTypeController {
 
   public async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const { propertyId } = req.auth;
+      const propertyId = Number(req.params.id);
 
       const result = await this.roomTypeService.getAllRoomTypes(propertyId);
 

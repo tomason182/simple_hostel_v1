@@ -153,6 +153,8 @@ export class Main {
         })
       }
 
+      console.log(err);
+
       return res.status(500).json({
 
         code: "INTERNAL_SERVER_ERROR",

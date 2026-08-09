@@ -19,15 +19,15 @@ export function createRoomTypeRoutes(pool: Pool, emailService: EmailService) {
     checkSchema(roomTypeSchema),
     validateRequest,
     requestContextMiddleware(pool, emailService),
+    authMiddleware,
     (req: Request, res: Response, next: NextFunction) => {
-      authMiddleware(req, res, next),
-        req.context.roomTypeController.createRoomType(req, res, next)
+      req.context.roomTypeController.createRoomType(req, res, next)
     });
 
 
   // 2. Get all room types
   router.get(
-    "/getAll/:id",
+    "/all/:id",
     param("id").isInt().withMessage("Property id must be integer."),
     validateRequest,
     requestContextMiddleware(pool, emailService),

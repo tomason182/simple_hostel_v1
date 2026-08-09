@@ -2,6 +2,7 @@ import { Bed, BedType } from "../../domain/entities/Bed";
 import { Room } from "../../domain/entities/Room";
 import { Gender, RoomType, RoomTypeLiteral } from "../../domain/entities/RoomTypes";
 import { IRoomTypeRepository } from "../../domain/ports/IRoomTypeRepository";
+import { AppError } from "../../errors/AppError";
 import { UnitOfWork } from "../transactions/UnitOfWork";
 
 interface RoomTypeRow {
@@ -35,8 +36,7 @@ export class RoomTypeRepository implements IRoomTypeRepository {
   }
 
   public async save(roomType: RoomType): Promise<RoomType> {
-
-    const roomTypeQuery = "INSERT INTO room_type (property_id, description, type, gender, createdAt, createdBy, updatedAt, updatedBy) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;";
+    const roomTypeQuery = "INSERT INTO room_types (property_id, description, type, gender, created_at, created_by, updated_at, updated_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;";
     const roomTypeResult = await this.uow.query<RoomTypeRow>(roomTypeQuery, [
       roomType.propertyId,
       roomType.description,
@@ -52,8 +52,8 @@ export class RoomTypeRepository implements IRoomTypeRepository {
 
     const rooms = roomType.getRooms();
 
-    const roomQuery = "INSERT INTO room (room_type_id, name) VALUES ($1, $2) RETURNING id;";
-    const bedQuery = "INSERT INTO bed (room_id, bed_number, bed_type) VALUES($1, $2, $3) RETURNING id;";
+    const roomQuery = "INSERT INTO rooms (room_type_id, name) VALUES ($1, $2) RETURNING id;";
+    const bedQuery = "INSERT INTO beds (room_id, bed_number, bed_type) VALUES($1, $2, $3) RETURNING id;";
 
     for (const room of rooms) {
       const roomResult = await this.uow.query<RoomRow>(roomQuery, [roomType.getId(), room.getName()]);
@@ -71,7 +71,7 @@ export class RoomTypeRepository implements IRoomTypeRepository {
   }
 
   public async findById(id: number): Promise<RoomType | null> {
-    const roomTypeQuery = "SELECT * FROM room_type WHERE id = $1;";
+    const roomTypeQuery = "SELECT * FROM room_types WHERE id = $1;";
     const roomsQuery = "SELECT * FROM room WHERE room_type_id = $1;";
     const bedsQuery = "SELECT * FROM bed WHERE room_id = ANY($1);";
 
@@ -115,11 +115,14 @@ export class RoomTypeRepository implements IRoomTypeRepository {
   }
 
   public async getAllRoomTypes(propertyId: number): Promise<RoomType[]> {
-    const roomTypesQuery = "SELECT * FROM room_type WHERE property_id = $1;";
-    const roomsQuery = "SELECT * FROM room WHERE room_type_id = ANY($1);";
-    const bedsQuery = "SELECT * FROM bed WHERE room_id = ANY($1);";
+    const roomTypesQuery = "SELECT * FROM room_types WHERE property_id = $1;";
+    const roomsQuery = "SELECT * FROM rooms WHERE room_type_id = ANY($1);";
+    const bedsQuery = "SELECT * FROM beds WHERE room_id = ANY($1);";
+
+    console.log("PropertyID", propertyId);
 
     const roomTypesResult = await this.uow.query<RoomTypeRow>(roomTypesQuery, [propertyId]);
+
 
     let roomTypes: Array<RoomType> = [];
 
@@ -129,8 +132,14 @@ export class RoomTypeRepository implements IRoomTypeRepository {
 
     const roomTypeIds = roomTypesResult.rows.map(row => row.id);
 
+
     const roomsResult = await this.uow.query<RoomRow>(roomsQuery, [roomTypeIds]);
+
+
+    console.log("ROOMS")
     const roomIds = roomsResult.rows.map(row => row.id);
+
+    console.log("ROOMS id", roomIds)
 
     const bedsResult = await this.uow.query<BedRow>(bedsQuery, [roomIds]);
 
@@ -169,5 +178,6 @@ export class RoomTypeRepository implements IRoomTypeRepository {
     }
 
     return roomTypes
+
   }
 } 

@@ -1,6 +1,6 @@
 import { Room } from "./Room";
 
-export type BedType = "SINGLE" | "DOUBLE" | "BUNK_BED" | "KING"
+export type BedType = "single" | "doble" | "bunk_bed" | "king"
 
 export class Bed {
 
@@ -18,7 +18,7 @@ export class Bed {
     return new Bed(
       null,
       bedNum,
-      "SINGLE"
+      "single"
     );
 
   }

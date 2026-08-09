@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS room_types (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   property_id BIGINT NOT NULL,
   description VARCHAR(255),
+  type VARCHAR(10) NOT NULL,
   gender VARCHAR(10) NOT NULL CHECK(gender IN ('male', 'female', 'mixed')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   created_by BIGINT,

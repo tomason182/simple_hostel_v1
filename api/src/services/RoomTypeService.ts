@@ -31,6 +31,8 @@ export class RoomTypeService implements IRoomTypeService {
     // 5. Guardar el RoomType
     await this.roomTypeRepository.save(newRoomType);
 
+    console.log("Cuarto creado")
+
     return { msg: "ROOM_TYPE_CREATED" };
   }
 
@@ -80,6 +82,7 @@ export class RoomTypeService implements IRoomTypeService {
   }
 
   async getAllRoomTypes(propertyId: number): Promise<RoomTypeResponseDTO[]> {
+
     // 1. Buscar todos los roomTypes de la propiedad.
 
     let dtos: RoomTypeResponseDTO[] = []

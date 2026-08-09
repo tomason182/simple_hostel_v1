@@ -3,7 +3,7 @@ import { Bed } from "./Bed";
 import { RoomTypeResponseDTO, RoomTypeRequestDTO } from "../dto/RoomTypeDTO";
 
 export type RoomTypeLiteral = "DORM" | "PRIVATE";
-export type Gender = "MIXED" | "MALE" | "FEMALE";
+export type Gender = "mixed" | "male" | "female";
 
 export class RoomType {
   private isActive: boolean = true;

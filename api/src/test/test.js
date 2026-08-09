@@ -9,6 +9,8 @@ if (!port) throw new Error("Port is not set");
 
 const baseUrl = "http://localhost:" + port + "/api/v1";
 
+let COOKIES = "";
+
 console.log(baseUrl)
 
 
@@ -29,7 +31,9 @@ async function cleanDatabase() {
       access_control,
       properties,
       users,
-      room_types
+      room_types,
+      rooms,
+      beds
     RESTART IDENTITY CASCADE
   `)
 
@@ -119,19 +123,26 @@ async function logInUser(username, password) {
 
     const response = await fetch(url, options);
 
-    const setCookie = response.headers.get("set-cookie");
+    let setCookie = response.headers.get("set-cookie");
 
-    console.log("Cookies: ", setCookie);
+    setCookie.split(";")[0];
 
-    console.log(await response.json());
+    COOKIES = setCookie;
 
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data);
+    }
+
+    return data
   } catch (err) {
     console.error("Error on login user", err);
   }
 }
 
-async function getAllRoomTypes() {
-  const url = baseUrl + "/room-types/all";
+async function getAllRoomTypes(propertyId) {
+  const url = baseUrl + `/room-types/all/${propertyId}`;
 
   const options = {
     method: "GET",
@@ -143,10 +154,36 @@ async function getAllRoomTypes() {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data);
+    console.log("ERROR: ", data)
   }
 
   console.log(data);
+}
+
+async function createRoomType(roomType) {
+  const url = baseUrl + `/room-types/create`;
+
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Cookie": COOKIES
+    },
+    credentials: "include",
+    body: JSON.stringify(roomType)
+  }
+
+  const response = await fetch(url, options);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data);
+    throw new Error("Ocurrio un error");
+  }
+
+  console.log("El Room Type se creo")
+
+
 }
 
 // ======================================================
@@ -159,6 +196,15 @@ const user = {
   acceptTerms: true,
   propertyName: "La Casa del Viajero",
   captchaToken: "captcha",
+}
+
+const roomType = {
+  description: "Cuarto compartido de 6 camas",
+  type: "DORM",
+  gender: "mixed",
+  maxOccupancy: 8,
+  inventory: 2
+
 }
 
 async function runTest() {
@@ -179,7 +225,16 @@ async function runTest() {
 
   // Log in user
   console.log("Logeando al usuario...");
-  await logInUser(user.username, user.password);
+  const login = await logInUser(user.username, user.password);
+
+
+  // Creando roomType
+  await createRoomType(roomType);
+
+  console.log("Buscando roomtypes..")
+
+  const roomTypes = await getAllRoomTypes(login.accessControl.propertyId)
+
 }
 
 runTest();
