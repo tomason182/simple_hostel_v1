@@ -1,16 +1,57 @@
+import { Client } from "pg";
+import "dotenv/config";
+
+
+console.log("corriendo archivo..")
+
 const port = "3000";
 if (!port) throw new Error("Port is not set");
 
 const baseUrl = "http://localhost:" + port + "/api/v1";
-let response;
+
+console.log(baseUrl)
+
+
+async function cleanDatabase() {
+  const client = new Client({
+    host: "localhost",
+    port: 5432,
+    database: "simplehostel",
+    user: "simplehostel_user",
+    password: process.env.DB_PASSWORD,
+  });
+
+
+  try {
+    await client.connect();
+    await client.query(`
+    TRUNCATE
+      access_control,
+      properties,
+      users,
+      room_types
+    RESTART IDENTITY CASCADE
+  `)
+
+  } catch (e) {
+    throw new Error(e)
+  } finally {
+    await client.end();
+  }
+
+}
+
 // 1. EndPoint GET/health
 async function checkHealth() {
-  response = await fetch(url + "/health");
+  const response = await fetch(baseUrl + "/health");
 
   console.log(response.status);
 
   console.log(await response.json());
 }
+
+
+
 // 2. Crear cuenta
 async function createAccount(username, password, firstName, propertyName, acceptTerms, captchaToken) {
   try {
@@ -73,6 +114,7 @@ async function logInUser(username, password) {
         password
       })
 
+
     }
 
     const response = await fetch(url, options);
@@ -88,6 +130,25 @@ async function logInUser(username, password) {
   }
 }
 
+async function getAllRoomTypes() {
+  const url = baseUrl + "/room-types/all";
+
+  const options = {
+    method: "GET",
+    credentials: "include"
+  }
+
+  const response = await fetch(url, options);
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data);
+  }
+
+  console.log(data);
+}
+
 // ======================================================
 // Iniciando TESTS.
 // ====================================================== 
@@ -101,6 +162,12 @@ const user = {
 }
 
 async function runTest() {
+
+  console.log("Empieza test")
+
+  await cleanDatabase();
+
+  console.log("Base de datos limpia");
 
   // Crear Cuenta
   console.log("Creando cuenta...")
