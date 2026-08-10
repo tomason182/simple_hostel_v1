@@ -199,6 +199,7 @@ CREATE TABLE IF NOT EXISTS minor_policies (
   property_id BIGINT UNIQUE,
   min_check_in_age INT,
   accept_children BOOLEAN NOT NULL DEFAULT FALSE,
+  minor_room_types VARCHAR(12) CHECK(minor_room_types IN ('all_rooms', 'only_private', 'only_dorms')),
   minor_adult_supervision BOOLEAN,
   min_child_age INT,
   free_stay_age INT,
