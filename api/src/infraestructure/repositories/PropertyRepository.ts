@@ -149,7 +149,7 @@ export class PropertyRepository implements IPropertyRepository {
   // Address
   // ======================================================
   async getAddress(propertyId: number): Promise<Address | null> {
-    const query = "SELECT * FROM address WHERE property_id = $1 LIMIT 1";
+    const query = "SELECT * FROM addresses WHERE property_id = $1 LIMIT 1";
 
     const result = await this.uow.query(query, [propertyId]);
 
@@ -174,7 +174,7 @@ export class PropertyRepository implements IPropertyRepository {
   }
 
   async saveAddress(propertyId: number, address: Address): Promise<void> {
-    const query = ` INSERT INTO address (
+    const query = ` INSERT INTO addresses (
                           property_id,
                           house_number,
                           street,

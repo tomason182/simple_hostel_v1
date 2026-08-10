@@ -1,4 +1,4 @@
-import { AddressDTO } from "../dto/AddressDTO";
+import { AddressDTO, AddressResponseDTO } from "../dto/AddressDTO";
 
 export class Address {
   public houseNumber: string;
@@ -74,7 +74,7 @@ export class Address {
       this.updatedAt = new Date()
   }
 
-  public toDTO(): AddressDTO {
+  public toDTO(): AddressResponseDTO {
     return {
       houseNumber: this.houseNumber,
       street: this.street,

@@ -122,7 +122,7 @@ const country: ParamSchema = {
   },
 }
 
-const apha2code: ParamSchema = {
+const alpha2code: ParamSchema = {
   in: ["body"],
   trim: true,
   exists: {
@@ -155,9 +155,9 @@ const lat: ParamSchema = {
   isDecimal: {
     options: {
       force_decimal: false,
-      decimal_digits: "9",
+      decimal_digits: "6",
     },
-    errorMessage: "LATITUDE_LENGTHi_9_DIGITS",
+    errorMessage: "LATITUDE_LENGTH_6_DIGITS",
   },
 };
 
@@ -175,9 +175,9 @@ const lon: ParamSchema = {
   isDecimal: {
     options: {
       force_decimal: false,
-      decimal_digits: "9"
+      decimal_digits: "6"
     },
-    errorMessage: "LONGITUDE_LENGTH_9_DIGITS"
+    errorMessage: "LONGITUDE_LENGTH_6_DIGITS"
   }
 }
 
@@ -203,7 +203,7 @@ export const addressSchema = {
   postalCode: postalCode,
   state: state,
   country: country,
-  apha2code: apha2code,
+  alpha2code: alpha2code,
   lat: lat,
   lon: lon,
   osmId: osmId

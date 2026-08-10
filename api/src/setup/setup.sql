@@ -41,6 +41,30 @@ CREATE TABLE IF NOT EXISTS access_control (
 );
 
 -- Crear tabla addresses.
+CREATE TABLE IF NOT EXISTS addresses (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  property_id BIGINT NOT NULL,
+  house_number VARCHAR(10),
+  street VARCHAR(255),
+  city VARCHAR(255),
+  postal_code VARCHAR(10),
+  state VARCHAR(255),
+  country VARCHAR(56),
+  alpha_2_code VARCHAR(2),
+  lat DECIMAL(9,6),
+  lon DECIMAL(9,6),
+  osm_id VARCHAR(20),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_by BIGINT,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_by BIGINT,
+
+  UNIQUE(property_id),
+
+  FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
+  FOREIGN KEY (updated_by) REFERENCES users(id),
+  FOREIGN KEY (created_by) REFERENCES users(id)
+);
 -- Crear tabla contact_info.
 CREATE TABLE IF NOT EXISTS contact_info (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

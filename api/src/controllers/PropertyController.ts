@@ -62,8 +62,6 @@ export class PropertyController {
         lat,
         lon,
         osmId,
-        updatedBy: null,
-        updatedAt: null,
       };
 
       const result = await this.propertyService.saveOrUpdateAddress(propertyId, userId, addressDTO);

@@ -211,6 +211,31 @@ async function saveOrUpdateContactInfo(contactInfo) {
   console.log(data);
 }
 
+async function saveOrUpdateAddress(address) {
+  const url = baseUrl + "/property/address";
+
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Cookie": COOKIES,
+    },
+    credentials: "include",
+    body: JSON.stringify(address)
+  };
+
+  const response = await fetch(url, options);
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data);
+    throw new Error("Error en address");
+  }
+
+  console.log(data);
+}
+
 // ======================================================
 // Iniciando TESTS.
 // ====================================================== 
@@ -238,6 +263,19 @@ const contactInfo = {
   phoneCallsCode: "549",
   phoneWhatsapp: "6539487",
   phoneCalls: "67432176"
+}
+
+const address = {
+  houseNumber: 2064,
+  street: "Av. Las Flores",
+  city: "El bolson",
+  postalCode: "8430",
+  state: "Rio Negro",
+  country: "Argentina",
+  alpha2code: "AR",
+  lat: "-41.948877",
+  lon: "-71.542412",
+  osmId: "1234"
 }
 
 async function runTest() {
@@ -272,6 +310,10 @@ async function runTest() {
   await saveOrUpdateContactInfo(contactInfo);
 
   console.log("Contact info creado")
+
+  // Guardar address
+  await saveOrUpdateAddress(address);
+  console.log("Address creado.")
 
 
 
