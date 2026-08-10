@@ -143,6 +143,27 @@ CREATE TABLE IF NOT EXISTS beds (
   FOREIGN KEY(updated_by) REFERENCES users(id)
 );
 -- Crear tabla guests.
+CREATE TABLE IF NOT EXISTS guest (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  property_id BIGINT NOT NULL,
+  first_name VARCHAR(255),
+  last_name VARCHAR(255),
+  id_number VARCHAR(100),
+  email VARCHAR(100),
+  phone_code VARCHAR(5),
+  phone_number VARCHAR(30),
+  street VARCHAR(100),
+  city VARCHAR(100),
+  country VARCHAR(100),
+  alpha_2_code VARCHAR(2),
+
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ,
+  updated_by BIGINT,
+
+  FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
+  FOREIGN KEY(updated_by) REFERENCES users(id)
+);
 -- Crear tabla breakfast_and_meals
   -- Crear tabla general policies
 -- crear tabla payment policies

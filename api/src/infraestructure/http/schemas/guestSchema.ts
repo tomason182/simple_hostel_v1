@@ -118,7 +118,7 @@ const postalCode: ParamSchema = {
   }
 };
 
-const countryCode: ParamSchema = {
+const alpha2code: ParamSchema = {
   in: ["body"],
   optional: true,
   isISO31661Alpha2: {
@@ -136,6 +136,6 @@ export const guestSchema = {
   city: city,
   street: street,
   postalCode: postalCode,
-  countryCode: countryCode
+  alpha2code: alpha2code
 }
 
