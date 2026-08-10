@@ -212,6 +212,20 @@ CREATE TABLE IF NOT EXISTS minor_policies (
 );
 
 -- crear tabla other policies
+CREATE TABLE IF NOT EXISTS other_policies (
+  property_id BIGINT UNIQUE,
+  quiet_hours_from TIME,
+  quiet_hours_until TIME,
+  has_smooking_areas BOOLEAN NOT NULL DEFAULT FALSE,
+  allow_external_guest BOOLEAN NOT NULL DEFAULT FALSE,
+  allow_pets BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ,
+  updated_by BIGINT,
+
+  FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
+  FOREIGN KEY(updated_by) REFERENCES users(id)
+);
 
 -- crear tabla rates and availability
 -- Crear tabla reservations
