@@ -186,6 +186,31 @@ async function createRoomType(roomType) {
 
 }
 
+async function saveOrUpdateContactInfo(contactInfo) {
+  const url = baseUrl + `/property/contact-info`;
+
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Cookie": COOKIES
+    },
+    credentials: "include",
+    body: JSON.stringify(contactInfo)
+  }
+
+  const response = await fetch(url, options);
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data);
+    throw new Error("Error en contact info")
+  }
+
+  console.log(data);
+}
+
 // ======================================================
 // Iniciando TESTS.
 // ====================================================== 
@@ -205,6 +230,14 @@ const roomType = {
   maxOccupancy: 8,
   inventory: 2
 
+}
+
+const contactInfo = {
+  email: "tomas@mail.com",
+  phoneWhatsappCode: "54",
+  phoneCallsCode: "549",
+  phoneWhatsapp: "6539487",
+  phoneCalls: "67432176"
 }
 
 async function runTest() {
@@ -233,7 +266,14 @@ async function runTest() {
 
   console.log("Buscando roomtypes..")
 
-  const roomTypes = await getAllRoomTypes(login.accessControl.propertyId)
+  await getAllRoomTypes(login.accessControl.propertyId)
+
+  // Guardar Contact Info
+  await saveOrUpdateContactInfo(contactInfo);
+
+  console.log("Contact info creado")
+
+
 
 }
 

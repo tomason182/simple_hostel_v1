@@ -42,6 +42,21 @@ CREATE TABLE IF NOT EXISTS access_control (
 
 -- Crear tabla addresses.
 -- Crear tabla contact_info.
+CREATE TABLE IF NOT EXISTS contact_info (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    property_id BIGINT NOT NULL UNIQUE,
+    email VARCHAR(255),
+    phone_calls_code VARCHAR(5),
+    phone_calls VARCHAR(20),
+    phone_whatsapp_code VARCHAR(5),
+    phone_whatsapp VARCHAR(20),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ,
+    updated_by BIGINT,
+
+    FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
+    FOREIGN KEY(updated_by) REFERENCES users(id)
+);
 -- Crear tabla currencies.
 -- Crear tabla room types.
 CREATE TABLE IF NOT EXISTS room_types (
