@@ -1,24 +1,32 @@
 import { CurrenciesDTO } from "../dto/CurrenciesDTO";
 
 export class Currencies {
-  private propertyId: number | null = null;
-  private baseCurrency: string | null = null;
-  private paymentCurrency: string | null = null;
-  public updatedAt: Date | null = null;
-  public updatedBy: number | null = null;
+  public propertyId: number;
+  public baseCurrency: string;
+  public paymentCurrency: string;
+  public updatedAt: Date;
+  public updatedBy: number;
 
-  public setId(id: number | null) {
+  constructor(propertyId: number, baseCurrency: string, paymentCurrency: string, updatedAt: Date, updatedBy: number) {
+    this.propertyId = propertyId,
+      this.baseCurrency = baseCurrency,
+      this.paymentCurrency = paymentCurrency,
+      this.updatedAt = updatedAt,
+      this.updatedBy = updatedBy
+  }
+
+  public setId(id: number) {
     this.propertyId = id;
   }
   public getId(): number | null {
     return this.propertyId;
   }
 
-  public getPaymentCurrency(): string | null {
+  public getPaymentCurrency(): string {
     return this.paymentCurrency;
   }
 
-  public setPaymentCurrency(currency: string | null) {
+  public setPaymentCurrency(currency: string) {
     let formatted = currency;
     if (formatted !== null) {
       formatted = this.currencyFormatter(formatted);
@@ -26,7 +34,7 @@ export class Currencies {
     this.paymentCurrency = formatted;
   }
 
-  public setBaseCurrency(currency: string | null) {
+  public setBaseCurrency(currency: string) {
     let formatted = currency;
     if (formatted !== null) {
       formatted = this.currencyFormatter(formatted);
@@ -34,25 +42,22 @@ export class Currencies {
     this.baseCurrency = formatted;
   }
 
-  public getBaseCurrency(): string | null {
+  public getBaseCurrency(): string {
     return this.baseCurrency;
   }
 
-  static make(dto: CurrenciesDTO): Currencies {
+  static make(dto: CurrenciesDTO, propertyId: number, userId: number): Currencies {
     // Se deberia comprobar que currency es de un formato determinado.
-    const currencies = new Currencies();
-    currencies.setBaseCurrency(dto.baseCurrency);
-    currencies.setPaymentCurrency(dto.paymentCurrency);
-    currencies.updatedAt = new Date();
-    currencies.updatedBy = dto.user_id;
+    const currencies = new Currencies(propertyId, dto.baseCurrency, dto.paymentCurrency, new Date(), userId);
+
     return currencies;
   }
 
-  public update(dto: CurrenciesDTO): void {
+  public update(dto: CurrenciesDTO, userId: number): void {
     this.setBaseCurrency(dto.baseCurrency);
     this.setPaymentCurrency(dto.paymentCurrency);
     this.updatedAt = new Date();
-    this.updatedBy = dto.user_id;
+    this.updatedBy = userId
   }
 
 

@@ -226,18 +226,16 @@ export class PropertyRepository implements IPropertyRepository {
   // ============================================
   // Currencies
   // ============================================
-  async getCurrencies(propertyId: number): Promise<Currencies> {
+  async getCurrencies(propertyId: number): Promise<Currencies | null> {
     const query = "SELECT * FROM currencies WHERE property_id = $1;";
 
     const result = await this.uow.query(query, [propertyId]);
     const data = result.rows[0];
 
-    const currencies = new Currencies();
-    currencies.setId(data.id ?? null);
-    currencies.setBaseCurrency(data.base_currency ?? null);
-    currencies.setPaymentCurrency(data.payment_currency ?? null);
-    currencies.updatedAt = data.updated_at ?? null;
-    currencies.updatedBy = data.updatedBy ?? null;
+    if (!data) return null;
+
+    const currencies = new Currencies(data.property_id, data.base_currency, data.payment_currency, data.updated_at, data.updated_by);
+
 
     return currencies;
   }
@@ -247,8 +245,8 @@ export class PropertyRepository implements IPropertyRepository {
                                   property_id,
                                   base_currency,
                                   payment_currency,
-                                  updatedAt,
-                                  updatedBy )
+                                  updated_at,
+                                  updated_by )
                   VALUES( 
                       $1,
                       $2,
@@ -258,8 +256,8 @@ export class PropertyRepository implements IPropertyRepository {
                   SET
                     base_currency = EXCLUDED.base_currency,
                     payment_currency = EXCLUDED.payment_currency,
-                    updatedAt = EXCLUDED.updatedAt,
-                    updatedBy = EXCLUDED.updatedBy;`
+                    updated_at = EXCLUDED.updated_at,
+                    updated_by = EXCLUDED.updated_by;`
 
     await this.uow.query(query, [
       currencies.getId(),

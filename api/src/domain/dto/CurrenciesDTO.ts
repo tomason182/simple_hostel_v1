@@ -1,6 +1,6 @@
 export interface CurrenciesDTO {
-  property_id: number;
+  propertyId: number;
   baseCurrency: string;
   paymentCurrency: string;
-  user_id: number;
+  userId: number;
 }

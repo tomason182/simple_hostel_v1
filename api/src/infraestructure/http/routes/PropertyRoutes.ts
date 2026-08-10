@@ -7,6 +7,7 @@ import { validateRequest } from "../middlewares/validateRequest";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { requestContextMiddleware } from "../middlewares/requestContextMiddleware";
 import { addressSchema } from "../schemas/addressSchema";
+import { currenciesSchema } from "../schemas/currenciesSchema";
 
 export function createPropertyRoutes(pool: Pool, emailService: EmailService) {
   const router = express.Router();
@@ -28,6 +29,15 @@ export function createPropertyRoutes(pool: Pool, emailService: EmailService) {
     requestContextMiddleware(pool, emailService),
     (req: Request, res: Response, next: NextFunction) =>
       req.context.propertyController.saveOrUpdateAddress(req, res, next)
+  );
+
+  router.post("/currencies",
+    authMiddleware,
+    checkSchema(currenciesSchema),
+    validateRequest,
+    requestContextMiddleware(pool, emailService),
+    (req: Request, res: Response, next: NextFunction) =>
+      req.context.propertyController.saveOrUpdateCurrencies(req, res, next)
   );
 
 

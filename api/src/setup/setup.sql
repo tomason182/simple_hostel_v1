@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS addresses (
   FOREIGN KEY (updated_by) REFERENCES users(id),
   FOREIGN KEY (created_by) REFERENCES users(id)
 );
+
 -- Crear tabla contact_info.
 CREATE TABLE IF NOT EXISTS contact_info (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -81,7 +82,22 @@ CREATE TABLE IF NOT EXISTS contact_info (
     FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
     FOREIGN KEY(updated_by) REFERENCES users(id)
 );
+
 -- Crear tabla currencies.
+CREATE TABLE IF NOT EXISTS currencies (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  property_id BIGINT NOT NULL UNIQUE,
+  base_currency VARCHAR(3),
+  payment_currency VARCHAR(3),
+
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ,
+  updated_by BIGINT,
+
+  FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
+  FOREIGN KEY(updated_by) REFERENCES users(id)
+);
+
 -- Crear tabla room types.
 CREATE TABLE IF NOT EXISTS room_types (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

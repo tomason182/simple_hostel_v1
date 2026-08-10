@@ -236,6 +236,29 @@ async function saveOrUpdateAddress(address) {
   console.log(data);
 }
 
+async function saveOrUpdateCurrencies(currencies) {
+  const url = baseUrl + "/property/currencies";
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Cookie": COOKIES,
+    },
+    credentials: "include",
+    body: JSON.stringify(currencies)
+  }
+
+  const response = await fetch(url, options);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data);
+    throw new Error("Error en currencies");
+  }
+
+  console.log(data)
+}
+
 // ======================================================
 // Iniciando TESTS.
 // ====================================================== 
@@ -278,6 +301,11 @@ const address = {
   osmId: "1234"
 }
 
+const currencies = {
+  baseCurrency: "USD",
+  paymentCurrency: "ARS"
+}
+
 async function runTest() {
 
   console.log("Empieza test")
@@ -314,6 +342,11 @@ async function runTest() {
   // Guardar address
   await saveOrUpdateAddress(address);
   console.log("Address creado.")
+
+
+  // Guardar currencies
+  await saveOrUpdateCurrencies(currencies);
+  console.log("Currencies creado")
 
 
 

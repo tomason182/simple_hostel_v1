@@ -76,15 +76,15 @@ export class PropertyController {
   async saveOrUpdateCurrencies(req: Request, res: Response, next: NextFunction) {
     try {
       const { propertyId, userId } = req.auth;
-      const { base_currency, payment_currency } = req.body;
+      const { baseCurrency, paymentCurrency } = req.body;
       const dto: CurrenciesDTO = {
-        property_id: propertyId,
-        baseCurrency: base_currency,
-        paymentCurrency: payment_currency,
-        user_id: userId
+        propertyId: propertyId,
+        baseCurrency: baseCurrency,
+        paymentCurrency: paymentCurrency,
+        userId: userId
       }
 
-      const result = await this.propertyService.saveOrUpdateCurrencies(dto)
+      const result = await this.propertyService.saveOrUpdateCurrencies(dto, propertyId, userId)
 
       return res.status(200).json(result);
     } catch (err) {

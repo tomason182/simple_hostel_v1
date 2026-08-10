@@ -21,5 +21,5 @@ export interface IPropertyService {
 
   // Currencies.
   // getCurrencies(propertyId: number): Promise<CurrenciesDTO>;
-  saveOrUpdateCurrencies(currenciesDTO: CurrenciesDTO): Promise<CurrenciesDTO>;
+  saveOrUpdateCurrencies(currenciesDTO: CurrenciesDTO, propertyId: number, userId: number): Promise<CurrenciesDTO>;
 }

@@ -79,12 +79,12 @@ export class PropertyService implements IPropertyService {
   // ======================================================
   // Currencies
   // ======================================================
-  async saveOrUpdateCurrencies(currenciesDTO: CurrenciesDTO): Promise<CurrenciesDTO> {
-    let currencies = await this.propertyRepository.getCurrencies(currenciesDTO.property_id);
+  async saveOrUpdateCurrencies(currenciesDTO: CurrenciesDTO, propertyId: number, userId: number): Promise<CurrenciesDTO> {
+    let currencies = await this.propertyRepository.getCurrencies(propertyId);
     if (!currencies) {
-      currencies = Currencies.make(currenciesDTO);
+      currencies = Currencies.make(currenciesDTO, propertyId, userId);
     } else {
-      currencies.update(currenciesDTO);
+      currencies.update(currenciesDTO, userId);
     }
 
     await this.propertyRepository.saveCurrencies(currencies);
