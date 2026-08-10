@@ -165,9 +165,50 @@ CREATE TABLE IF NOT EXISTS guest (
   FOREIGN KEY(updated_by) REFERENCES users(id)
 );
 -- Crear tabla breakfast_and_meals
-  -- Crear tabla general policies
+-- Crear tabla general policies
+CREATE TABLE IF NOT EXISTS general_policies (
+  property_id BIGINT UNIQUE,
+  min_length_stay INT,
+  max_length_stay INT,
+  min_advance_booking INT,
+  check_in_from TIME,   -- 11:00
+  check_in_until TIME,     -- 21:00
+  check_out_from TIME,
+  check_out_until TIME,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ,
+  updated_by BIGINT,
+
+  FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
+  FOREIGN KEY(updated_by) REFERENCES users(id)
+);
 -- crear tabla payment policies
+CREATE TABLE IF NOT EXISTS payment_policies (
+  property_id BIGINT UNIQUE,
+  adavance_payment_required BOOLEAN NOT NULL DEFAULT FALSE,
+  deposit_amount INT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ,
+  updated_by BIGINT,
+
+  FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
+  FOREIGN KEY(updated_by) REFERENCES users(id)
+);
 -- crear tabla minor policies
+CREATE TABLE IF NOT EXISTS minor_policies (
+  property_id BIGINT UNIQUE,
+  min_check_in_age INT,
+  accept_children BOOLEAN NOT NULL DEFAULT FALSE,
+  minor_adult_supervision BOOLEAN,
+  min_child_age INT,
+  free_stay_age INT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ,
+  updated_by BIGINT,
+
+  FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
+  FOREIGN KEY(updated_by) REFERENCES users(id)
+);
 
 -- crear tabla other policies
 
