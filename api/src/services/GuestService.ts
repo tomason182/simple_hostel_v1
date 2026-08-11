@@ -1,4 +1,4 @@
-import { GuestDTO } from "../domain/dto/GuestDTO";
+import { GuestRequestDTO, GuestResponseDTO } from "../domain/dto/GuestDTO";
 import { Guest } from "../domain/entities/Guest";
 import { IGuestService } from "../domain/interfaces/IGuestService";
 import { IGuestRepository } from "../domain/ports/IGuestRepository";
@@ -11,12 +11,12 @@ export class GuestService implements IGuestService {
     this.propertyRepository = propertyRepository;
   }
 
-  public async create(propertyId: number, userId: number, guestDTO: GuestDTO): Promise<Guest> {
+  public async create(propertyId: number, userId: number, dto: GuestRequestDTO): Promise<Guest> {
     if (!this.propertyRepository.findById(propertyId)) {
       throw new Error("PROPERTY_NOT_FOUND");
     };
 
-    let guest = Guest.fromDTO(propertyId, userId, guestDTO);
+    let guest = Guest.fromDTO(propertyId, userId, dto);
 
     // Chequear que el huesped no exista.
     if (!this.guestRepository.findByEmail(guest.email)) {
@@ -28,8 +28,8 @@ export class GuestService implements IGuestService {
     return guest;
   }
 
-  public async update(userId: number, guestDTO: GuestDTO): Promise<GuestDTO> {
-    const guestId = guestDTO.id;
+  public async update(userId: number, dto: GuestRequestDTO): Promise<GuestResponseDTO> {
+    const guestId = dto.id;
 
     if (!guestId) {
       throw new Error("NO_GUEST_ID_PROVIDED");
@@ -40,7 +40,7 @@ export class GuestService implements IGuestService {
       throw new Error("GUEST_NOT_FOUND");
     }
 
-    guest.update(guestId, userId, guestDTO);
+    guest.update(guestId, userId, dto);
 
     guest = await this.guestRepository.save(guest);
 

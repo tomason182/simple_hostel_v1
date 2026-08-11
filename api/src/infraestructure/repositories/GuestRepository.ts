@@ -49,10 +49,24 @@ export class GuestRepository implements IGuestRepository {
                 WHERE
                   id = $16;`
     } else {
-      query = `INSERT INTO guest (property_id, first_name, last_name, id_number, email, 
-                                        phone_number, phone_code, street, city, country, alpha_2_code,
-                                        created_by, created_at, updated_by, updated_at) VALUES 
-                                        ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id;`
+      query = `INSERT INTO guest (
+        property_id, 
+        first_name, 
+        last_name, 
+        id_number, 
+        email, 
+        phone_number,
+        phone_code, 
+        street, 
+        city, 
+        country, 
+        alpha_2_code, 
+        created_by, 
+        created_at, 
+        updated_by, 
+        updated_at) 
+        VALUES 
+        ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING id;`
 
     }
 

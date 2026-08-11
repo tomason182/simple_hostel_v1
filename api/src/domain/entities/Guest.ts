@@ -1,4 +1,5 @@
-import { GuestDTO } from "../dto/GuestDTO";
+import { AppError } from "../../errors/AppError";
+import { GuestRequestDTO, GuestResponseDTO } from "../dto/GuestDTO";
 export type Status = "ACTIVE" | "DEACTIVATE" | "BLOCKED"
 export class Guest {
   private status: Status = "ACTIVE";
@@ -39,7 +40,7 @@ export class Guest {
     this.updatedAt = updatedAt;
   }
 
-  static fromDTO(propertyId: number, userId: number, dto: GuestDTO): Guest {
+  static fromDTO(propertyId: number, userId: number, dto: GuestRequestDTO): Guest {
     const createdBy = userId;
     const updatedBy = userId;
     const createdAt = new Date();
@@ -65,7 +66,10 @@ export class Guest {
     )
   }
 
-  public toDTO(): GuestDTO {
+  public toDTO(): GuestResponseDTO {
+    if (!this.id) {
+      throw new Error("GUEST_ID_NOT_PROVIDED")
+    }
     return {
       id: this.id,
       propertyId: this.propertyId,
@@ -78,11 +82,15 @@ export class Guest {
       street: this.street,
       city: this.city,
       country: this.country,
-      alpa2code: this.alpa2code
+      alpa2code: this.alpa2code,
+      createdAt: this.createdAt,
+      createdBy: this.createdBy,
+      updatedAt: this.updatedAt,
+      updatedBy: this.updatedBy
     }
   }
 
-  public update(guestId: number, userId: number, dto: GuestDTO) {
+  public update(guestId: number, userId: number, dto: GuestRequestDTO) {
     const updatedBy = userId;
     const updatedAt = new Date();
     return new Guest(
