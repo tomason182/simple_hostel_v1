@@ -5,7 +5,7 @@ export class MinorPolicies {
     public propertyId: number,
     public minCheckInAge: number | null,
     public acceptChildren: boolean | null,
-    public minorsAdultSupervision: boolean | null,
+    public minorAdultSupervision: boolean | null,
     public minChildAge: number | null,
     public freeStayAge: number | null,
     public updatedAt: Date | null,
@@ -14,7 +14,7 @@ export class MinorPolicies {
     this.propertyId = propertyId
     this.minCheckInAge = minCheckInAge;
     this.acceptChildren = acceptChildren;
-    this.minorsAdultSupervision = minorsAdultSupervision;
+    this.minorAdultSupervision = minorAdultSupervision;
     this.minChildAge = minChildAge;
     this.freeStayAge = freeStayAge;
     this.updatedAt = updatedAt;
@@ -30,7 +30,7 @@ export class MinorPolicies {
       propertyId,
       dto.minCheckInAge,
       dto.acceptChildren,
-      dto.minorsAdultSupervision,
+      dto.minorAdultSupervision,
       dto.minChildAge,
       dto.freeStayAge,
       new Date(),
@@ -43,7 +43,7 @@ export class MinorPolicies {
       propertyId: this.propertyId,
       minCheckInAge: this.minCheckInAge,
       acceptChildren: this.acceptChildren,
-      minorsAdultSupervision: this.minorsAdultSupervision,
+      minorAdultSupervision: this.minorAdultSupervision,
       minChildAge: this.minCheckInAge,
       freeStayAge: this.freeStayAge,
       updatedAt: this.updatedAt,
@@ -54,7 +54,7 @@ export class MinorPolicies {
   public update(dto: MinorPoliciesDTO, userId: number) {
     this.minCheckInAge = dto.minCheckInAge;
     this.acceptChildren = dto.acceptChildren;
-    this.minorsAdultSupervision = dto.minorsAdultSupervision;
+    this.minorAdultSupervision = dto.minorAdultSupervision;
     this.minChildAge = dto.minCheckInAge;
     this.freeStayAge = dto.freeStayAge;
     this.updatedAt = new Date();

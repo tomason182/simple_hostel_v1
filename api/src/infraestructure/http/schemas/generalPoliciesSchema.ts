@@ -105,7 +105,7 @@ export const generalPoliciesSchema = {
   minLengthOfStay: minLengthOfStay,
   maxLengthOfStay: maxLengthOfStay,
   minAdvanceBooking: minAdvanceBooking,
-  checkInfrom: checkInFrom,
+  checkInFrom: checkInFrom,
   checkInUntil: checkInUntil,
   checkOutFrom: checkOutFrom,
   checkOutUntil: checkOutUntil

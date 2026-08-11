@@ -185,8 +185,8 @@ CREATE TABLE IF NOT EXISTS general_policies (
 -- crear tabla payment policies
 CREATE TABLE IF NOT EXISTS payment_policies (
   property_id BIGINT UNIQUE,
-  adavance_payment_required BOOLEAN NOT NULL DEFAULT FALSE,
-  deposit_amount INT,
+  advance_payment_required BOOLEAN NOT NULL DEFAULT FALSE,
+  deposit_amount NUMERIC(4,2),
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ,
   updated_by BIGINT,

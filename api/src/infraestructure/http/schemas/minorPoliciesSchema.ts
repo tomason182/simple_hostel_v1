@@ -19,11 +19,11 @@ const acceptChildren: ParamSchema = {
   toBoolean: true
 };
 
-const minorsRoomTypes: ParamSchema = {
+const minorRoomTypes: ParamSchema = {
   in: ["body"],
   isIn: {
     options: [["all_rooms", "only_private", "only_dorms"]],
-    errorMessage: "MINORS_ROOM_TYPE_MUST_BE_ALL_ROOMS_ONLY_PRIVATE_OR_ONLY_DORMS",
+    errorMessage: "INVALID_MINOR_ROOM_TYPES",
   },
 
 }
@@ -60,7 +60,7 @@ const freeStayAge: ParamSchema = {
 export const minorPoliciesSchema = {
   minCheckInAge: minCheckInAge,
   acceptChildren: acceptChildren,
-  minorsRoomTypes: minorsRoomTypes,
+  minorRoomTypes: minorRoomTypes,
   minorAdultSupervision: minorAdultSupervision,
   minChildAge: minChildAge,
   freeStayAge: freeStayAge

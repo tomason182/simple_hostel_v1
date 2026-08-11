@@ -54,18 +54,18 @@ export class PoliciesRepository implements IPoliciesRepository {
                       updated_at, 
                       updated_by
                   ) VALUES (
-                   $1, $2, $3, $4, $5, $6, $7, $8, $9       
+                   $1, $2, $3, $4, $5, $6, $7, $8, $9, $10      
                   ) ON CONFLICT (property_id) DO UPDATE
                   SET 
                   min_length_stay = EXCLUDED.min_length_stay,
                   max_length_stay = EXCLUDED.max_length_stay,
-                  min_advance_booking = EXCLUDED min_advance_booking,
-                  check_in_from = EXCLUDED check_in_from,
-                  check_out_from = EXCLUDED check_out_from,
-                  check_in_until = EXCLUDED check_in_until,
-                  check_out_until = EXCLUDED check_out_until,
-                  updated_at = EXCLUDED updated_at,
-                  updated_by = EXCLUDED updated_by;`;
+                  min_advance_booking = EXCLUDED.min_advance_booking,
+                  check_in_from = EXCLUDED.check_in_from,
+                  check_out_from = EXCLUDED.check_out_from,
+                  check_in_until = EXCLUDED.check_in_until,
+                  check_out_until = EXCLUDED.check_out_until,
+                  updated_at = EXCLUDED.updated_at,
+                  updated_by = EXCLUDED.updated_by;`;
 
     await this.uow.query(query, [
       general.propertyId,
@@ -102,7 +102,7 @@ export class PoliciesRepository implements IPoliciesRepository {
   async savePaymentPolicies(paymentPolicies: PaymentPolicies): Promise<PaymentPolicies> {
     const query = `INSERT INTO payment_policies (property_id, advance_payment_required, deposit_amount, updated_at, updated_by) 
                     VALUES ($1, $2, $3, $4, $5)
-                    ON CONFLICT (property_id) SET 
+                    ON CONFLICT (property_id) DO UPDATE SET 
                     advance_payment_required = EXCLUDED.advance_payment_required, 
                     deposit_amount = EXCLUDED.deposit_amount, 
                     updated_at = EXCLUDED.updated_at, 
@@ -132,7 +132,7 @@ export class PoliciesRepository implements IPoliciesRepository {
       data.id ?? null,
       data.min_check_in_age ?? null,
       data.accept_children ?? null,
-      data.minors_adult_supervision ?? null,
+      data.minor_adult_supervision ?? null,
       data.min_child_age ?? null,
       data.free_stay_age ?? null,
       data.updated_at ?? null,
@@ -141,12 +141,12 @@ export class PoliciesRepository implements IPoliciesRepository {
   }
 
   async saveMinorPolicies(minorPolicies: MinorPolicies): Promise<MinorPolicies> {
-    const query = `INSERT INTO minor_policies (property_id, min_check_in_age, accept_children, minors_adult_supervision, min_child_age, free_stay_age, updated_at, updated_by)
+    const query = `INSERT INTO minor_policies (property_id, min_check_in_age, accept_children, minor_adult_supervision, min_child_age, free_stay_age, updated_at, updated_by)
                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-                    ON CONFLICT (property_id) SET
+                    ON CONFLICT (property_id) DO UPDATE SET
                     min_check_in_age = EXCLUDED.min_check_in_age,
                     accept_children = EXCLUDED.accept_children,
-                    minors_adult_supervision = EXCLUDED.minors_adult_supervision,
+                    minor_adult_supervision = EXCLUDED.minor_adult_supervision,
                     min_child_age = EXCLUDED.min_child_age,
                     free_stay_age = EXCLUDED.free_stay_age,
                     updated_at = EXCLUDED.updated_at,
@@ -156,7 +156,7 @@ export class PoliciesRepository implements IPoliciesRepository {
       minorPolicies.propertyId,
       minorPolicies.minCheckInAge,
       minorPolicies.acceptChildren,
-      minorPolicies.minorsAdultSupervision,
+      minorPolicies.minorAdultSupervision,
       minorPolicies.minChildAge,
       minorPolicies.freeStayAge,
       minorPolicies.updatedAt,
@@ -189,7 +189,7 @@ export class PoliciesRepository implements IPoliciesRepository {
   async saveOtherPolicies(otherPolicies: OtherPolicies): Promise<OtherPolicies> {
     const query = `INSERT INTO other_policies (property_id, quiet_hours_from, quiet_hours_until, has_smooking_areas, allow_external_guest, allow_pets, updated_at, updated_by)
                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-                    ON CONFLICT (property_id) SET 
+                    ON CONFLICT (property_id) DO UPDATE SET 
                     quiet_hours_from = EXCLUDED.quiet_hours_from,
                     quiet_hours_until = EXCLUDED.quiet_hours_until,
                     has_smooking_areas = EXCLUDED.has_smooking_areas,

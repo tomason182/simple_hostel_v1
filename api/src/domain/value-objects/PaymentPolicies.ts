@@ -3,10 +3,10 @@ import { PaymentPoliciesDTO, PaymentPoliciesOutputDTO } from "../dto/PoliciesDTO
 export class PaymentPolicies {
   constructor(
     public propertyId: number,
-    public advancePaymentRequired: boolean | null,
-    public depositAmount: number | null,
-    public updatedAt: Date | null,
-    public updatedBy: number | null,
+    public advancePaymentRequired: boolean,
+    public depositAmount: number,
+    public updatedAt: Date,
+    public updatedBy: number,
   ) {
     this.advancePaymentRequired = advancePaymentRequired;
     this.depositAmount = depositAmount;
@@ -17,7 +17,7 @@ export class PaymentPolicies {
   }
 
   static fromDTO(dto: PaymentPoliciesDTO, userId: number, propertyId: number): PaymentPolicies {
-    return new PaymentPolicies(propertyId, dto.advancePaymentRequired, dto.depositAmount, new Date(), userId)
+    return new PaymentPolicies(propertyId, dto.advancePaymentRequired, Number(dto.depositAmount), new Date(), userId)
   }
 
   public toDTO(): PaymentPoliciesOutputDTO {

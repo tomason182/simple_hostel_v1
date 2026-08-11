@@ -259,6 +259,96 @@ async function saveOrUpdateCurrencies(currencies) {
   console.log(data)
 }
 
+async function saveOrUpdateGeneralPolicies(generalPolicies) {
+  const url = baseUrl + "/policies/general-policies"
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Cookie": COOKIES,
+    },
+    credentials: "include",
+    body: JSON.stringify(generalPolicies)
+  }
+
+  const response = await fetch(url, options);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data);
+    throw new Error("generalPolicies error")
+  }
+
+  console.log(data);
+}
+
+async function saveOrUpdateMinorPolicies(minorPolicies) {
+  const url = baseUrl + "/policies/minor-policies";
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Cookie": COOKIES,
+    },
+    credentials: "include",
+    body: JSON.stringify(minorPolicies),
+  }
+
+  const response = await fetch(url, options);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data);
+    throw new Error("Minor policies error")
+  }
+
+  console.log(data);
+}
+
+
+async function saveOrUpdateOtherPolicies(otherPolicies) {
+  const url = baseUrl + "/policies/other-policies";
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Cookie": COOKIES,
+    },
+    credentials: "include",
+    body: JSON.stringify(otherPolicies),
+  }
+
+  const response = await fetch(url, options);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data);
+    throw new Error("Other policies error")
+  }
+}
+
+async function saveOrUpdatePaymentPolicies(paymentPolicies) {
+  const url = baseUrl + "/policies/payment-policies";
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Cookie": COOKIES,
+    },
+    credentials: "include",
+    body: JSON.stringify(paymentPolicies),
+  }
+
+  const result = await fetch(url, options);
+  const data = await result.json();
+
+  console.log(data);
+  if (!result.ok) {
+    throw new Error("Error en paymentPolicies")
+  }
+
+}
+
 // ======================================================
 // Iniciando TESTS.
 // ====================================================== 
@@ -306,6 +396,38 @@ const currencies = {
   paymentCurrency: "ARS"
 }
 
+const generalPolicies = {
+  minLengthOfStay: 1,
+  maxLengthOfStay: 0,
+  minAdvanceBooking: 0,
+  checkInFrom: "14:00",
+  checkInUntil: "21:00",
+  checkOutFrom: "00:00",
+  checkOutUntil: "11:00"
+}
+
+const minorPolicies = {
+  minCheckInAge: 18,
+  acceptChildren: true,
+  minorRoomTypes: "only_private",
+  minorAdultSupervision: true,
+  minChildAge: 8,
+  freeStayAge: 0,
+}
+
+const otherPolicies = {
+  quietHoursFrom: "23:00",
+  quietHoursUntil: "09:00",
+  hasSmookingAreas: true,
+  allowExternalGuest: false,
+  allowPets: false
+}
+
+const paymentPolicies = {
+  advancePaymentRequired: true,
+  depositAmount: 0.4
+}
+
 async function runTest() {
 
   console.log("Empieza test")
@@ -348,6 +470,18 @@ async function runTest() {
   await saveOrUpdateCurrencies(currencies);
   console.log("Currencies creado")
 
+  // Policies
+  await saveOrUpdateGeneralPolicies(generalPolicies);
+  console.log("generalPolicies creadas");
+
+  await saveOrUpdateMinorPolicies(minorPolicies);
+  console.log("minorPolicies creadas");
+
+  await saveOrUpdateOtherPolicies(otherPolicies);
+  console.log("otherPolicies creadas")
+
+  await saveOrUpdatePaymentPolicies(paymentPolicies);
+  console.log("paymentPolicies creadas")
 
 
 }

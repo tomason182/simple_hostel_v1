@@ -38,7 +38,7 @@ export class PoliciesController {
       const dto: MinorPoliciesDTO = {
         minCheckInAge: req.body.minCheckInAge,
         acceptChildren: req.body.acceptChildren,
-        minorsAdultSupervision: req.body.minorsAdultSupervision,
+        minorAdultSupervision: req.body.minorsAdultSupervision,
         minChildAge: req.body.minChildAge,
         freeStayAge: req.body.freeStayAge
       };

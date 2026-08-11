@@ -24,8 +24,8 @@ export interface GeneralPoliciesDTO {
 export interface GeneralPoliciesOutputDTO extends GeneralPoliciesDTO, AuditableDTO { };
 
 export interface PaymentPoliciesDTO {
-  advancePaymentRequired: boolean | null;
-  depositAmount: number | null;
+  advancePaymentRequired: boolean;
+  depositAmount: number;
 };
 
 export interface PaymentPoliciesOutputDTO extends PaymentPoliciesDTO, AuditableDTO { }
@@ -35,7 +35,7 @@ export interface PaymentPoliciesOutputDTO extends PaymentPoliciesDTO, AuditableD
 export interface MinorPoliciesDTO {
   minCheckInAge: number | null;
   acceptChildren: boolean | null;
-  minorsAdultSupervision: boolean | null;
+  minorAdultSupervision: boolean | null;
   minChildAge: number | null;
   freeStayAge: number | null;
 };
