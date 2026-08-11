@@ -297,12 +297,11 @@ async function saveOrUpdateMinorPolicies(minorPolicies) {
   const response = await fetch(url, options);
   const data = await response.json();
 
+  console.log(data);
   if (!response.ok) {
-    console.log(data);
     throw new Error("Minor policies error")
   }
 
-  console.log(data);
 }
 
 
@@ -321,8 +320,9 @@ async function saveOrUpdateOtherPolicies(otherPolicies) {
   const response = await fetch(url, options);
   const data = await response.json();
 
+
+  console.log(data);
   if (!response.ok) {
-    console.log(data);
     throw new Error("Other policies error")
   }
 }
@@ -347,6 +347,28 @@ async function saveOrUpdatePaymentPolicies(paymentPolicies) {
     throw new Error("Error en paymentPolicies")
   }
 
+}
+
+async function saveOrUpdateCancellationPolicies(cancellationPolicies) {
+  const url = baseUrl + "/policies/cancellationPolicies";
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Cookie": COOKIES,
+    },
+    credentials: "include",
+    body: JSON.stringify(cancellationPolicies)
+  }
+
+  const result = await fetch(url, options);
+  const data = await result.json();
+
+  console.log(data);
+
+  if (!response.ok) {
+    throw new Error("cancellationPolicies Error")
+  }
 }
 
 // ======================================================
@@ -428,6 +450,11 @@ const paymentPolicies = {
   depositAmount: 0.4
 }
 
+const cancellationPolicies = {
+  daysBeforeArrival: 15,
+  refundAmount: 0.5
+}
+
 async function runTest() {
 
   console.log("Empieza test")
@@ -482,6 +509,9 @@ async function runTest() {
 
   await saveOrUpdatePaymentPolicies(paymentPolicies);
   console.log("paymentPolicies creadas")
+
+  await saveOrUpdateCancellationPolicies(cancellationPolicies);
+  console.log("cancellationPolicies creadas")
 
 
 }
