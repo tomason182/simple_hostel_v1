@@ -227,6 +227,15 @@ CREATE TABLE IF NOT EXISTS other_policies (
   FOREIGN KEY(updated_by) REFERENCES users(id)
 );
 
+-- crear tabla de cancelaciones 
+CREATE TABLE IF NOT EXISTS cancellationPolicies (
+    property_id BIGINT UNIQUE,
+    days_before_arrival INT NOT NULL CHECK(days_before_arrival > 0),
+    amount_refund DECIMAL(4,2) DEFAULT 0.00,
+
+    FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE
+);
+
 -- crear tabla rates and availability
 -- Crear tabla reservations
 

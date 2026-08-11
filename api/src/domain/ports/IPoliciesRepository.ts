@@ -1,3 +1,4 @@
+import { CancellationPolicies } from "../value-objects/CancellationPolicies";
 import { GeneralPolicies } from "../value-objects/GeneralPolicies";
 import { MinorPolicies } from "../value-objects/MinorPolicies";
 import { OtherPolicies } from "../value-objects/OtherPolicies";
@@ -18,5 +19,7 @@ export interface IPoliciesRepository {
 
   getPaymentPolicies(propertyId: number): Promise<PaymentPolicies>;
   savePaymentPolicies(paymentPolicies: PaymentPolicies): Promise<PaymentPolicies>;
+
+  saveCancellationPolicies(cancellationPolicies: CancellationPolicies): Promise<CancellationPolicies>
 
 }

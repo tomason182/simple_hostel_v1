@@ -1,4 +1,5 @@
 import { IPoliciesRepository } from "../../domain/ports/IPoliciesRepository";
+import { CancellationPolicies } from "../../domain/value-objects/CancellationPolicies";
 import { GeneralPolicies } from "../../domain/value-objects/GeneralPolicies";
 import { MinorPolicies } from "../../domain/value-objects/MinorPolicies";
 import { OtherPolicies } from "../../domain/value-objects/OtherPolicies";
@@ -210,5 +211,27 @@ export class PoliciesRepository implements IPoliciesRepository {
     ]);
 
     return otherPolicies;
+  }
+
+  async saveCancellationPolicies(cancellationPolicies: CancellationPolicies): Promise<CancellationPolicies> {
+    const query = `INSERT INTO cancellationPolicies
+                    (propertyId, days_before_arrival, amount_refund, updated_at, updated_by) 
+                    VALUES ($1, $2, $3, $4, $5)
+                    ON CONFLICT (property_id)
+                    DO UPDATE SET 
+                    days_before_arrival = EXCLUDED.days_before_arrival,
+                    amount_refund = EXCLUDED.amount_refund,
+                    updated_at = EXCLUDED.updated_at,
+                    updated_by = EXCLUDED.updated_by;`;
+
+    await this.uow.query(query, [
+      cancellationPolicies.propertyId,
+      cancellationPolicies.dayBeforeArrival,
+      cancellationPolicies.amountRefund,
+      cancellationPolicies.updatedAt,
+      cancellationPolicies.updatedBy
+    ]);
+
+    return cancellationPolicies
   }
 }

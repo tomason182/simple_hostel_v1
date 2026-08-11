@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { GeneralPoliciesDTO, MinorPoliciesDTO, OtherPoliciesDTO, PaymentPoliciesDTO } from "../domain/dto/PoliciesDTO";
 import { IPoliciesService } from "../domain/interfaces/IPoliciesService";
+import { CancellationPoliciesRequestDTO } from "../domain/dto/CancellationPoliciesDTO";
 
 export class PoliciesController {
   constructor(
@@ -86,6 +87,23 @@ export class PoliciesController {
       return res.status(200).json(result);
     } catch (err) {
       next(err);
+    }
+  }
+
+  public async saveOrUpdateCancellationPolicies(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { propertyId, userId } = req.auth;
+
+      const dto: CancellationPoliciesRequestDTO = {
+        daysBeforeArrival: req.body.daysBeforeArrival,
+        amountRefund: req.body.amountRefund,
+      };
+
+      const result = await this.policiesService.saveOrUpdateCancellationPolicies(propertyId, userId, dto);
+
+      return res.status(200).json(result);
+    } catch (err) {
+      next(err)
     }
   }
 

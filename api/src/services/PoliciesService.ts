@@ -6,6 +6,9 @@ import { GeneralPoliciesDTO, MinorPoliciesDTO, OtherPoliciesDTO, PaymentPolicies
 import { MinorPolicies } from "../domain/value-objects/MinorPolicies";
 import { OtherPolicies } from "../domain/value-objects/OtherPolicies";
 import { PaymentPolicies } from "../domain/value-objects/PaymentPolicies";
+import { CancellationPoliciesRequestDTO, CancellationPoliciesResponseDTO } from "../domain/dto/CancellationPoliciesDTO";
+import { AppError } from "../errors/AppError";
+import { CancellationPolicies } from "../domain/value-objects/CancellationPolicies";
 
 
 export class PoliciesService implements IPoliciesService {
@@ -76,5 +79,19 @@ export class PoliciesService implements IPoliciesService {
     paymentPolicies = await this.policiesRepository.savePaymentPolicies(paymentPolicies);
 
     return paymentPolicies.toDTO();
+  }
+
+  async saveOrUpdateCancellationPolicies(propertyId: number, userId: number, dto: CancellationPoliciesRequestDTO): Promise<CancellationPoliciesResponseDTO> {
+    const accessControl = await this.accessControlRepository.findUser(userId);
+
+    if (!accessControl.canEditPolicies()) {
+      throw new AppError("El usuario no puede editar las politicas", 404, "PERMITION_DENIED")
+    }
+
+    let cancellationPolicies = CancellationPolicies.fromDTO(propertyId, userId, dto);
+
+    cancellationPolicies = await this.policiesRepository.saveCancellationPolicies(cancellationPolicies);
+
+    return cancellationPolicies.toDTO()
   }
 }
