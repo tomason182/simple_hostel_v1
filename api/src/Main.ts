@@ -23,6 +23,7 @@ import { ValidationError } from "./errors/ValidationError";
 import { createRoomTypeRoutes } from "./infraestructure/http/routes/RoomTypeRoutes";
 import { createPropertyRoutes } from "./infraestructure/http/routes/PropertyRoutes";
 import { createPoliciesRoute } from "./infraestructure/http/routes/policiesRoutes";
+import { createRatesAndAvailabilityRoutes } from "./infraestructure/http/routes/ratesAndAvailabilityRoutes";
 
 
 export class Main {
@@ -134,6 +135,8 @@ export class Main {
     this.app.use(`${this.baseUrl}/property`, createPropertyRoutes(this.pool, this.emailService));
 
     this.app.use(`${this.baseUrl}/policies`, createPoliciesRoute(this.pool, this.emailService));
+
+    this.app.use(`${this.baseUrl}/rates-and-availability`, createRatesAndAvailabilityRoutes(this.pool, this.emailService));
 
 
     // ...mas rutas

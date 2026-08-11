@@ -240,6 +240,27 @@ CREATE TABLE IF NOT EXISTS cancellationPolicies (
 );
 
 -- crear tabla rates and availability
+CREATE TABLE IF NOT EXISTS rates_and_availability (
+  property_id BIGINT, -- Aqui no se si es necesario property_id ya que se relaciona con roomType.
+  room_type_id BIGINT,
+  date DATE NOT NULL,
+  custom_rate INT NOT NULL CHECK( custom_rate > 0),
+  rooms_to_sell INT NOT NULL CHECK( rooms_to_sell >= 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ,
+  updated_by BIGINT,
+
+  PRIMARY KEY(room_type_id, date),
+
+  FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
+  FOREIGN KEY(room_type_id) REFERENCES room_type(id) ON DELETE CASCADE,
+  FOREIGN KEY(updated_by) REFERENCES users(id)
+);
+
+CREATE INDEX idx_rates_property_date ON rates_and_availability(property_id, date);
+CREATE INDEX idx_rates_room_type_date ON rates_and_availability(room_type_id, date);
+
+
 -- Crear tabla reservations
 
 -- Crear tabla reservation_items
