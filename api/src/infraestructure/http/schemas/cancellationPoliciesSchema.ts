@@ -1,6 +1,6 @@
 import { ParamSchema } from "express-validator";
 
-const daysBeforArrival: ParamSchema = {
+const daysBeforeArrival: ParamSchema = {
   in: ["body"],
   trim: true,
   isInt: {
@@ -27,6 +27,6 @@ const amountRefund: ParamSchema = {
 
 
 export const cancellationPoliciesSchema = {
-  daysBeforArrival: daysBeforArrival,
+  daysBeforeArrival: daysBeforeArrival,
   amountRefund: amountRefund
 }

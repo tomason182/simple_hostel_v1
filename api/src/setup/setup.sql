@@ -232,8 +232,11 @@ CREATE TABLE IF NOT EXISTS cancellationPolicies (
     property_id BIGINT UNIQUE,
     days_before_arrival INT NOT NULL CHECK(days_before_arrival > 0),
     amount_refund DECIMAL(4,2) DEFAULT 0.00,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_by BIGINT,
 
-    FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE
+    FOREIGN KEY(property_id) REFERENCES properties(id) ON DELETE CASCADE,
+    FOREIGN KEY (updated_by) REFERENCES users(id)
 );
 
 -- crear tabla rates and availability

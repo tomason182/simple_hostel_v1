@@ -10,6 +10,7 @@ import { minorPoliciesSchema } from "../schemas/minorPoliciesSchema";
 import { otherPoliciesSchema } from "../schemas/otherPoliciesSchema";
 import { requestContextMiddleware } from "../middlewares/requestContextMiddleware";
 import { paymentPoliciesSchema } from "../schemas/paymentPoliciesSchema";
+import { cancellationPoliciesSchema } from "../schemas/cancellationPoliciesSchema";
 
 
 export function createPoliciesRoute(pool: Pool, emailService: EmailService) {
@@ -50,6 +51,16 @@ export function createPoliciesRoute(pool: Pool, emailService: EmailService) {
     (req: Request, res: Response, next: NextFunction) =>
       req.context.policiesController.saveOrUpdatePaymentPolicies(req, res, next)
   )
+
+  router.post("/cancellation-policies",
+    authMiddleware,
+    checkSchema(cancellationPoliciesSchema),
+    validateRequest,
+    requestContextMiddleware(pool, emailService),
+    (req: Request, res: Response, next: NextFunction) =>
+      req.context.policiesController.saveOrUpdateCancellationPolicies(req, res, next)
+
+  );
 
 
 

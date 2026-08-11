@@ -350,7 +350,7 @@ async function saveOrUpdatePaymentPolicies(paymentPolicies) {
 }
 
 async function saveOrUpdateCancellationPolicies(cancellationPolicies) {
-  const url = baseUrl + "/policies/cancellationPolicies";
+  const url = baseUrl + "/policies/cancellation-policies";
   const options = {
     method: "POST",
     headers: {
@@ -361,8 +361,8 @@ async function saveOrUpdateCancellationPolicies(cancellationPolicies) {
     body: JSON.stringify(cancellationPolicies)
   }
 
-  const result = await fetch(url, options);
-  const data = await result.json();
+  const response = await fetch(url, options);
+  const data = await response.json();
 
   console.log(data);
 
@@ -452,7 +452,7 @@ const paymentPolicies = {
 
 const cancellationPolicies = {
   daysBeforeArrival: 15,
-  refundAmount: 0.5
+  amountRefund: 0.5
 }
 
 async function runTest() {

@@ -215,7 +215,7 @@ export class PoliciesRepository implements IPoliciesRepository {
 
   async saveCancellationPolicies(cancellationPolicies: CancellationPolicies): Promise<CancellationPolicies> {
     const query = `INSERT INTO cancellationPolicies
-                    (propertyId, days_before_arrival, amount_refund, updated_at, updated_by) 
+                    (property_id, days_before_arrival, amount_refund, updated_at, updated_by) 
                     VALUES ($1, $2, $3, $4, $5)
                     ON CONFLICT (property_id)
                     DO UPDATE SET 
