@@ -24,6 +24,7 @@ import { createRoomTypeRoutes } from "./infraestructure/http/routes/RoomTypeRout
 import { createPropertyRoutes } from "./infraestructure/http/routes/PropertyRoutes";
 import { createPoliciesRoute } from "./infraestructure/http/routes/policiesRoutes";
 import { createRatesAndAvailabilityRoutes } from "./infraestructure/http/routes/ratesAndAvailabilityRoutes";
+import { createGuestRoutes } from "./infraestructure/http/routes/guestRoutes";
 
 
 export class Main {
@@ -137,6 +138,8 @@ export class Main {
     this.app.use(`${this.baseUrl}/policies`, createPoliciesRoute(this.pool, this.emailService));
 
     this.app.use(`${this.baseUrl}/rates-and-availability`, createRatesAndAvailabilityRoutes(this.pool, this.emailService));
+
+    this.app.use(`${this.baseUrl}/guests`, createGuestRoutes(this.pool, this.emailService));
 
 
     // ...mas rutas
