@@ -96,16 +96,18 @@ export class ReservationRepository implements IReservationRepository {
   async countByRoomTypeAndDate(roomTypeId: number, date: Date): Promise<number> {
 
     // NOTA: ARRAY[1,2] en reservation_status rerpesentan los ids NO_SHOW y CANCELLED en tabla reservation_status
-    const query = `SELECT DISTINCT r.* FROM reservation r 
-                      INNER JOIN reservation_items ri ON ri.reservation_id = r.id
-                      WHERE ri.room_type_id = $1 
-                      AND r.check_in <= $2 
+    const query = `SELECT COALESCE(SUM(ri.quantity), 0) AS quantity
+                      FROM reservation r
+                      INNER JOIN reservation_items ri
+                      ON ri.reservation_id = r.id
+                      WHERE ri.room_type_id = $1
+                      AND r.check_in <= $2
                       AND r.check_out > $2
-                      AND r.reservation_status_id NOT IN (1,2);`
+                      AND r.reservation_status_id NOT IN (1, 2);`
 
     const result = await this.uow.query(query, [roomTypeId, date]);
 
-    return result.rows.length;
+    return Number(result.rows[0].quantity);
   }
 
   async getByRoomTypeAndDateRange(roomTypeId: number, from: Date, to: Date): Promise<Reservation[]> {
@@ -113,26 +115,49 @@ export class ReservationRepository implements IReservationRepository {
     // LOGICA: Las reservas que confluyen en el rango son las que tienen un check in menor que "hasta"
     // y el check_out mayor que el desde
 
-    const query = `SELECT * FROM reservation WHERE 
-                    room_type_id = $1
-                    AND check_in < $3
-                    AND check_out > $2
+    const query = `SELECT r.id,
+                          r.property_id,
+                          r.guest_id,
+                          r.currency_id,
+                          r.booking_source_id,
+                          r.reservation_status_id,
+                          r.check_in,
+                          r.check_out,
+                          r.special_request,
+                          r.subtotal_amount,
+                          r.discount_amount,
+                          r.tax_amount,
+                          r.total_amount
+                          r.required_deposit_amount,
+                          r.created_at,
+                          r.created_by,
+                          r.updated_at,
+                          r.updated_by,
+
+                          c.code AS currency,
+                          bs.description AS booking_source,
+                          rs.description AS reservation_status,
+                    FROM reservation r
+                    INNER JOIN currencies c ON c.id = r.currency_id
+                    INNER JOIN booking_source bs ON bd.id = r.booking_source_id
+                    INNER JOIN reservation_status rs ON rs.id = r.reservation_status_id
+                    WHERE check_in < $2
+                    AND check_out > $1
                     AND reservation_status_id NOT IN (1,2);`
 
-    const result = await this.uow.query(query, [roomTypeId, from, to]);
+    const result = await this.uow.query(query, [from, to]);
 
     if (result.rows.length === 0) {
       return [];
     }
 
-
     // 2. Obtener los id de todas la reservas encontradas.
     const reservationIds = result.rows.map(r => r.id);
 
     // 3. Obtener los cuartos seleccionados de cada reserva.
-    const roomsQuery = `SELECT * FROM selected_room WHERE reservation_id = ANY($1);`;
+    const roomsQuery = `SELECT * FROM reservation_items WHERE reservation_id = ANY($1) AND room_type_id = $2;`;
 
-    const roomsResult = await this.uow.query(roomsQuery, [reservationIds]);
+    const roomsResult = await this.uow.query(roomsQuery, [reservationIds, roomTypeId]);
 
     // 4. Crear un Map <reservation_id, selectedRooms[]>
     const roomsMap = new Map<number, SelectedRoom[]>();
@@ -156,6 +181,10 @@ export class ReservationRepository implements IReservationRepository {
 
       const selectedRooms = roomsMap.get(data.id);
 
+      // NOTA: Parece tener sentido aqui hacer el chequeo !selectedRooms dado que
+      // en la primer consulta se traen todas las reservas de periodo buscado pero 
+      // no se distingue por tipo de cuarto en esa instancia.
+      // Entonces si el id de la reserva no esta en el Map, es porque la reserva pertenece al periodo pero no al tipo de cuarto.
       if (!selectedRooms) {
         continue;
       }
