@@ -100,10 +100,12 @@ export class ReservationRepository implements IReservationRepository {
                       FROM reservation r
                       INNER JOIN reservation_items ri
                       ON ri.reservation_id = r.id
+                      INNER JOIN reservation_status rs
+                      ON rs.id = r.reservation_status_id
                       WHERE ri.room_type_id = $1
                       AND r.check_in <= $2
                       AND r.check_out > $2
-                      AND r.reservation_status_id NOT IN (1, 2);`
+                      AND rs.is_active_inventory = TRUE;`
 
     const result = await this.uow.query(query, [roomTypeId, date]);
 
@@ -118,16 +120,13 @@ export class ReservationRepository implements IReservationRepository {
     const query = `SELECT r.id,
                           r.property_id,
                           r.guest_id,
-                          r.currency_id,
-                          r.booking_source_id,
-                          r.reservation_status_id,
                           r.check_in,
                           r.check_out,
                           r.special_request,
                           r.subtotal_amount,
                           r.discount_amount,
                           r.tax_amount,
-                          r.total_amount
+                          r.total_amount,
                           r.required_deposit_amount,
                           r.created_at,
                           r.created_by,
@@ -136,14 +135,14 @@ export class ReservationRepository implements IReservationRepository {
 
                           c.code AS currency,
                           bs.description AS booking_source,
-                          rs.description AS reservation_status,
+                          rs.description AS reservation_status
                     FROM reservation r
                     INNER JOIN currencies c ON c.id = r.currency_id
-                    INNER JOIN booking_source bs ON bd.id = r.booking_source_id
+                    INNER JOIN booking_source bs ON bs.id = r.booking_source_id
                     INNER JOIN reservation_status rs ON rs.id = r.reservation_status_id
-                    WHERE check_in < $2
-                    AND check_out > $1
-                    AND reservation_status_id NOT IN (1,2);`
+                    WHERE r.check_in < $2
+                    AND r.check_out > $1
+                    AND rs.is_active_inventory = TRUE;`
 
     const result = await this.uow.query(query, [from, to]);
 
@@ -155,7 +154,7 @@ export class ReservationRepository implements IReservationRepository {
     const reservationIds = result.rows.map(r => r.id);
 
     // 3. Obtener los cuartos seleccionados de cada reserva.
-    const roomsQuery = `SELECT * FROM reservation_items WHERE reservation_id = ANY($1) AND room_type_id = $2;`;
+    const roomsQuery = `SELECT * FROM reservation_items WHERE reservation_id = ANY($1::bigint[]) AND room_type_id = $2;`;
 
     const roomsResult = await this.uow.query(roomsQuery, [reservationIds, roomTypeId]);
 
