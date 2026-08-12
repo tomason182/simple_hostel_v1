@@ -146,8 +146,8 @@ CREATE TABLE IF NOT EXISTS beds (
 CREATE TABLE IF NOT EXISTS guest (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   property_id BIGINT NOT NULL,
-  first_name VARCHAR(255),
-  last_name VARCHAR(255),
+  first_name VARCHAR(255) NOT NULL, 
+  last_name VARCHAR(255) NOT NULL,
   id_number VARCHAR(100),
   email VARCHAR(100),
   phone_code VARCHAR(5),

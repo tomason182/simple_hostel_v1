@@ -3,14 +3,14 @@ export interface GuestResponseDTO {
   propertyId: number;
   firstName: string;
   lastName: string;
-  idNumber: string;
+  idNumber: string | null;
   email: string;
   phoneNumber: string;
   phoneCode: string;
-  street: string;
-  city: string;
-  country: string;
-  alpa2code: string;
+  street: string | null;
+  city: string | null;
+  country: string | null;
+  alpa2code: string | null;
 
   createdAt: Date;
   createdBy: number;
@@ -22,12 +22,12 @@ export interface GuestRequestDTO {
   id: number | null;
   firstName: string;
   lastName: string;
-  idNumber: string;
+  idNumber: string | null;
   email: string;
   phoneNumber: string;
   phoneCode: string;
-  street: string;
-  city: string;
-  country: string;
-  alpa2code: string;
+  street: string | null;
+  city: string | null;
+  country: string | null;
+  alpa2code: string | null;
 }

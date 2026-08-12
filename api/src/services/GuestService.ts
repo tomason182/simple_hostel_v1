@@ -3,6 +3,7 @@ import { Guest } from "../domain/entities/Guest";
 import { IGuestService } from "../domain/interfaces/IGuestService";
 import { IGuestRepository } from "../domain/ports/IGuestRepository";
 import { IPropertyRepository } from "../domain/ports/IPropertyRepository";
+import { AppError } from "../errors/AppError";
 
 export class GuestService implements IGuestService {
   constructor(
@@ -32,12 +33,12 @@ export class GuestService implements IGuestService {
     const guestId = dto.id;
 
     if (!guestId) {
-      throw new Error("NO_GUEST_ID_PROVIDED");
+      throw new AppError("NO_GUEST_ID_PROVIDED", 404, "NO_GUEST_ID_PROVIDED");
     }
 
     let guest = await this.guestRepository.findById(guestId)
     if (!guest) {
-      throw new Error("GUEST_NOT_FOUND");
+      throw new AppError("GUEST_NOT_FOUND", 404, "GUEST_NOT_FOUND");
     }
 
     guest.update(guestId, userId, dto);
