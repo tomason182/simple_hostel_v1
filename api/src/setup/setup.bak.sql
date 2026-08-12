@@ -316,7 +316,7 @@ CREATE TABLE IF NOT EXISTS reservation_items (
   CONSTRAINT chk_positive_prices CHECK (unit_price >= 0 AND subtotal >= 0),
 
   -- FKs
-  FOREIGN KEY(reservation_id) REFERENCES reservations(id) ON DELETE CASCADE,
+  FOREIGN KEY(reservation_id) REFERENCES reservation(id) ON DELETE CASCADE,
   FOREIGN KEY(room_type_id) REFERENCES room_types(id)
 );
 

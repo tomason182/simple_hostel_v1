@@ -96,11 +96,12 @@ export class ReservationRepository implements IReservationRepository {
   async countByRoomTypeAndDate(roomTypeId: number, date: Date): Promise<number> {
 
     // NOTA: ARRAY[1,2] en reservation_status rerpesentan los ids NO_SHOW y CANCELLED en tabla reservation_status
-    const query = `SELECT * FROM reservation WHERE 
-                    room_type_id = $1 
-                    AND check_in <= $2 
-                    AND check_out > $2
-                    AND reservation_status_id != ALL(ARRAY[1,2]);`
+    const query = `SELECT DISTINCT r.* FROM reservation r 
+                      INNER JOIN reservation_items ri ON ri.reservation_id = r.id
+                      WHERE ri.room_type_id = $1 
+                      AND r.check_in <= $2 
+                      AND r.check_out > $2
+                      AND r.reservation_status_id NOT IN (1,2);`
 
     const result = await this.uow.query(query, [roomTypeId, date]);
 
