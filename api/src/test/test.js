@@ -371,6 +371,8 @@ async function saveOrUpdateCancellationPolicies(cancellationPolicies) {
   }
 }
 
+
+
 // ======================================================
 // Iniciando TESTS.
 // ====================================================== 
@@ -453,6 +455,21 @@ const paymentPolicies = {
 const cancellationPolicies = {
   daysBeforeArrival: 15,
   amountRefund: 0.5
+}
+
+const guest = {
+  firstName: "Joe",
+  lastName: "Dow",
+  email: "joe@mail.com",
+  phoneNumber: "+549281456543"
+}
+
+const ratesAndAvailability = {
+  roomTypeId: 1,
+  date: "2026-08-11",
+  customRate: 12.5,
+  roomsToSell: 8
+
 }
 
 async function runTest() {

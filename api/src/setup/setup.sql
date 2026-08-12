@@ -262,8 +262,69 @@ CREATE INDEX idx_rates_room_type_date ON rates_and_availability(room_type_id, da
 
 
 -- Crear tabla reservations
+CREATE TABLE IF NOT EXISTS reservation (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  property_id BIGINT NOT NULL,
+  guest_id BIGINT NOT NULL,
+  currency_id BIGINT NOT NULL,
+  booking_source_id SMALLINT NOT NULL,
+  reservation_status_id SMALLINT NOT NULL,
+
+  check_in DATE NOT NULL,
+  check_out DATE NOT NULL,
+  special_request VARCHAR(500),
+
+
+  -- subtotales, descuentos, impuestos, etc.
+  subtotal_amount NUMERIC(12,2) NOT NULL,
+  discount_amount NUMERIC(12,2) NOT NULL DEFAULT 0.00,
+  tax_amount NUMERIC(12,2) NOT NULL DEFAULT 0.00,
+  total_amount NUMERIC(12,2) NOT NULL,   -- subtotal - discount + taxes
+  required_deposit_amount NUMERIC(12,2) NOT NULL,
+
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_by BIGINT NOT NULL,
+  updated_at TIMESTAMPTZ,
+  updated_by BIGINT,
+
+  CHECK(check_out > check_in),
+  CHECK(total_amount > 0),
+
+  FOREIGN KEY(property_id) REFERENCES property(id) ON DELETE CASCADE,
+  FOREIGN KEY(guest_id) REFERENCES guest(id),
+  FOREIGN KEY(currency_id) REFERENCES currencies(id),
+  FOREIGN KEY(booking_source_id) REFERENCES booking_source(id),
+  FOREIGN KEY(reservation_status_id) REFERENCES reservation_status(id),
+  FOREIGN KEY(created_by) REFERENCES users(id),
+  FOREIGN KEY(updated_by) REFERENCES users(id)
+);
 
 -- Crear tabla reservation_items
+CREATE TABLE IF NOT EXISTS reservation_items (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  reservation_id BIGINT NOT NULL,
+  room_type_id BIGINT NOT NULL,
+  
+  -- Cantidad de camas o cuartos comprados de este tipo
+  quantity INT NOT NULL DEFAULT 1,
+  
+  -- Precio acordado por unidad/noche al momento de reservar
+  unit_price NUMERIC(12, 2) NOT NULL,
+  subtotal NUMERIC(12, 2) NOT NULL,
+  
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  -- Validaciones
+  CONSTRAINT chk_positive_quantity CHECK (quantity > 0),
+  CONSTRAINT chk_positive_prices CHECK (unit_price >= 0 AND subtotal >= 0),
+
+  -- FKs
+  FOREIGN KEY(reservation_id) REFERENCES reservations(id) ON DELETE CASCADE,
+  FOREIGN KEY(room_type_id) REFERENCES room_types(id)
+);
+
+CREATE INDEX idx_reservation_items_reservation ON reservation_items(reservation_id);
+
 
 --crear tabla payment
 -- Índice para consultar rápidamente todos los pagos de una reserva

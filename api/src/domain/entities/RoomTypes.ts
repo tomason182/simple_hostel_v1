@@ -1,6 +1,7 @@
 import { Room } from "./Room";
 import { Bed } from "./Bed";
 import { RoomTypeResponseDTO, RoomTypeRequestDTO } from "../dto/RoomTypeDTO";
+import { AppError } from "../../errors/AppError";
 
 export type RoomTypeLiteral = "DORM" | "PRIVATE";
 export type Gender = "mixed" | "male" | "female";
@@ -130,6 +131,18 @@ export class RoomType {
 
   public getDescription(): string {
     return this.description;
+  }
+
+  public checkRoomsToSell(roomsToSell: number, reservationCount: number): boolean {
+    if (!this.isActive) {
+      throw new AppError("ROOM_TYPE_IS_INACTIVE", 400, "ROOM_TYPE_IS_INACTIVE");
+    }
+
+    if (roomsToSell > this.calcMaxOccupancy() && roomsToSell < reservationCount) {
+      throw new AppError("INVALID_ROOMS_TO_SELL_VALUE", 400, "INVALID_ROOMS_TO_SELL_VALUE")
+    };
+
+    return true;
   }
 
 }

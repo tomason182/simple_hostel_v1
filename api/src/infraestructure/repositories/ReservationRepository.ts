@@ -93,4 +93,90 @@ export class ReservationRepository implements IReservationRepository {
     return reservation;
   }
 
+  async countByRoomTypeAndDate(roomTypeId: number, date: Date): Promise<number> {
+
+    // NOTA: ARRAY[1,2] en reservation_status rerpesentan los ids NO_SHOW y CANCELLED en tabla reservation_status
+    const query = `SELECT * FROM reservation WHERE 
+                    room_type_id = $1 
+                    AND check_in <= $2 
+                    AND check_out > $2
+                    AND reservation_status_id != ALL(ARRAY[1,2]);`
+
+    const result = await this.uow.query(query, [roomTypeId, date]);
+
+    return result.rows.length;
+  }
+
+  async getByRoomTypeAndDateRange(roomTypeId: number, from: Date, to: Date): Promise<Reservation[]> {
+
+    // LOGICA: Las reservas que confluyen en el rango son las que tienen un check in menor que "hasta"
+    // y el check_out mayor que el desde
+
+    const query = `SELECT * FROM reservation WHERE 
+                    room_type_id = $1
+                    AND check_in < $3
+                    AND check_out > $2
+                    AND reservation_status_id NOT IN (1,2);`
+
+    const result = await this.uow.query(query, [roomTypeId, from, to]);
+
+    if (result.rows.length === 0) {
+      return [];
+    }
+
+
+    // 2. Obtener los id de todas la reservas encontradas.
+    const reservationIds = result.rows.map(r => r.id);
+
+    // 3. Obtener los cuartos seleccionados de cada reserva.
+    const roomsQuery = `SELECT * FROM selected_room WHERE reservation_id = ANY($1);`;
+
+    const roomsResult = await this.uow.query(roomsQuery, [reservationIds]);
+
+    // 4. Crear un Map <reservation_id, selectedRooms[]>
+    const roomsMap = new Map<number, SelectedRoom[]>();
+
+    for (const row of roomsResult.rows) {
+      let rooms = roomsMap.get(row.reservation_id);
+
+      if (!rooms) {
+        rooms = [];
+        roomsMap.set(row.reservation_id, rooms);
+      }
+
+      rooms.push(new SelectedRoom(row.room_type_id, row.quantity));
+    }
+
+    // 5. Armar una lista con las entidades reservas.
+
+    const reservationList: Reservation[] = [];
+
+    for (const data of result.rows) {
+
+      const selectedRooms = roomsMap.get(data.id);
+
+      if (!selectedRooms) {
+        continue;
+      }
+      reservationList.push(new Reservation(
+        data.id,
+        data.guest_id,
+        data.property_id,
+        data.booking_source,
+        data.reservation_status,
+        data.payment_status,
+        data.currency,
+        data.check_in,
+        data.check_out,
+        data.special_request,
+        data.created_by,
+        data.updated_by,
+        data.created_at,
+        data.updated_at,
+        selectedRooms))
+    }
+
+    return reservationList;
+  }
+
 }

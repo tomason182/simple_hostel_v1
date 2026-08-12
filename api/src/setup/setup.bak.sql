@@ -259,7 +259,7 @@ CREATE INDEX idx_rates_property_date ON rates_and_availability(property_id, date
 CREATE INDEX idx_rates_room_type_date ON rates_and_availability(room_type_id, date);
 
 -- Crear tabla reservations
-CREATE TABLE IF NOT EXISTS reservations (
+CREATE TABLE IF NOT EXISTS reservation (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   property_id BIGINT NOT NULL,
   guest_id BIGINT NOT NULL,
