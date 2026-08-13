@@ -1,4 +1,4 @@
-import { RatesAndAvailabilityDTO, RatesAndAvailabilityOutputDTO } from "../domain/dto/RatesAndAvailabilityDTO";
+import { RatesAndAvailabilityBulkDTO, RatesAndAvailabilityDTO, RatesAndAvailabilityOutputDTO } from "../domain/dto/RatesAndAvailabilityDTO";
 import { RatesAndAvailability } from "../domain/entities/RatesAndAvailability";
 import { IRatesAndAvailabilityService } from "../domain/interfaces/IRatesAndAvailabilityService";
 import { IRatesAndAvailabilityRepository } from "../domain/ports/IRatesAndAvailabilityRepository";
@@ -73,22 +73,11 @@ export class RatesAndAvailabilityService implements IRatesAndAvailabilityService
     return currentRate.toDTO()
   }
 
-  async createOrUpdteBulk(propertyId: number, userId: number, dtos: RatesAndAvailabilityDTO[]): Promise<void> {
+  async createOrUpdateBulk(propertyId: number, userId: number, dto: RatesAndAvailabilityBulkDTO): Promise<void> {
     // 1. Se podria chequear que el listado de tarifas no exceda el año.
-    if (dtos.length === 0) {
-      throw new AppError("La lista de tarifas no puede estar vacia", 400, "EMPTY_RATES_AVAILABILITY");
-    }
-    if (dtos.length > 365) {
-      throw new AppError("La cantidad maxima de tarifas a establecer es de 365 dias", 400, "EXCEED_RATES_AVAILABILITY")
-    }
 
     // 2. Se podria chequear que el listado de tarifas correspondan todas al mismo roomType.
-    const roomTypeId = dtos[0].roomTypeId;
-    const invalidRoomTypes = dtos.filter(d => d.roomTypeId !== roomTypeId);
-
-    if (invalidRoomTypes.length > 0) {
-      throw new AppError("La lista debe contener los mismo roomTypes", 400, "INVALID_ROOM_TYPE_LIST");
-    };
+    const roomTypeId = dto.roomTypeId;
 
     // 3. Buscamos el tipo de cuarto para el cual se quieren crear tarifas.
     const roomType = await this.roomTypeRepository.findById(roomTypeId);
@@ -101,28 +90,24 @@ export class RatesAndAvailabilityService implements IRatesAndAvailabilityService
       throw new AppError("RoomType no corresponde a la propiedad", 400, "INVALID_ROOM_TYPE");
     }
 
-    // 4. Ordenamos los dtos para obtener las fechas "desde" y "hasta" cuando se quiere actualizar.
-    const sortedDtos = [...dtos].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-    const from = sortedDtos[0].date;
-    const to = sortedDtos[sortedDtos.length - 1].date;
-
     // 5. Buscamos las reservas vigentes para ese rango de fechas y tipo de cuarto.
-    const reservationList = await this.reservationRepository.getByRoomTypeAndDateRange(roomTypeId, from, to);
+    const reservationList = await this.reservationRepository.getByRoomTypeAndDateRange(roomTypeId, dto.from, dto.to);
 
     // 6. Obtenemos el inventario del cuarto.
-    // En RoomType el inventario representa la cantidad de cuartos.
-    // Aqui diferenciamos entre "PRIVATE" Y "DORM".
-    // Para PRIVATE el inventario representa la cantidad de cuartos y para DORM representa la cantidad de camas.
     const inventory = roomType.type === "PRIVATE" ? roomType.calcInventory() : roomType.calcMaxOccupancy();
 
     // 7. Iteramos los dtos recividos con el fin de chequear que los roomsToSell (cuartos o camas a la venta) enviados en cada uno,
     // es menor o igual a las camas o cuartos libres. Distingimos entre cuartos privados y cuartos compartidos.
-    //
     const rates: RatesAndAvailability[] = [];
-    for (const dto of dtos) {
-      rates.push(RatesAndAvailability.fromDTO(propertyId, userId, dto));
-      const activeReservations = reservationList.filter(r => r.isActiveOn(dto.date));
+    for (let date = dto.from; date < dto.to; date = addDays(date, 1)) {
+      const rate: RatesAndAvailabilityDTO = {
+        roomTypeId: dto.roomTypeId,
+        date: date,
+        roomsToSell: dto.roomsToSell,
+        customRate: dto.customRate
+      }
+      rates.push(RatesAndAvailability.fromDTO(propertyId, userId, rate));
+      const activeReservations = reservationList.filter(r => r.isActiveOn(date));
 
       let occupancy = 0;
 
