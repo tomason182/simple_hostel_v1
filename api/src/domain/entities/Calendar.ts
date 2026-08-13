@@ -1,5 +1,7 @@
 import { RatesAndAvailability } from "./RatesAndAvailability";
 import { BedOccupancy } from "./BedOccupancy";
+import { RoomType } from "./RoomTypes";
+import { SelectedRoom } from "../value-objects/SelectedRoom";
 
 export class Calendar {
   // roomTypeId --> timestamp -->  CalendarDay
@@ -37,25 +39,22 @@ export class Calendar {
 
     for (const occupancy of bedOccupancyList) {
       // aca esta mal porque occupancy no deberia tener date sino un rango checkin - checkout.
-      for (const date of occupancy.getOccupiedDates()) {
-        const timestamp = date.getTime();
-        const roomTypeId = occupancy.getRoomTypeId();
+      const timestamp = occupancy.getDate().getTime();
+      const roomTypeId = occupancy.getRoomTypeId();
 
-        let timeline = calendar.roomTypes.get(roomTypeId);
+      let timeline = calendar.roomTypes.get(roomTypeId);
 
-        if (!timeline) {
-          throw new Error("ROOM_TYPE_NOT_FOUND");
-        }
-
-        let calendarDay = timeline.get(timestamp);
-
-        if (!calendarDay) {
-          throw new Error("RATE_NOT_FOUND");
-        }
-
-        calendarDay.addOccupancy(occupancy.getBedId(), occupancy.getReservationId());
+      if (!timeline) {
+        throw new Error("ROOM_TYPE_NOT_FOUND");
       }
 
+      let calendarDay = timeline.get(timestamp);
+
+      if (!calendarDay) {
+        throw new Error("RATE_NOT_FOUND");
+      }
+
+      calendarDay.addOccupancy(occupancy.getBedId(), occupancy.getReservationId());
     }
 
     return calendar;
@@ -75,6 +74,12 @@ export class Calendar {
     }
 
     return day
+  }
+
+  public nextDay(date: number): number {
+    const next = new Date(date);
+    next.setDate(next.getDate() + 1);
+    return next.getTime()
   }
 }
 

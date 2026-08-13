@@ -7,4 +7,6 @@ export interface IRatesAndAvailabilityRepository {
   getRateByDate(propertyId: number, date: Date): Promise<RatesAndAvailability | null>;
 
   save(propertyId: number, rate: RatesAndAvailability): Promise<void>;
+
+  saveBulk(propertyId: number, rates: RatesAndAvailability[]): Promise<void>
 }

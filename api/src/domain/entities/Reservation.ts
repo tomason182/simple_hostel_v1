@@ -105,6 +105,14 @@ export class Reservation {
     return total
   }
 
+  public occupancyByRoomType(roomTypeId: number) {
+    return this.selectedRooms.reduce((total, room) =>
+      room.getRoomTypeId() === roomTypeId
+        ? total + room.getQuantity()
+        : total,
+      0);
+  }
+
   public setTotalAmount(amount: number): void {
     this.totalAmount = amount;
   }

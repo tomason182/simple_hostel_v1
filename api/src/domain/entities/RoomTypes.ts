@@ -45,7 +45,7 @@ export class RoomType {
       gender: this.gender,
       type: this.type,
       inventory: this.calcInventory(),
-      maxOccupancy: this.calcMaxOccupancy(),
+      maxOccupancy: this.calcMaxOccupancy() / this.calcInventory(),
       createdAt: this.createdAt,
       createdBy: this.createdBy,
       updatedAt: this.updatedAt,
@@ -54,17 +54,12 @@ export class RoomType {
     }
   }
 
-  private calcInventory(): number {
+  public calcInventory(): number {
     return this.rooms.length
   }
 
-  private calcMaxOccupancy(): number {
-    let occ = 0;
-    for (const room of this.rooms) {
-      occ += room.getOccupancy();
-    }
-
-    return occ;
+  public calcMaxOccupancy(): number {
+    return this.rooms.reduce((acc, room) => acc + room.getOccupancy(), 0);
   }
 
   static make(propertyId: number, description: string, type: RoomTypeLiteral, gender: Gender, inventary: number, maxOccupancy: number, userId: number) {
@@ -131,18 +126,6 @@ export class RoomType {
 
   public getDescription(): string {
     return this.description;
-  }
-
-  public checkRoomsToSell(roomsToSell: number, reservationCount: number): boolean {
-    if (!this.isActive) {
-      throw new AppError("ROOM_TYPE_IS_INACTIVE", 400, "ROOM_TYPE_IS_INACTIVE");
-    }
-
-    if (roomsToSell > this.calcMaxOccupancy() && roomsToSell < reservationCount) {
-      throw new AppError("INVALID_ROOMS_TO_SELL_VALUE", 400, "INVALID_ROOMS_TO_SELL_VALUE")
-    };
-
-    return true;
   }
 
 }
