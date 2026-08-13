@@ -30,6 +30,7 @@ export class RatesAndAvailabilityService implements IRatesAndAvailabilityService
       throw new AppError("RoomType no corresponde a la propiedad", 400, "INVALID_ROOM_TYPE");
     }
 
+
     const reservations = await this.reservationRepository.getByRoomTypeAndDate(dto.roomTypeId, dto.date);
 
     const inventory = roomType.type === "PRIVATE" ? roomType.calcInventory() : roomType.calcMaxOccupancy();
@@ -74,7 +75,16 @@ export class RatesAndAvailabilityService implements IRatesAndAvailabilityService
   }
 
   async createOrUpdateBulk(propertyId: number, userId: number, dto: RatesAndAvailabilityBulkDTO): Promise<void> {
-    // 1. Se podria chequear que el listado de tarifas no exceda el año.
+    // 1. Chequear el rango.
+    if (dto.from >= dto.to) {
+      throw new AppError("INVALID_DATE_RANGE", 400, "INVALID_DATE_RANGE");
+    }
+
+    const days = (dto.to.getTime() - dto.from.getTime()) / (1000 * 60 * 60 * 24);
+
+    if (days > 365) {
+      throw new AppError("EXCEED_DATE_RANGE", 400, "EXCEED_DATE_RANGE");
+    }
 
     // 2. Se podria chequear que el listado de tarifas correspondan todas al mismo roomType.
     const roomTypeId = dto.roomTypeId;
