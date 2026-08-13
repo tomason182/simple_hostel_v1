@@ -112,6 +112,99 @@ export class ReservationRepository implements IReservationRepository {
     return Number(result.rows[0].quantity);
   }
 
+  async getByRoomTypeAndDate(roomTypeId: number, date: Date): Promise<Reservation[]> {
+
+    // LOGICA: Obtener las reservas que de un dia y tipo de cuarto especifico. 
+    const query = `SELECT r.id,
+                          r.property_id,
+                          r.guest_id,
+                          r.check_in,
+                          r.check_out,
+                          r.special_request,
+                          r.subtotal_amount,
+                          r.discount_amount,
+                          r.tax_amount,
+                          r.total_amount,
+                          r.required_deposit_amount,
+                          r.created_at,
+                          r.created_by,
+                          r.updated_at,
+                          r.updated_by,
+
+                          c.code AS currency,
+                          bs.description AS booking_source,
+                          rs.description AS reservation_status
+                    FROM reservation r
+                    INNER JOIN currencies c ON c.id = r.currency_id
+                    INNER JOIN booking_source bs ON bs.id = r.booking_source_id
+                    INNER JOIN reservation_status rs ON rs.id = r.reservation_status_id
+                    WHERE r.check_in < $1
+                    AND r.check_out > $1
+                    AND rs.is_active_inventory = TRUE;`;
+
+    const result = await this.uow.query(query, [date])
+
+    if (result.rows.length === 0) {
+      return [];
+    }
+    // 2. Obtener los id de todas la reservas encontradas.
+    const reservationIds = result.rows.map(r => r.id);
+
+    // 3. Obtener los cuartos seleccionados de cada reserva.
+    const roomsQuery = `SELECT * FROM reservation_items WHERE reservation_id = ANY($1::bigint[]) AND room_type_id = $2;`;
+
+    const roomsResult = await this.uow.query(roomsQuery, [reservationIds, roomTypeId]);
+
+    // 4. Crear un Map <reservation_id, selectedRooms[]>
+    const roomsMap = new Map<number, SelectedRoom[]>();
+
+    for (const row of roomsResult.rows) {
+      let rooms = roomsMap.get(row.reservation_id);
+
+      if (!rooms) {
+        rooms = [];
+        roomsMap.set(row.reservation_id, rooms);
+      }
+
+      rooms.push(new SelectedRoom(row.room_type_id, row.quantity));
+    }
+
+    // 5. Armar una lista con las entidades reservas.
+
+    const reservationList: Reservation[] = [];
+
+    for (const data of result.rows) {
+
+      const selectedRooms = roomsMap.get(data.id);
+
+      // NOTA: Parece tener sentido aqui hacer el chequeo !selectedRooms dado que
+      // en la primer consulta se traen todas las reservas de periodo buscado pero 
+      // no se distingue por tipo de cuarto en esa instancia.
+      // Entonces si el id de la reserva no esta en el Map, es porque la reserva pertenece al periodo pero no al tipo de cuarto.
+      if (!selectedRooms) {
+        continue;
+      }
+      reservationList.push(new Reservation(
+        data.id,
+        data.guest_id,
+        data.property_id,
+        data.booking_source,
+        data.reservation_status,
+        data.payment_status,
+        data.currency,
+        data.check_in,
+        data.check_out,
+        data.special_request,
+        data.created_by,
+        data.updated_by,
+        data.created_at,
+        data.updated_at,
+        selectedRooms))
+    }
+
+    return reservationList;
+  }
+
   async getByRoomTypeAndDateRange(roomTypeId: number, from: Date, to: Date): Promise<Reservation[]> {
 
     // LOGICA: Las reservas que confluyen en el rango son las que tienen un check in menor que "hasta"

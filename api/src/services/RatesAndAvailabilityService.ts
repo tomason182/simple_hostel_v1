@@ -26,10 +26,34 @@ export class RatesAndAvailabilityService implements IRatesAndAvailabilityService
       throw new AppError("ROOM_TYPE_NOT_FOUND", 404, "ROOM_TYPE_NOT_FOUND");
     }
 
-    const reservationCount = await this.reservationRepository.countByRoomTypeAndDate(dto.roomTypeId, dto.date)
+    if (roomType.propertyId !== propertyId) {
+      throw new AppError("RoomType no corresponde a la propiedad", 400, "INVALID_ROOM_TYPE");
+    }
 
-    // 2. Chequear roomsToSell
-    roomType.checkRoomsToSell(dto.roomsToSell, reservationCount);
+    const reservations = await this.reservationRepository.getByRoomTypeAndDate(dto.roomTypeId, dto.date);
+
+    const inventory = roomType.type === "PRIVATE" ? roomType.calcInventory() : roomType.calcMaxOccupancy();
+
+    let occupancy = 0;
+
+    if (roomType.type === "PRIVATE") {
+      occupancy = reservations.length;
+    } else if (roomType.type === "DORM") {
+      for (const reservation of reservations) {
+        const rooms = reservation.getSelectedRooms()
+        const room = rooms.find(r => r.getRoomTypeId() === dto.roomTypeId);
+
+        if (!room) continue;
+
+        occupancy += room.getQuantity();
+      }
+    } else {
+      throw new Error("INVALID_ROOM_TYPE")
+    }
+
+    if (inventory - occupancy < dto.roomsToSell) {
+      throw new AppError("Invalid roomsToSell amount", 400, "INVALID_ROOM_TO_SELL_AMOUNT")
+    }
 
     // 2. Buscar tarifa y disponibilidad para el dia.
     let currentRate = await this.ratesAndAvailabilityRepository.getRateByDate(propertyId, dto.date);
@@ -94,7 +118,10 @@ export class RatesAndAvailabilityService implements IRatesAndAvailabilityService
 
     // 7. Iteramos los dtos recividos con el fin de chequear que los roomsToSell (cuartos o camas a la venta) enviados en cada uno,
     // es menor o igual a las camas o cuartos libres. Distingimos entre cuartos privados y cuartos compartidos.
+    //
+    const rates: RatesAndAvailability[] = [];
     for (const dto of dtos) {
+      rates.push(RatesAndAvailability.fromDTO(propertyId, userId, dto));
       const activeReservations = reservationList.filter(r => r.isActiveOn(dto.date));
 
       let occupancy = 0;
@@ -123,7 +150,7 @@ export class RatesAndAvailabilityService implements IRatesAndAvailabilityService
     }
 
     // 9. Se no hubo conflicto guardar (crear o actualizar)
-    await this.ratesAndAvailabilityRepository.saveBulk(propertyId, dtos);
+    await this.ratesAndAvailabilityRepository.saveBulk(rates);
 
   }
 

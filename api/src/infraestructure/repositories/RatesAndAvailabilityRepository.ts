@@ -45,7 +45,7 @@ export class RatesAndAvailabilityRepository implements IRatesAndAvailabilityRepo
     ])
   }
 
-  public async saveBulk(propertyId: number, rates: RatesAndAvailability[]): Promise<void> {
+  public async saveBulk(rates: RatesAndAvailability[]): Promise<void> {
     const query = `INSERT INTO rates_and_availability (
                     property_id,
                     room_type_id,
@@ -72,7 +72,7 @@ export class RatesAndAvailabilityRepository implements IRatesAndAvailabilityRepo
                       updated_by = EXCLUDED.updated_by;`;
 
     await this.uow.query(query, [
-      rates.map(r => propertyId),
+      rates.map(r => r.propertyId),
       rates.map(r => r.roomTypeId),
       rates.map(r => r.date),
       rates.map(r => r.customRate),

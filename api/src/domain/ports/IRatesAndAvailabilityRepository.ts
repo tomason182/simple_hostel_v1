@@ -8,5 +8,5 @@ export interface IRatesAndAvailabilityRepository {
 
   save(propertyId: number, rate: RatesAndAvailability): Promise<void>;
 
-  saveBulk(propertyId: number, rates: RatesAndAvailability[]): Promise<void>
+  saveBulk(rates: RatesAndAvailability[]): Promise<void>
 }
