@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { IReservationService } from "../domain/interfaces/IReservationService";
-import { GuestDTO } from "../domain/dto/GuestDTO";
+import { GuestRequestDTO } from "../domain/dto/GuestDTO";
 import { ReservationDTO } from "../domain/dto/ReservationDTO";
 
 export class ReservationController {
@@ -12,7 +12,8 @@ export class ReservationController {
     try {
       const { propertyId, userId } = req.auth;
 
-      const guestDTO: GuestDTO = {
+      const guestDTO: GuestRequestDTO = {
+        id: null,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         idNumber: req.body.idNumber,

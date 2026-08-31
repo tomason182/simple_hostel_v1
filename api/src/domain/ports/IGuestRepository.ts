@@ -5,5 +5,5 @@ export interface IGuestRepository {
 
   findById(guestId: number): Promise<Guest | null>;
 
-  findByEmail(email: string): Promise<Guest | null>;
+  findByEmail(propertyId: number, email: string): Promise<Guest | null>;
 }

@@ -109,10 +109,10 @@ export class GuestRepository implements IGuestRepository {
     );
   }
 
-  async findByEmail(email: string): Promise<Guest | null> {
-    const query = "SELECT * FROM guest WHERE email = $1;";
+  async findByEmail(propertyId: number, email: string): Promise<Guest | null> {
+    const query = "SELECT * FROM guest WHERE property_id = $1 AND email = $2;";
 
-    const result = await this.uow.query(query, [email]);
+    const result = await this.uow.query(query, [propertyId, email]);
     const data = result.rows[0];
 
     if (!data) {

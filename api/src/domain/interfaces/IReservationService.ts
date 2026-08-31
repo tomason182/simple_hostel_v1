@@ -1,11 +1,11 @@
 import { Reservation } from "../entities/Reservation";
 import { ReservationDTO } from "../dto/ReservationDTO";
-import { GuestDTO } from "../dto/GuestDTO";
+import { GuestRequestDTO } from "../dto/GuestDTO";
 import type { ReservationStatus, PaymentStatus } from "../entities/Reservation";
 
 export interface IReservationService {
   // Crear una reserva nueva.
-  createReservation(reservationDTO: ReservationDTO, guestDTO: GuestDTO, userId: number, propertyId: number): Promise<{ msg: string }>;
+  createReservation(reservationDTO: ReservationDTO, guestDTO: GuestRequestDTO, userId: number, propertyId: number): Promise<{ msg: string }>;
 
   // Posiblemente necesitomos distinta data para crear que para actualizar.
   updateReservation(reservationDTO: ReservationDTO): Promise<{ msg: string }>;

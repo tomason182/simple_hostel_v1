@@ -1,4 +1,4 @@
-import { GuestDTO } from "../domain/dto/GuestDTO";
+import { GuestRequestDTO } from "../domain/dto/GuestDTO";
 import { ReservationDTO } from "../domain/dto/ReservationDTO";
 import { Guest } from "../domain/entities/Guest";
 import { IBedOccupancyService } from "../domain/interfaces/IBedOccupancyService";
@@ -12,6 +12,7 @@ import { Reservation } from "../domain/entities/Reservation";
 import { Calendar } from "../domain/entities/Calendar";
 import { BedOccupancy } from "../domain/entities/BedOccupancy";
 import { BedOccupancyService } from "./BedOccupancyService";
+import { RatesAndAvailability } from "../domain/entities/RatesAndAvailability";
 
 export class ReservationService implements IReservationService {
 
@@ -31,10 +32,16 @@ export class ReservationService implements IReservationService {
     this.ratesAndAvailabilityRepository = ratesAndAvailabilityRepository;
   }
 
-  async createReservation(reservationDTO: ReservationDTO, guestDTO: GuestDTO, userId: number, propertyId: number): Promise<{ msg: string; }> {
+  async createReservation(reservationDTO: ReservationDTO, guestDTO: GuestRequestDTO, userId: number, propertyId: number): Promise<{ msg: string; }> {
     // 1. Crear el huesped y guardarlo.
-    const guest = Guest.fromDTO(propertyId, userId, guestDTO);
-    await this.guestRepository.save(guest);
+    // Directamente se crea y se guarda sin ninguna confirmacion previa.
+    // Se podria chequear el par guest_email - propertyId
+    let guest = await this.guestRepository.findByEmail(propertyId, guestDTO.email);
+
+    if (!guest) {
+      guest = Guest.fromDTO(propertyId, userId, guestDTO);
+      await this.guestRepository.save(guest);
+    }
 
     const guestId = guest.getId();
     if (guestId === null) {
@@ -50,7 +57,7 @@ export class ReservationService implements IReservationService {
     const checkOut = reservationDTO.checkOut;
     const selectedRooms = reservationDTO.selectedRooms   // Es un array con los roomTypes seleccionados.
 
-    const ratesAndAvailability = await this.ratesAndAvailabilityRepository.getRatesByPeriodAndRooms(propertyId, selectedRooms, checkIn, checkOut);
+    const ratesAndAvailability: RatesAndAvailability[] = await this.ratesAndAvailabilityRepository.getRatesByPeriodAndRooms(propertyId, selectedRooms, checkIn, checkOut);
     const occupancyList = await this.bedOccupancyService.getOccupancyList(selectedRooms, checkIn, checkOut);
 
     const calendar = Calendar.build(ratesAndAvailability, occupancyList);
