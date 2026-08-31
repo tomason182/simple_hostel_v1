@@ -62,7 +62,7 @@ export class ReservationService implements IReservationService {
 
     const calendar = Calendar.build(ratesAndAvailability, occupancyList);
 
-    const reservation = Reservation.create(guestId, reservationDTO, currencies, userId);
+    const reservation = Reservation.create(propertyId, guestId, reservationDTO, currencies, userId);
 
     const totalAmount = reservation.calculateTotalAmount(calendar);
     reservation.setTotalAmount(totalAmount)
