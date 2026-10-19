@@ -6,6 +6,7 @@ import { RegisterPage } from "../pages/RegisterPage";
 import { MainLayout } from "../layouts/MainLayout/MainLayout";
 import { Home } from "../pages/Home/Home";
 import { RoomTypes } from "../pages/RoomTypes/RoomTypes";
+import { Reservations } from "../pages/Reservations/Reservations";
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
       {
         path: "/calendar",
         element: <h1>Calendar page</h1>
+      },
+      {
+        path: "/reservations",
+        element: <Reservations />
       },
       {
         path: "/room-types",

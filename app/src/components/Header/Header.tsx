@@ -1,4 +1,5 @@
 import styles from "./Header.module.css";
+import { Link } from "react-router";
 
 export function Header() {
   return (
@@ -15,8 +16,15 @@ export function Header() {
 
         <nav className={styles.navigation}>
           <ul>
-            <li>Home</li>
-            <li>Calendar</li>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/calendar">Calendar</Link>
+            </li>
+            <li>
+              <Link to="reservations">Reservas</Link>
+            </li>
             <li>Tarifas y disponibilidad</li>
             <li>Dormitorios</li>
             <li>Propiedad</li>
